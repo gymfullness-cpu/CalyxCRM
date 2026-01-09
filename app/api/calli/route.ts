@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import crypto from "node:crypto";
 import { getMemory, saveMemory, Msg } from "../../../lib/calliMemory";
 
+export const runtime = "nodejs";
+
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
 function getOrCreateUserId(req: Request) {
@@ -45,16 +47,33 @@ function extractUrlCitations(resp: any): Array<{ title?: string; url: string }> 
   });
 }
 
+// ✅ TS/Vercel fix: normalizacja wiadomości do typu Msg[]
+function toMsgArray(input: unknown): Msg[] {
+  if (!Array.isArray(input)) return [];
+
+  const out: Msg[] = [];
+  for (const m of input as any[]) {
+    const role = m?.role;
+    const content = m?.content;
+
+    if ((role === "user" || role === "assistant") && typeof content === "string") {
+      out.push({ role, content });
+    }
+  }
+  return out;
+}
+
 export async function POST(req: Request) {
   try {
-    const { messages } = (await req.json()) as { messages: Msg[] };
-    const { userId, setCookie } = getOrCreateUserId(req);
+    const body = (await req.json()) as unknown;
+    const incomingMessages = toMsgArray((body as any)?.messages);
 
+    const { userId, setCookie } = getOrCreateUserId(req);
     const mem = getMemory(userId);
 
     // ✅ DODATEK: mniejszy kontekst = szybciej
-    const lastMemMsgs = mem.messages.slice(-12);
-    const userMsgs = messages.slice(-12);
+    const lastMemMsgs: Msg[] = toMsgArray(mem?.messages).slice(-12);
+    const userMsgs: Msg[] = incomingMessages.slice(-12);
 
     const vectorStoreId = process.env.CALLI_VECTOR_STORE_ID?.trim();
 
@@ -104,12 +123,10 @@ ${mem.profile || "(brak)"}
 
     const sources = extractUrlCitations(resp);
 
-    // ✅ update pamięci
-    const merged = [
-      ...lastMemMsgs,
-      ...userMsgs,
-      { role: "assistant", content: reply },
-    ].slice(-40);
+    // ✅ update pamięci (TS-safe)
+    const assistantMsg: Msg = { role: "assistant", content: reply };
+
+    const merged: Msg[] = [...lastMemMsgs, ...userMsgs, assistantMsg].slice(-40);
 
     const prof = await openai.responses.create({
       model: "gpt-4.1-mini",
