@@ -4,7 +4,7 @@ import NavLink from "./NavLink";
 import Script from "next/script";
 import CalliWidget from "./components/CalliWidget";
 import MarketingPixels from "./components/MarketingPixels";
-import ThemeSwitcher from "./components/ThemeSwitcher";
+import ThemeSwitcher from "./components/themeswitcher";
 
 export const viewport = {
   width: "device-width",
@@ -205,11 +205,13 @@ export default function RootLayout({
               flexWrap: "wrap",
             }}
           >
+            {/* LEWA: logo + ThemeSwitcher obok, bez napisu Navy/Mint */}
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: 10,
+                gap: 12,
+                flexWrap: "wrap",
                 fontWeight: 900,
                 letterSpacing: -0.4,
                 fontSize: 16,
@@ -237,7 +239,7 @@ export default function RootLayout({
                 Calyx AI
               </span>
 
-              {/* ✅ chmurka do zmiany motywu (po prawej stronie loga) */}
+              {/* ✅ tu jest przełącznik motywów */}
               <ThemeSwitcher />
             </div>
 
@@ -248,13 +250,11 @@ export default function RootLayout({
 
                 <div className="ce-dropdown" id="ce-mobile-dropdown">
                   <div className="ce-grid">
-                    {/* CRM / główne */}
                     <NavLink href="/dashboard">📊 Dashboard</NavLink>
                     <NavLink href="/leads">📞 Leady</NavLink>
                     <NavLink href="/contacts">👥 Kontakty</NavLink>
                     <NavLink href="/agents">🧑‍💼 Agenci</NavLink>
 
-                    {/* Pozyski / oferty */}
                     <NavLink href="/prospects">🎯 Pozyski</NavLink>
                     <NavLink href="/prospects/intake">🧾 Pozyski z formularzy</NavLink>
                     <NavLink href="/prospects/ads">📣 Reklamy / Social</NavLink>
@@ -262,15 +262,12 @@ export default function RootLayout({
 
                     <NavLink href="/properties">🏠 Nieruchomości</NavLink>
 
-                    {/* Realizacja */}
                     <NavLink href="/calendar">📅 Kalendarz</NavLink>
                     <NavLink href="/followups">🔔 Follow-up</NavLink>
 
-                    {/* AI razem */}
                     <NavLink href="/analyzed">🤖 AI: Analiza</NavLink>
                     <NavLink href="/assistant/live">🎧 AI: Coach</NavLink>
 
-                    {/* Marketing / pozostałe */}
                     <NavLink href="/news">🗞️ Prasówka</NavLink>
                     <NavLink href="/newsletter">✉️ Newsletter</NavLink>
                     <NavLink href="/market">🌍 Market</NavLink>
@@ -286,28 +283,23 @@ export default function RootLayout({
               className="ce-desktop-links"
               style={{ gap: 10, flexWrap: "wrap", alignItems: "center" }}
             >
-              {/* CRM / główne */}
               <NavLink href="/dashboard">📊 Dashboard</NavLink>
               <NavLink href="/leads">📞 Leady</NavLink>
               <NavLink href="/contacts">👥 Kontakty</NavLink>
               <NavLink href="/agents">🧑‍💼 Agenci</NavLink>
 
-              {/* Pozyski / oferty */}
               <NavLink href="/prospects">🎯 Pozyski</NavLink>
               <NavLink href="/properties">🏠 Nieruchomości</NavLink>
 
-              {/* Realizacja */}
               <NavLink href="/calendar">📅 Kalendarz</NavLink>
               <NavLink href="/followups">🔔 Follow-up</NavLink>
 
-              {/* AI razem */}
               <NavLink href="/analyzed">🤖 AI: Analiza</NavLink>
               <NavLink href="/assistant/live">🎧 AI: Coach</NavLink>
 
-              {/* Pozostałe */}
               <NavLink href="/market">🌍 Market</NavLink>
               <NavLink href="/voice-notes">🎙️ Głosówki</NavLink>
-              <NavLink href="/documents/sale">📄 Dokumenty (sprzedaż)</NavLink>
+              <NavLink href="/documents/sale">📄 Dokumenty</NavLink>
               <NavLink href="/news">🗞️ Prasówka</NavLink>
               <NavLink href="/newsletter">✉️ Newsletter</NavLink>
             </div>
