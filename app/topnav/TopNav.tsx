@@ -4,7 +4,9 @@ import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { usePathname } from "next/navigation";
 import NavLink from "./NavLink";
 import { AppBrand } from "./AppBrand";
-import ThemeSwitcher from "../components/ThemeSwitcher";
+
+// ✅ U CIEBIE: app/components/themeswitcher (case-sensitive na Vercel)
+import ThemeSwitcher from "../components/themeswitcher";
 
 export default function TopNav() {
   const [hidden, setHidden] = useState(false);
@@ -19,18 +21,11 @@ export default function TopNav() {
     if (detailsRef.current) detailsRef.current.open = false;
   };
 
-  // ✅ zamykaj menu po zmianie trasy (klik w link)
   useEffect(() => {
     closeMenu();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
-  /**
-   * ✅ Zachowanie:
-   * - chowaj topbar gdy użytkownik scrolluje w dół
-   * - pokazuj gdy scrolluje w górę
-   * - pokaż zawsze na górze (y < 8)
-   */
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -52,7 +47,6 @@ export default function TopNav() {
         }
 
         const TH = 10;
-
         if (delta > TH) setHidden(true);
         else if (delta < -TH) setHidden(false);
 
@@ -65,7 +59,6 @@ export default function TopNav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // ✅ klik w link w dropdown -> zamknij details
   const onDropdownClick = (e: MouseEvent) => {
     const el = e.target as HTMLElement | null;
     const a = el?.closest?.("a");
@@ -74,7 +67,6 @@ export default function TopNav() {
 
   return (
     <>
-      {/* ✅ CSS tylko do responsywnego menu */}
       <style>{`
         .ce-desktop-links { display: none; }
         .ce-mobile-menu { display: block; }
@@ -145,18 +137,9 @@ export default function TopNav() {
             flexWrap: "wrap",
           }}
         >
-          {/* LEFT: logo + theme switcher (obok loga) */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-              flexWrap: "wrap",
-            }}
-          >
+          {/* LEWA: logo + switcher obok */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
             <AppBrand />
-
-            {/* ✅ ThemeSwitcher MUSI być w return */}
             <ThemeSwitcher />
           </div>
 
@@ -192,10 +175,7 @@ export default function TopNav() {
           </div>
 
           {/* DESKTOP */}
-          <div
-            className="ce-desktop-links"
-            style={{ gap: 10, flexWrap: "wrap", alignItems: "center" }}
-          >
+          <div className="ce-desktop-links" style={{ gap: 10, flexWrap: "wrap", alignItems: "center" }}>
             <NavLink href="/dashboard">📊 Dashboard</NavLink>
             <NavLink href="/leads">📞 Leady</NavLink>
             <NavLink href="/contacts">👥 Kontakty</NavLink>
