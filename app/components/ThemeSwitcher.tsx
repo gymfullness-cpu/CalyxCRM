@@ -31,7 +31,7 @@ const LABEL: Record<ThemeId, string> = {
   offwhite: "Off-White",
 };
 
-export default function ThemeSwitcher() {
+export default function themeswitcher() {
   const [theme, setTheme] = useState<ThemeId>("navyMint");
 
   useEffect(() => {

@@ -4,7 +4,7 @@ import NavLink from "./NavLink";
 import Script from "next/script";
 import CalliWidget from "./components/CalliWidget";
 import MarketingPixels from "./components/MarketingPixels";
-import ThemeSwitcher from "./components/themeswitcher";
+import ThemeSwitcher from "./components/ThemeSwitcher";
 
 export const viewport = {
   width: "device-width",

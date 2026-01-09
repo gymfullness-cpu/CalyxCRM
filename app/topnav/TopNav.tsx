@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { usePathname } from "next/navigation";
 import NavLink from "./NavLink";
 import { AppBrand } from "../components/AppBrand";
-import ThemeSwitcher from "../components/themeswitcher";
+import ThemeSwitcher from "../components/ThemeSwitcher";
 
 
 export default function TopNav() {
@@ -139,7 +139,7 @@ export default function TopNav() {
           {/* LEWA: logo + switcher obok */}
           <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
             <AppBrand />
-            <themeswitcher />
+            <ThemeSwitcher />
           </div>
 
           {/* MOBILE */}
