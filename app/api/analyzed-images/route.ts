@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
+export const runtime = "nodejs";
+
 export async function POST(req: Request) {
   try {
     console.log("▶ API: request received");
@@ -8,7 +10,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     console.log("▶ BODY:", body);
 
-    const { images } = body;
+    const { images } = body as { images?: string[] };
 
     if (!images || !Array.isArray(images) || images.length === 0) {
       return NextResponse.json(
@@ -30,13 +32,13 @@ export async function POST(req: Request) {
           role: "user",
           content: [
             {
-              type: "text",
+              type: "text" as const,
               text:
                 "Przeanalizuj stan techniczny nieruchomości na podstawie zdjęć. " +
                 "Opisz standard wykończenia, zużycie, ewentualne wady.",
             },
             ...images.map((url: string) => ({
-              type: "image_url",
+              type: "image_url" as const,
               image_url: { url },
             })),
           ],
@@ -57,13 +59,16 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ result });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("❌ API ERROR:", err);
+
+    const message =
+      err instanceof Error ? err.message : typeof err === "string" ? err : "Nieznany błąd";
 
     return NextResponse.json(
       {
         error: "Błąd serwera API",
-        details: err?.message ?? String(err),
+        details: message,
       },
       { status: 500 }
     );
