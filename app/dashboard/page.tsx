@@ -1,78 +1,106 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Link from "next/link";
 
-type Status = "Nowy" | "Oddzwonić" | "Zamknięty";
-
-type Stats = {
-  Nowy: number;
-  Oddzwonić: number;
-  Zamknięty: number;
-  notesToday: number;
-};
-
-export default function Dashboard() {
-  const [stats, setStats] = useState<Stats>({
-    Nowy: 0,
-    Oddzwonić: 0,
-    Zamknięty: 0,
-    notesToday: 0,
-  });
-
-  useEffect(() => {
-    let nowy = 0;
-    let oddzwonic = 0;
-    let zamkniety = 0;
-    let notesToday = 0;
-
-    const today = new Date().toLocaleDateString();
-
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i) || "";
-
-      // STATUSY
-      if (key.startsWith("lead-status-")) {
-        const value = localStorage.getItem(key);
-
-        if (value === "Nowy") nowy++;
-        if (value === "Oddzwonić") oddzwonic++;
-        if (value === "Zamknięty") zamkniety++;
-      }
-
-      // NOTATKI
-      if (key.startsWith("lead-notes-")) {
-        const notes = JSON.parse(localStorage.getItem(key) || "[]");
-        notes.forEach((note: { date: string }) => {
-          if (note.date.startsWith(today)) {
-            notesToday++;
-          }
-        });
-      }
-    }
-
-    setStats({
-      Nowy: nowy,
-      Oddzwonić: oddzwonic,
-      Zamknięty: zamkniety,
-      notesToday,
-    });
-  }, []);
-
-  const total = stats.Nowy + stats.Oddzwonić + stats.Zamknięty;
-  const success =
-    total > 0 ? Math.round((stats.Zamknięty / total) * 100) : 0;
-
+export default function DashboardPage() {
   return (
-    <main style={{ padding: 40 }}>
-      <h1>📊 Dashboard agenta</h1>
+    <main className="mx-auto max-w-7xl px-6 py-8">
+      <div className="flex items-end justify-between gap-4 flex-wrap">
+        <div>
+          <div
+            className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-extrabold"
+            style={{
+              border: "1px solid rgba(45,212,191,0.25)",
+              background: "rgba(45,212,191,0.08)",
+              color: "rgba(234,255,251,0.92)",
+            }}
+          >
+            <span style={{ color: "var(--accent)" }}>●</span> Centrum dowodzenia
+          </div>
 
-      <ul>
-        <li>📞 Leadów obsłużonych: <strong>{total}</strong></li>
-        <li>🟡 Do oddzwonienia: <strong>{stats.Oddzwonić}</strong></li>
-        <li>🟢 Zamknięte: <strong>{stats.Zamknięty}</strong></li>
-        <li>📝 Notatek dziś: <strong>{stats.notesToday}</strong></li>
-        <li>📈 Skuteczność: <strong>{success}%</strong></li>
-      </ul>
+          <h1
+            className="mt-3 text-3xl font-extrabold tracking-tight"
+            style={{ color: "var(--text-main)" }}
+          >
+            📊 Dashboard
+          </h1>
+
+          <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>
+            Szybki dostęp do modułów. Wszystko w jednym miejscu.
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <Tile title="📅 Kalendarz" desc="Spotkania, przypomnienia, follow-up." href="/calendar" />
+        <Tile title="🧲 Pozyski" desc="Pozyskiwanie ofert i właścicieli." href="/prospects" />
+        <Tile title="🏠 Nieruchomości" desc="Baza ofert, zdjęcia, parametry." href="/properties" />
+        <Tile title="🤖 AI: Analiza" desc="AI: analiza i porządek zdjęć." href="/analyzed" />
+        <Tile title="🧮 AI: Wycena" desc="Szybka wycena nieruchomości." href="/valuation" />
+        <Tile title="📞 Leady" desc="Leady, statusy, kontakty." href="/leads" />
+      </div>
     </main>
+  );
+}
+
+function Tile({ title, desc, href }: { title: string; desc: string; href: string }) {
+  return (
+    <Link
+      href={href}
+      className="surface-light group p-6 transition-transform"
+      style={{ textDecoration: "none" }}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h3 className="text-lg font-extrabold leading-snug">{title}</h3>
+          <p className="mt-2 text-sm muted">{desc}</p>
+        </div>
+
+        <div
+          className="rounded-full px-3 py-1 text-xs font-extrabold"
+          style={{
+            border: "1px solid rgba(45,212,191,0.35)",
+            background: "rgba(45,212,191,0.12)",
+            color: "rgba(234,255,251,0.95)",
+          }}
+        >
+          Otwórz →
+        </div>
+      </div>
+
+      <div className="mt-5 h-px w-full" style={{ background: "rgba(255,255,255,0.10)" }} />
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Tag>CRM</Tag>
+        <Tag>Workflow</Tag>
+        <Tag>Premium</Tag>
+      </div>
+
+      <style jsx>{`
+        a.surface-light {
+          transform: translateY(0);
+        }
+        a.surface-light:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 18px 50px rgba(0, 0, 0, 0.42);
+          border-color: rgba(45, 212, 191, 0.35);
+        }
+      `}</style>
+    </Link>
+  );
+}
+
+function Tag({ children }: { children: React.ReactNode }) {
+  return (
+    <span
+      className="inline-flex items-center rounded-full px-3 py-1 text-xs font-bold"
+      style={{
+        background: "rgba(255,255,255,0.06)",
+        border: "1px solid rgba(255,255,255,0.10)",
+        color: "rgba(238, 242, 255, 0.78)",
+      }}
+    >
+      {children}
+    </span>
   );
 }

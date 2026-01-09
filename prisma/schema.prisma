@@ -1,0 +1,215 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "library"
+   url      = env("DATABASE_URL")
+}
+
+
+datasource db {
+  provider = "sqlite"
+   
+}
+
+enum OrgMemberRole {
+  OWNER
+  ADMIN
+  MANAGER
+  AGENT
+  ASSISTANT
+  VIEWER
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  VIEWING
+  OFFER
+  WON
+  LOST
+  ARCHIVED
+}
+
+enum InteractionType {
+  CALL
+  SMS
+  EMAIL
+  MEETING
+  NOTE
+  WHATSAPP
+}
+
+enum AITaskType {
+  FOLLOW_UP
+  DEAL_DOCTOR
+  COACHING
+}
+
+enum AITaskStatus {
+  PENDING
+  DONE
+  DISMISSED
+}
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members OrgMember[]
+  leads   Lead[]
+  aiTasks AITask[]
+}
+
+model OrgMember {
+  id    String  @id @default(cuid())
+  orgId String
+  email String
+  name  String?
+  phone String?
+  rank  String? // np. "Senior", "Junior", "Top Performer"
+
+  role      OrgMemberRole @default(AGENT)
+  createdAt DateTime      @default(now())
+
+  org          Organization  @relation(fields: [orgId], references: [id])
+  ownedLeads   Lead[]        @relation("LeadOwner")
+  agentProfile AgentProfile?
+
+  @@index([orgId])
+}
+
+model Lead {
+  id      String  @id @default(cuid())
+  orgId   String
+  ownerId String?
+
+  fullName String
+  phone    String?
+  email    String?
+  source   String?
+  status   LeadStatus @default(NEW)
+
+  temperature   Int       @default(50)
+  lastContactAt DateTime?
+  nextActionAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  org   Organization @relation(fields: [orgId], references: [id])
+  owner OrgMember?   @relation("LeadOwner", fields: [ownerId], references: [id])
+
+  interactions Interaction[]
+  aiTasks      AITask[]
+
+  @@index([orgId])
+  @@index([ownerId])
+}
+
+model Interaction {
+  id        String          @id @default(cuid())
+  leadId    String
+  actorId   String?
+  type      InteractionType
+  content   String
+  createdAt DateTime        @default(now())
+
+  lead Lead @relation(fields: [leadId], references: [id])
+
+  @@index([leadId])
+}
+
+model AITask {
+  id      String       @id @default(cuid())
+  orgId   String
+  leadId  String?
+  ownerId String?
+  type    AITaskType
+  status  AITaskStatus @default(PENDING)
+
+  title     String
+  rationale String?
+  payload   String?
+  dueAt     DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  org  Organization @relation(fields: [orgId], references: [id])
+  lead Lead?        @relation(fields: [leadId], references: [id])
+
+  @@index([orgId])
+  @@index([leadId])
+  @@index([ownerId])
+}
+
+model AgentProfile {
+  id       String @id @default(cuid())
+  memberId String @unique
+
+  displayName String
+  title       String?
+  bio         String?
+  phone       String?
+  avatarUrl   String?
+  coverUrl    String?
+
+  primaryColor String? @default("#0f172a")
+  accentColor  String? @default("#38bdf8")
+  ctaText      String? @default("Skontaktuj się ze mną")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  member OrgMember @relation(fields: [memberId], references: [id])
+}
+enum ContactType {
+  SELLER
+  BUYER
+  OTHER
+}
+
+model Contact {
+  id        String      @id @default(cuid())
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  // ważne: kontakty w obrębie organizacji (biura)
+  orgId     String
+
+  type      ContactType @default(OTHER)
+  firstName String
+  lastName  String
+  phone     String?
+  email     String?
+  notes     String?
+tags      ContactTagOnContact[]
+
+  @@index([orgId])
+  @@index([orgId, lastName])
+}
+model ContactTag {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  orgId     String
+  name      String
+
+  contacts  ContactTagOnContact[]
+
+  @@unique([orgId, name])
+  @@index([orgId])
+}
+
+model ContactTagOnContact {
+  contactId String
+  tagId     String
+  createdAt DateTime @default(now())
+
+  contact   Contact    @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  tag       ContactTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([contactId, tagId])
+  @@index([tagId])
+}

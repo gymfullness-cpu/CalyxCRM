@@ -1,26 +1,277 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* =========================================================
+   CALYX — THEME SYSTEM (7 MOTYWÓW)
+   data-theme: navyMint | ocean | emerald | royal | graphite | burgundy | offwhite
+========================================================= */
+
+/* ---------- 1) NAVY MINT (domyślny) ---------- */
+:root,
+[data-theme="navyMint"]{
+  --bg-main: #0b1220;
+  --bg-main-2: #070d18;
+
+  --border-soft: rgba(255,255,255,0.10);
+  --border-strong: rgba(255,255,255,0.16);
+
+  --text-main: #eef2ff;
+  --text-muted: rgba(238, 242, 255, 0.72);
+  --text-faint: rgba(238, 242, 255, 0.50);
+
+  --accent: #2dd4bf;
+  --accent-2: #14b8a6;
+  --accent-soft: rgba(45, 212, 191, 0.18);
+
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --shadow-soft: 0 10px 30px rgba(0,0,0,0.35);
+  --focus: 0 0 0 4px rgba(45,212,191,0.18);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ---------- 2) OCEAN (blue tech premium) ---------- */
+[data-theme="ocean"]{
+  --bg-main: #081225;
+  --bg-main-2: #050b18;
+
+  --border-soft: rgba(255,255,255,0.11);
+  --border-strong: rgba(255,255,255,0.17);
+
+  --text-main: #eff6ff;
+  --text-muted: rgba(239, 246, 255, 0.72);
+  --text-faint: rgba(239, 246, 255, 0.52);
+
+  --accent: #60a5fa;
+  --accent-2: #3b82f6;
+  --accent-soft: rgba(96, 165, 250, 0.20);
+
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --shadow-soft: 0 10px 30px rgba(0,0,0,0.38);
+  --focus: 0 0 0 4px rgba(96,165,250,0.20);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ---------- 3) EMERALD (zielony „private”) ---------- */
+[data-theme="emerald"]{
+  --bg-main: #071a17;
+  --bg-main-2: #05110f;
+
+  --border-soft: rgba(255,255,255,0.12);
+  --border-strong: rgba(255,255,255,0.18);
+
+  --text-main: #ecfdf5;
+  --text-muted: rgba(236, 253, 245, 0.70);
+  --text-faint: rgba(236, 253, 245, 0.50);
+
+  --accent: #34d399;
+  --accent-2: #10b981;
+  --accent-soft: rgba(52, 211, 153, 0.20);
+
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --shadow-soft: 0 10px 30px rgba(0,0,0,0.40);
+  --focus: 0 0 0 4px rgba(52,211,153,0.20);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ---------- 4) ROYAL (fiolet premium) ---------- */
+[data-theme="royal"]{
+  --bg-main: #0f1026;
+  --bg-main-2: #0a0b18;
+
+  --border-soft: rgba(255,255,255,0.11);
+  --border-strong: rgba(255,255,255,0.17);
+
+  --text-main: #f5f3ff;
+  --text-muted: rgba(245, 243, 255, 0.72);
+  --text-faint: rgba(245, 243, 255, 0.52);
+
+  --accent: #a78bfa;
+  --accent-2: #8b5cf6;
+  --accent-soft: rgba(167, 139, 250, 0.20);
+
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --shadow-soft: 0 10px 30px rgba(0,0,0,0.40);
+  --focus: 0 0 0 4px rgba(167,139,250,0.20);
 }
+
+/* ---------- 5) GRAPHITE (minimal dark „enterprise”) ---------- */
+[data-theme="graphite"]{
+  --bg-main: #0f1115;
+  --bg-main-2: #0b0d10;
+
+  --border-soft: rgba(255,255,255,0.10);
+  --border-strong: rgba(255,255,255,0.16);
+
+  --text-main: #f4f4f5;
+  --text-muted: rgba(244, 244, 245, 0.70);
+  --text-faint: rgba(244, 244, 245, 0.50);
+
+  --accent: #a1a1aa;
+  --accent-2: #d4d4d8;
+  --accent-soft: rgba(161,161,170,0.22);
+
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --shadow-soft: 0 10px 30px rgba(0,0,0,0.45);
+  --focus: 0 0 0 4px rgba(161,161,170,0.22);
+}
+
+/* ---------- 6) BURGUNDY (bordowy premium / luxury) ---------- */
+[data-theme="burgundy"]{
+  --bg-main: #1a0b12;
+  --bg-main-2: #12070c;
+
+  --border-soft: rgba(255,255,255,0.12);
+  --border-strong: rgba(255,255,255,0.18);
+
+  --text-main: #fff1f2;
+  --text-muted: rgba(255, 241, 242, 0.72);
+  --text-faint: rgba(255, 241, 242, 0.52);
+
+  --accent: #e11d48;
+  --accent-2: #be123c;
+  --accent-soft: rgba(225, 29, 72, 0.22);
+
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --shadow-soft: 0 10px 30px rgba(0,0,0,0.50);
+  --focus: 0 0 0 4px rgba(225,29,72,0.18);
+}
+
+/* ---------- 7) OFF-WHITE (jasny premium + czarna typografia) ---------- */
+[data-theme="offwhite"]{
+  --bg-main: #f5f5f4;   /* stone-100-ish */
+  --bg-main-2: #fafaf9; /* stone-50 */
+
+  --border-soft: rgba(15, 23, 42, 0.14);
+  --border-strong: rgba(15, 23, 42, 0.20);
+
+  --text-main: #0f172a;
+  --text-muted: rgba(15, 23, 42, 0.68);
+  --text-faint: rgba(15, 23, 42, 0.48);
+
+  /* akcent bardziej „ink” niż niebieski — premium, spokojny */
+  --accent: #0f172a;
+  --accent-2: #020617;
+  --accent-soft: rgba(15, 23, 42, 0.12);
+
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --shadow-soft: 0 12px 28px rgba(15,23,42,0.10);
+  --focus: 0 0 0 4px rgba(15,23,42,0.14);
+}
+
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+html, body {
+  color: var(--text-main);
+
+  background:
+    radial-gradient(900px 520px at 18% 0%, var(--accent-soft), transparent 60%),
+    radial-gradient(900px 520px at 85% 0%, rgba(29, 78, 216, 0.10), transparent 60%),
+    linear-gradient(180deg, var(--bg-main-2) 0%, var(--bg-main) 38%, rgba(0,0,0,0) 100%);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  letter-spacing: 0.1px;
+}
+
+* { box-sizing: border-box; }
+a { color: inherit; text-decoration: none; }
+::selection { background: var(--accent-soft); }
+
+h1, h2, h3, h4 {
+  color: var(--text-main);
+  letter-spacing: -0.4px;
+}
+
+.muted { color: var(--text-muted); }
+
+/* =========================================================
+   TOP NAV HAIRLINE
+========================================================= */
+
+nav { position: relative; }
+nav::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--accent) 75%, transparent),
+    rgba(29, 78, 216, 0.40),
+    color-mix(in srgb, var(--accent) 75%, transparent),
+    transparent
+  );
+}
+
+/* =========================================================
+   NAV LINK
+========================================================= */
+
+.nav-link {
+  text-decoration: none;
+  color: var(--text-main);
+  font-weight: 700;
+  font-size: 13px;
+
+  padding: 9px 14px;
+  border-radius: 999px;
+
+  border: 1px solid var(--border-soft);
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+  backdrop-filter: blur(14px);
+}
+
+.nav-link:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: linear-gradient(135deg, var(--accent-soft), rgba(255,255,255,0.06));
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.18), inset 0 0 0 1px color-mix(in srgb, var(--accent) 25%, transparent);
+  transform: translateY(-1px);
+}
+
+.nav-link.active {
+  border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
+}
+
+/* =========================================================
+   DASHBOARD TILES (spójne z motywem)
+========================================================= */
+
+.surface-light {
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+  color: var(--text-main);
+  border: 1px solid var(--border-soft);
+  border-radius: 18px;
+  box-shadow: 0 14px 34px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.08);
+  backdrop-filter: blur(14px);
+}
+
+.surface-light .muted { color: var(--text-muted); }
+
+.surface-light:hover {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border-soft));
+  box-shadow: 0 18px 50px rgba(0,0,0,0.26), 0 0 0 1px var(--accent-soft) inset;
+}
+
+.surface-light a,
+.surface-light p,
+.surface-light span,
+.surface-light small,
+.surface-light label,
+.surface-light h1,
+.surface-light h2,
+.surface-light h3,
+.surface-light h4 { color: inherit; }
