@@ -1,11 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/lib/db";
 
 export const runtime = "nodejs";
 
-export async function PATCH(req: Request, ctx: { params: { id: string } }) {
+// ✅ Next.js 16: params jest Promise
+type Ctx = { params: Promise<{ id: string }> };
+
+export async function PATCH(req: NextRequest, ctx: Ctx) {
   try {
-    const id = ctx.params.id;
+    const { id } = await ctx.params;
     const body = await req.json();
 
     const tagIds = Array.isArray(body.tagIds) ? (body.tagIds as string[]) : null;
@@ -29,6 +32,7 @@ export async function PATCH(req: Request, ctx: { params: { id: string } }) {
         if (tagIds.length > 0) {
           await tx.contactTagOnContact.createMany({
             data: tagIds.map((tagId) => ({ contactId: id, tagId })),
+            skipDuplicates: true,
           });
         }
       }
@@ -39,6 +43,10 @@ export async function PATCH(req: Request, ctx: { params: { id: string } }) {
       });
     });
 
+    if (!updated) {
+      return NextResponse.json({ error: "Nie znaleziono kontaktu" }, { status: 404 });
+    }
+
     return NextResponse.json(updated);
   } catch (e: any) {
     console.log("ERROR /api/contacts/[id] PATCH:", e);
@@ -46,9 +54,10 @@ export async function PATCH(req: Request, ctx: { params: { id: string } }) {
   }
 }
 
-export async function DELETE(_req: Request, ctx: { params: { id: string } }) {
+export async function DELETE(_req: NextRequest, ctx: Ctx) {
   try {
-    const id = ctx.params.id;
+    const { id } = await ctx.params;
+
     await prisma.contact.delete({ where: { id } });
     return NextResponse.json({ ok: true });
   } catch (e: any) {
