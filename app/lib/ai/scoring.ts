@@ -1,6 +1,3 @@
-// Prisma 7 / build na Vercelu potrafi nie mieć eksportów enumów w @prisma/client w tym etapie.
-// Dlatego definiujemy lokalne typy zgodne z schema.prisma i nie importujemy ich z Prisma.
-
 export type LeadStatus =
   | "NEW"
   | "CONTACTED"
