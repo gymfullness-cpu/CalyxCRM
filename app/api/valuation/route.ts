@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
@@ -8,10 +8,10 @@ const openai = new OpenAI({
 export const runtime = "nodejs";
 
 /**
- * Minimalny “HTML -> text” bez bibliotek:
+ * Minimalny â€śHTML -> textâ€ť bez bibliotek:
  * - usuwa skrypty/style
  * - wycina tagi
- * - kompresuje białe znaki
+ * - kompresuje biaĹ‚e znaki
  */
 function htmlToText(html: string) {
   const withoutScripts = html
@@ -22,7 +22,7 @@ function htmlToText(html: string) {
 }
 
 /**
- * Wyciąga JSON-LD (często portale trzymają tam cenę/metraż/tytuł)
+ * WyciÄ…ga JSON-LD (czÄ™sto portale trzymajÄ… tam cenÄ™/metraĹĽ/tytuĹ‚)
  */
 function extractJsonLd(html: string): any[] {
   const out: any[] = [];
@@ -33,12 +33,12 @@ function extractJsonLd(html: string): any[] {
     const raw = (m[1] || "").trim();
     if (!raw) continue;
 
-    // czasem jest kilka obiektów albo @graph
+    // czasem jest kilka obiektĂłw albo @graph
     try {
       const parsed = JSON.parse(raw);
       out.push(parsed);
     } catch {
-      // czasem JSON-LD ma śmieci — pomijamy
+      // czasem JSON-LD ma Ĺ›mieci â€” pomijamy
     }
   }
 
@@ -56,8 +56,8 @@ function clamp(n: number, min: number, max: number) {
 }
 
 /**
- * Normalizacja: score ma być 1–10
- * - jeśli model/legacy da 0–100, przeliczamy
+ * Normalizacja: score ma byÄ‡ 1â€“10
+ * - jeĹ›li model/legacy da 0â€“100, przeliczamy
  */
 function normalizeScoreTo10(raw: any): number | null {
   const n = safeNumber(raw);
@@ -83,10 +83,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Brak url" }, { status: 400 });
     }
     if (!url.startsWith("http")) {
-      return NextResponse.json({ error: "URL musi zaczynać się od http/https" }, { status: 400 });
+      return NextResponse.json({ error: "URL musi zaczynaÄ‡ siÄ™ od http/https" }, { status: 400 });
     }
 
-    // 1) Pobierz HTML ogłoszenia
+    // 1) Pobierz HTML ogĹ‚oszenia
     const response = await fetch(url, {
       headers: {
         "User-Agent":
@@ -97,36 +97,36 @@ export async function POST(req: Request) {
 
     if (!response.ok) {
       return NextResponse.json(
-        { error: `Nie udało się pobrać strony (${response.status})` },
+        { error: `Nie udaĹ‚o siÄ™ pobraÄ‡ strony (${response.status})` },
         { status: 400 }
       );
     }
 
     const html = await response.text();
 
-    // 2) Przygotuj “pakiet danych” dla AI: JSON-LD + tekst + fragment HTML
+    // 2) Przygotuj â€śpakiet danychâ€ť dla AI: JSON-LD + tekst + fragment HTML
     const jsonLd = extractJsonLd(html);
     const text = htmlToText(html);
 
-    // Uwaga: nie wysyłamy całego HTML (tokeny), tylko sensowne skróty
+    // Uwaga: nie wysyĹ‚amy caĹ‚ego HTML (tokeny), tylko sensowne skrĂłty
     const htmlSlice = html.slice(0, 60000);
     const textSlice = text.slice(0, 25000);
     const jsonLdSlice = JSON.stringify(jsonLd).slice(0, 20000);
 
-    // 3) Poproś model o CZYSTY JSON analizy ogłoszenia
-    //    (score 1–10, pros/cons, marketAssessment, views jeśli da się znaleźć)
+    // 3) PoproĹ› model o CZYSTY JSON analizy ogĹ‚oszenia
+    //    (score 1â€“10, pros/cons, marketAssessment, views jeĹ›li da siÄ™ znaleĹşÄ‡)
     const prompt = `
-Jesteś analitykiem rynku nieruchomości w Polsce. Analizujesz OGŁOSZENIE z portalu (np. Otodom/Gratka/Morizon).
+JesteĹ› analitykiem rynku nieruchomoĹ›ci w Polsce. Analizujesz OGĹOSZENIE z portalu (np. Otodom/Gratka/Morizon).
 Masz dane z HTML/JSON-LD/tekstu strony. Twoim celem jest:
 
-- wyciągnąć konkretne parametry oferty (tytuł, cena, metraż, lokalizacja, opis),
-- policzyć pricePerM2,
-- wypisać pros/cons (max ~8/8, konkrety),
-- stworzyć bardzo konkretną rekomendację (co sprawdzić, jak negocjować),
-- dać SCORE w skali 1–10 (10 = bardzo dobra oferta),
-- jeśli w danych widzisz WYŚWIETLENIA (views) — zwróć je jako liczbę (w przeciwnym razie null).
+- wyciÄ…gnÄ…Ä‡ konkretne parametry oferty (tytuĹ‚, cena, metraĹĽ, lokalizacja, opis),
+- policzyÄ‡ pricePerM2,
+- wypisaÄ‡ pros/cons (max ~8/8, konkrety),
+- stworzyÄ‡ bardzo konkretnÄ… rekomendacjÄ™ (co sprawdziÄ‡, jak negocjowaÄ‡),
+- daÄ‡ SCORE w skali 1â€“10 (10 = bardzo dobra oferta),
+- jeĹ›li w danych widzisz WYĹšWIETLENIA (views) â€” zwrĂłÄ‡ je jako liczbÄ™ (w przeciwnym razie null).
 
-Zwróć WYŁĄCZNIE czysty JSON bez markdown.
+ZwrĂłÄ‡ WYĹÄ„CZNIE czysty JSON bez markdown.
 `;
 
     const schema = {
@@ -144,20 +144,20 @@ Zwróć WYŁĄCZNIE czysty JSON bez markdown.
           street: { type: ["string", "null"] },
           description: { type: ["string", "null"] },
 
-          // ✅ bardzo dokładna analiza:
+          // âś… bardzo dokĹ‚adna analiza:
           marketAssessment: { type: ["string", "null"] }, // np. "nisko / rynkowo / wysoko + dlaczego"
           pros: { type: "array", items: { type: "string" } },
           cons: { type: "array", items: { type: "string" } },
 
-          // ✅ score 1–10
+          // âś… score 1â€“10
           score: { type: ["number", "null"] },
 
           recommendation: { type: ["string", "null"] },
 
-          // ✅ views jeśli się da znaleźć
+          // âś… views jeĹ›li siÄ™ da znaleĹşÄ‡
           views: { type: ["number", "null"] },
 
-          // debug: z czego model korzystał (krótko)
+          // debug: z czego model korzystaĹ‚ (krĂłtko)
           extractedFrom: { type: ["string", "null"] },
         },
         required: [
@@ -193,7 +193,7 @@ Zwróć WYŁĄCZNIE czysty JSON bez markdown.
             {
               type: "input_text",
               text: `
-Portal (podpowiedź): ${portal || "nieznany"}
+Portal (podpowiedĹş): ${portal || "nieznany"}
 URL: ${url}
 
 JSON-LD (fragment):
@@ -209,7 +209,7 @@ ${htmlSlice}
           ],
         },
       ],
-      // ✅ gwarantuje poprawny JSON
+      // âś… gwarantuje poprawny JSON
       text: {
         format: {
           type: "json_schema",
@@ -227,17 +227,17 @@ ${htmlSlice}
       analysis = {};
     }
 
-    // 4) Normalizacja + wyliczenia bezpieczeństwa
+    // 4) Normalizacja + wyliczenia bezpieczeĹ„stwa
     const price = safeNumber(analysis.price);
     const area = safeNumber(analysis.area);
 
-    // jeśli model nie policzył, policzmy
+    // jeĹ›li model nie policzyĹ‚, policzmy
     let ppm2 = safeNumber(analysis.pricePerM2);
     if (ppm2 === null && price !== null && area !== null && area > 0) {
       ppm2 = Math.round(price / area);
     }
 
-    // score 1–10
+    // score 1â€“10
     const s10 = normalizeScoreTo10(analysis.score);
 
     const normalized = {
@@ -254,8 +254,9 @@ ${htmlSlice}
     return NextResponse.json({ analysis: normalized });
   } catch (e: any) {
     return NextResponse.json(
-      { error: "Błąd serwera", details: e?.message || String(e) },
+      { error: "BĹ‚Ä…d serwera", details: e?.message || String(e) },
       { status: 500 }
     );
   }
 }
+

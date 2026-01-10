@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
 const client = new OpenAI({
@@ -24,22 +24,22 @@ export async function POST(req: Request) {
             {
               type: "input_text",
               text: `
-Jesteś analitykiem rynku nieruchomości w Polsce.
+JesteĹ› analitykiem rynku nieruchomoĹ›ci w Polsce.
 
-Dane nieruchomości:
+Dane nieruchomoĹ›ci:
 Miasto: ${city}
 Dzielnica: ${district}
-Metraż: ${area} m2
-Cena: ${price} zł
+MetraĹĽ: ${area} m2
+Cena: ${price} zĹ‚
 Stan techniczny: ${condition}
 
 Zadanie:
-1. Oceń czy cena jest niska / rynkowa / wysoka
-2. Porównaj do średnich cen w tej dzielnicy i mieście
-3. Podaj SCORE 0–100
-4. Krótki komentarz inwestycyjny
+1. OceĹ„ czy cena jest niska / rynkowa / wysoka
+2. PorĂłwnaj do Ĺ›rednich cen w tej dzielnicy i mieĹ›cie
+3. Podaj SCORE 0â€“100
+4. KrĂłtki komentarz inwestycyjny
 
-Odpowiedz w prostym tekście.
+Odpowiedz w prostym tekĹ›cie.
 `,
             },
           ],
@@ -53,8 +53,9 @@ Odpowiedz w prostym tekście.
   } catch (e: any) {
     console.error(e);
     return NextResponse.json(
-      { error: "Błąd scoringu" },
+      { error: "BĹ‚Ä…d scoringu" },
       { status: 500 }
     );
   }
 }
+

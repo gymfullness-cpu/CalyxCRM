@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
@@ -67,7 +67,7 @@ export default function AgentsPage() {
   const [rank, setRank] = useState("");
   const [role, setRole] = useState("AGENT");
 
-  // ✅ localStorage czytamy dopiero po mount (bez hydration mismatch)
+  // âś… localStorage czytamy dopiero po mount (bez hydration mismatch)
   useEffect(() => {
     async function initOrg() {
       setHydrated(true);
@@ -107,7 +107,7 @@ export default function AgentsPage() {
   async function addAgent() {
     if (!orgId) return alert("Brak orgId w localStorage");
     if (!email.trim()) return alert("Podaj email");
-    if (!fullName.trim()) return alert("Podaj imię i nazwisko");
+    if (!fullName.trim()) return alert("Podaj imiÄ™ i nazwisko");
 
     const res = await fetch("/api/org/members", {
       method: "POST",
@@ -122,7 +122,7 @@ export default function AgentsPage() {
       }),
     });
 
-    // ✅ odporne na brak JSON
+    // âś… odporne na brak JSON
     let data: any = null;
     const text = await res.text();
     try {
@@ -132,7 +132,7 @@ export default function AgentsPage() {
     }
 
     if (!res.ok) {
-      alert(data?.error ?? data?.detail ?? text ?? "Błąd");
+      alert(data?.error ?? data?.detail ?? text ?? "BĹ‚Ä…d");
       return;
     }
 
@@ -153,15 +153,15 @@ export default function AgentsPage() {
     return { all, owners, admins, managers };
   }, [agents]);
 
-  // ✅ podczas SSR i zanim useEffect odpali, render stabilny
+  // âś… podczas SSR i zanim useEffect odpali, render stabilny
   if (!hydrated) {
     return (
       <main className="mx-auto max-w-7xl px-6 py-8">
         <h1 className="text-3xl font-extrabold tracking-tight" style={{ color: "var(--text-main)" }}>
-          🧑‍💼 Agenci
+          đź§‘â€Ťđź’Ľ Agenci
         </h1>
         <div className="mt-3 text-sm" style={{ color: "var(--text-muted)" }}>
-          ⏳ Ładowanie...
+          âŹł Ĺadowanie...
         </div>
       </main>
     );
@@ -171,16 +171,16 @@ export default function AgentsPage() {
     return (
       <main className="mx-auto max-w-7xl px-6 py-8">
         <h1 className="text-3xl font-extrabold tracking-tight" style={{ color: "var(--text-main)" }}>
-          🧑‍💼 Agenci
+          đź§‘â€Ťđź’Ľ Agenci
         </h1>
 
         <div className="mt-4 rounded-2xl p-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border-soft)" }}>
           <div className="text-sm font-extrabold" style={{ color: "rgba(255,220,220,0.95)" }}>
-            ❌ Brak orgId w localStorage.
+            âťŚ Brak orgId w localStorage.
           </div>
 
           <div className="mt-3 text-sm" style={{ color: "var(--text-muted)" }}>
-            Otwórz DevTools → Console i wklej:
+            OtwĂłrz DevTools â†’ Console i wklej:
           </div>
 
           <pre
@@ -211,14 +211,14 @@ export default function AgentsPage() {
               color: "rgba(234,255,251,0.92)",
             }}
           >
-            <span style={{ color: "var(--accent)" }}>●</span> Zespół / Uprawnienia
+            <span style={{ color: "var(--accent)" }}>â—Ź</span> ZespĂłĹ‚ / Uprawnienia
           </div>
 
           <h1 className="mt-3 text-3xl font-extrabold tracking-tight" style={{ color: "var(--text-main)" }}>
-            🧑‍💼 Agenci
+            đź§‘â€Ťđź’Ľ Agenci
           </h1>
           <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>
-            Dodawaj członków biura, przypisuj role i zarządzaj dostępem.
+            Dodawaj czĹ‚onkĂłw biura, przypisuj role i zarzÄ…dzaj dostÄ™pem.
           </p>
         </div>
 
@@ -239,10 +239,10 @@ export default function AgentsPage() {
         <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <div>
             <h2 className="text-xl font-extrabold" style={{ color: "var(--text-main)" }}>
-              ➕ Dodaj agenta
+              âž• Dodaj agenta
             </h2>
             <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
-              Minimalnie: email i imię/nazwisko.
+              Minimalnie: email i imiÄ™/nazwisko.
             </p>
           </div>
 
@@ -263,7 +263,7 @@ export default function AgentsPage() {
           </div>
 
           <div>
-            <label className="label">Imię i nazwisko</label>
+            <label className="label">ImiÄ™ i nazwisko</label>
             <input
               className="input"
               value={fullName}
@@ -326,10 +326,10 @@ export default function AgentsPage() {
         <div className="flex items-end justify-between gap-3 flex-wrap">
           <div>
             <h2 className="text-xl font-extrabold" style={{ color: "var(--text-main)" }}>
-              Lista agentów
+              Lista agentĂłw
             </h2>
             <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
-              {loading ? "Ładowanie…" : `Łącznie: ${agents.length}`}
+              {loading ? "Ĺadowanieâ€¦" : `ĹÄ…cznie: ${agents.length}`}
             </p>
           </div>
         </div>
@@ -337,13 +337,13 @@ export default function AgentsPage() {
         {loading ? (
           <div className="mt-4 rounded-2xl p-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border-soft)" }}>
             <div className="text-sm" style={{ color: "var(--text-muted)" }}>
-              ⏳ Ładowanie agentów...
+              âŹł Ĺadowanie agentĂłw...
             </div>
           </div>
         ) : agents.length === 0 ? (
           <div className="mt-4 rounded-2xl p-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border-soft)" }}>
             <div className="text-sm" style={{ color: "var(--text-muted)" }}>
-              Brak agentów w tym biurze. Dodaj pierwszego powyżej 👆
+              Brak agentĂłw w tym biurze. Dodaj pierwszego powyĹĽej đź‘†
             </div>
           </div>
         ) : (
@@ -351,7 +351,7 @@ export default function AgentsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr style={{ background: "rgba(15,23,42,0.04)" }}>
-                  <Th>Imię i nazwisko</Th>
+                  <Th>ImiÄ™ i nazwisko</Th>
                   <Th>Email</Th>
                   <Th>Telefon</Th>
                   <Th>Ranga</Th>
@@ -381,7 +381,7 @@ export default function AgentsPage() {
                           color: "#0f172a",
                         }}
                       >
-                        Profil →
+                        Profil â†’
                       </Link>
                     </Td>
                   </tr>
@@ -475,3 +475,4 @@ function Td({
     </td>
   );
 }
+

@@ -1,4 +1,4 @@
-// app/prospects/ads/fonts.ts
+﻿// app/prospects/ads/fonts.ts
 import {
   Inter,
   Playfair_Display,
@@ -41,7 +41,7 @@ export const crimson = Crimson_Pro({ subsets: ["latin"], weight: ["300", "400", 
 export const libreBask = Libre_Baskerville({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-libre" });
 
 /**
- * Wartości w `css` są gotowe do wklejenia do `font-family:` w stylach warstw.
+ * WartoĹ›ci w `css` sÄ… gotowe do wklejenia do `font-family:` w stylach warstw.
  * `label` to nazwa w UI.
  */
 export const FONT_LIBRARY = [
@@ -82,3 +82,4 @@ export const FONT_VARS_CLASSNAME = [
   crimson.variable,
   libreBask.variable,
 ].join(" ");
+

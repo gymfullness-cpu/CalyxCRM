@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, useMemo } from "react";
 
@@ -58,7 +58,7 @@ export default function themeswitcher() {
   };
 
   const hint = useMemo(
-    () => `Motyw: ${LABEL[theme]} (kliknij aby zmienić)`,
+    () => `Motyw: ${LABEL[theme]} (kliknij aby zmieniÄ‡)`,
     [theme]
   );
 
@@ -82,7 +82,7 @@ export default function themeswitcher() {
         backdropFilter: "blur(14px)",
       }}
     >
-      ☁️
+      âď¸Ź
       <span
         style={{
           width: 8,
@@ -96,3 +96,4 @@ export default function themeswitcher() {
     </button>
   );
 }
+

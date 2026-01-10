@@ -1,4 +1,4 @@
-import OpenAI from "openai";
+﻿import OpenAI from "openai";
 import { NextResponse } from "next/server";
 import crypto from "node:crypto";
 import { getMemory, saveMemory, Msg } from "../../../lib/calliMemory";
@@ -17,7 +17,7 @@ function getOrCreateUserId(req: Request) {
   return { userId, setCookie };
 }
 
-// ✅ helper: wyciągnij cytowania URL z odpowiedzi (url_citation annotations)
+// âś… helper: wyciÄ…gnij cytowania URL z odpowiedzi (url_citation annotations)
 function extractUrlCitations(resp: any): Array<{ title?: string; url: string }> {
   const out: Array<{ title?: string; url: string }> = [];
 
@@ -37,7 +37,7 @@ function extractUrlCitations(resp: any): Array<{ title?: string; url: string }> 
     }
   }
 
-  // usuń duplikaty po URL
+  // usuĹ„ duplikaty po URL
   const seen = new Set<string>();
   return out.filter((x) => {
     if (!x.url) return false;
@@ -47,7 +47,7 @@ function extractUrlCitations(resp: any): Array<{ title?: string; url: string }> 
   });
 }
 
-// ✅ TS/Vercel fix: normalizacja wiadomości do typu Msg[]
+// âś… TS/Vercel fix: normalizacja wiadomoĹ›ci do typu Msg[]
 function toMsgArray(input: unknown): Msg[] {
   if (!Array.isArray(input)) return [];
 
@@ -71,33 +71,33 @@ export async function POST(req: Request) {
     const { userId, setCookie } = getOrCreateUserId(req);
     const mem = getMemory(userId);
 
-    // ✅ DODATEK: mniejszy kontekst = szybciej
+    // âś… DODATEK: mniejszy kontekst = szybciej
     const lastMemMsgs: Msg[] = toMsgArray(mem?.messages).slice(-12);
     const userMsgs: Msg[] = incomingMessages.slice(-12);
 
     const vectorStoreId = process.env.CALLI_VECTOR_STORE_ID?.trim();
 
-    // ✅ Stabilny prompt: prosimy o web search dla rzeczy “zmiennych” + preferowane domeny
+    // âś… Stabilny prompt: prosimy o web search dla rzeczy â€śzmiennychâ€ť + preferowane domeny
     const system = `
-Jesteś Calli Chat — ekspert od nieruchomości (PL) i asystent ogólny.
+JesteĹ› Calli Chat â€” ekspert od nieruchomoĹ›ci (PL) i asystent ogĂłlny.
 
 Zasady:
-- Odpowiadaj po polsku, krótko i konkretnie.
-- Jeśli temat może być aktualny / zmienny (terminy, opłaty, procedury, przepisy, urzędy) → użyj WEB SEARCH.
-- Jeśli temat jest z Twojej bazy wiedzy → użyj FILE SEARCH.
-- Dawaj kroki “co zrobić”, checklisty dokumentów.
-- Jeśli brakuje danych (miasto, rodzaj prawa: własność/spółdzielcze, KW) → dopytaj.
-- Nie zmyślaj. Jeśli korzystasz z internetu, podaj źródła.
-- Dodaj zdanie: "To informacja ogólna, nie porada prawna."
+- Odpowiadaj po polsku, krĂłtko i konkretnie.
+- JeĹ›li temat moĹĽe byÄ‡ aktualny / zmienny (terminy, opĹ‚aty, procedury, przepisy, urzÄ™dy) â†’ uĹĽyj WEB SEARCH.
+- JeĹ›li temat jest z Twojej bazy wiedzy â†’ uĹĽyj FILE SEARCH.
+- Dawaj kroki â€śco zrobiÄ‡â€ť, checklisty dokumentĂłw.
+- JeĹ›li brakuje danych (miasto, rodzaj prawa: wĹ‚asnoĹ›Ä‡/spĂłĹ‚dzielcze, KW) â†’ dopytaj.
+- Nie zmyĹ›laj. JeĹ›li korzystasz z internetu, podaj ĹşrĂłdĹ‚a.
+- Dodaj zdanie: "To informacja ogĂłlna, nie porada prawna."
 
-Preferowane źródła (jeśli pasują do pytania):
+Preferowane ĹşrĂłdĹ‚a (jeĹ›li pasujÄ… do pytania):
 - gov.pl, ms.gov.pl, isap.sejm.gov.pl, podatki.gov.pl, biznes.gov.pl
 
-Profil użytkownika:
+Profil uĹĽytkownika:
 ${mem.profile || "(brak)"}
 `;
 
-    // ✅ Tools: web_search zawsze + file_search jeśli masz vector store
+    // âś… Tools: web_search zawsze + file_search jeĹ›li masz vector store
     const tools: any[] = [{ type: "web_search" }];
 
     if (vectorStoreId) {
@@ -112,18 +112,18 @@ ${mem.profile || "(brak)"}
       tools,
       temperature: 0.2,
 
-      // ✅ DODATEK: limit odpowiedzi = szybciej
+      // âś… DODATEK: limit odpowiedzi = szybciej
       max_output_tokens: 500,
 
       input: [{ role: "system", content: system }, ...lastMemMsgs, ...userMsgs],
     });
 
     const reply =
-      (resp.output_text || "").trim() || "Nie udało mi się wygenerować odpowiedzi.";
+      (resp.output_text || "").trim() || "Nie udaĹ‚o mi siÄ™ wygenerowaÄ‡ odpowiedzi.";
 
     const sources = extractUrlCitations(resp);
 
-    // ✅ update pamięci (TS-safe)
+    // âś… update pamiÄ™ci (TS-safe)
     const assistantMsg: Msg = { role: "assistant", content: reply };
 
     const merged: Msg[] = [...lastMemMsgs, ...userMsgs, assistantMsg].slice(-40);
@@ -135,7 +135,7 @@ ${mem.profile || "(brak)"}
         {
           role: "system",
           content:
-            "Zaktualizuj krótki profil użytkownika w 1–2 zdaniach (rola, miasto, preferencje odpowiedzi). Jeśli brak nowych faktów: zwróć bez zmian.",
+            "Zaktualizuj krĂłtki profil uĹĽytkownika w 1â€“2 zdaniach (rola, miasto, preferencje odpowiedzi). JeĹ›li brak nowych faktĂłw: zwrĂłÄ‡ bez zmian.",
         },
         {
           role: "user",
@@ -165,3 +165,4 @@ ${mem.profile || "(brak)"}
     );
   }
 }
+

@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
@@ -15,16 +15,16 @@ export async function POST(req: Request) {
       {
         role: "system",
         content: `
-Jesteś asystentem nieruchomości w Polsce.
-Analizujesz preferencje klienta zapisane potocznym językiem.
-Zwracasz TYLKO JSON bez żadnego tekstu.
+JesteĹ› asystentem nieruchomoĹ›ci w Polsce.
+Analizujesz preferencje klienta zapisane potocznym jÄ™zykiem.
+Zwracasz TYLKO JSON bez ĹĽadnego tekstu.
 
 ZASADY:
-- jeśli pada dzielnica Warszawy → city = Warszawa
-- rozpoznawaj odmiany (Mokotowie, Żoliborzu itd.)
-- rozpoznawaj widełki cenowe (do, od, -, mln, tys)
-- rozpoznawaj pokoje, windę, metro (metro ignoruj, informacyjnie)
-- nic nie zgaduj jeśli brak danych
+- jeĹ›li pada dzielnica Warszawy â†’ city = Warszawa
+- rozpoznawaj odmiany (Mokotowie, Ĺ»oliborzu itd.)
+- rozpoznawaj wideĹ‚ki cenowe (do, od, -, mln, tys)
+- rozpoznawaj pokoje, windÄ™, metro (metro ignoruj, informacyjnie)
+- nic nie zgaduj jeĹ›li brak danych
 
 FORMAT:
 {
@@ -48,3 +48,4 @@ FORMAT:
   const json = completion.choices[0].message.content;
   return NextResponse.json(JSON.parse(json!));
 }
+

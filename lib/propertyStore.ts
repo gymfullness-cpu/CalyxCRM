@@ -1,4 +1,4 @@
-export type Property = {
+﻿export type Property = {
   id: string;
   name: string;
   notes?: string;
@@ -64,3 +64,4 @@ export function deleteProperty(id: string) {
   const all = read().filter((x) => x.id !== id);
   write(all);
 }
+

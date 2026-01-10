@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import { headers } from "next/headers";
@@ -73,8 +73,8 @@ function nowMs() {
 
 /**
  * Anty-spam (prosty rate limit per IP):
- * - max 3 zgłoszenia / 10 minut
- * - max 10 zgłoszeń / 24h
+ * - max 3 zgĹ‚oszenia / 10 minut
+ * - max 10 zgĹ‚oszeĹ„ / 24h
  */
 function checkRateLimit(ip: string) {
   const fp = rateFilePath();
@@ -90,10 +90,10 @@ function checkRateLimit(ip: string) {
   const last10min = cleaned.filter((e) => e.ip === ip && t - e.ts < TEN_MIN).length;
   const last24h = cleaned.filter((e) => e.ip === ip).length;
 
-  if (last10min >= 3) return { ok: false as const, error: "Za dużo zgłoszeń. Spróbuj ponownie za kilka minut." };
-  if (last24h >= 10) return { ok: false as const, error: "Limit dzienny zgłoszeń został przekroczony." };
+  if (last10min >= 3) return { ok: false as const, error: "Za duĹĽo zgĹ‚oszeĹ„. SprĂłbuj ponownie za kilka minut." };
+  if (last24h >= 10) return { ok: false as const, error: "Limit dzienny zgĹ‚oszeĹ„ zostaĹ‚ przekroczony." };
 
-  // zapisz “event”
+  // zapisz â€śeventâ€ť
   cleaned.unshift({ ip, ts: t });
   writeJson(fp, cleaned);
 
@@ -104,18 +104,18 @@ export async function POST(req: Request) {
   try {
     const body = (await req.json().catch(() => ({}))) as Incoming;
 
-    // ✅ honeypot: boty to wypełniają
+    // âś… honeypot: boty to wypeĹ‚niajÄ…
     if (body.website && String(body.website).trim().length > 0) {
       return NextResponse.json({ ok: true, id: `spam_${Date.now()}` });
     }
 
-    // ✅ anty-bot: jeśli ktoś “wyśle” w < 2 sekundy od wejścia
+    // âś… anty-bot: jeĹ›li ktoĹ› â€śwyĹ›leâ€ť w < 2 sekundy od wejĹ›cia
     const startedAt = Number(body.startedAt || 0);
     if (startedAt && nowMs() - startedAt < 2000) {
-      return NextResponse.json({ ok: false, error: "Zgłoszenie wygląda na automatyczne. Spróbuj ponownie." }, { status: 429 });
+      return NextResponse.json({ ok: false, error: "ZgĹ‚oszenie wyglÄ…da na automatyczne. SprĂłbuj ponownie." }, { status: 429 });
     }
 
-    // ✅ rate limit per IP
+    // âś… rate limit per IP
     const ip = await getClientIp();
     const rl = checkRateLimit(ip);
     if (!rl.ok) return NextResponse.json({ ok: false, error: rl.error }, { status: 429 });
@@ -166,7 +166,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true, id });
   } catch (e: any) {
-    return NextResponse.json({ ok: false, error: "Błąd serwera", message: e?.message || "" }, { status: 500 });
+    return NextResponse.json({ ok: false, error: "BĹ‚Ä…d serwera", message: e?.message || "" }, { status: 500 });
   }
 }
 
@@ -182,13 +182,13 @@ export async function PATCH(req: Request) {
 
     if (!id) return NextResponse.json({ ok: false, error: "Brak id." }, { status: 400 });
     if (!["new", "contacted", "closed", "spam"].includes(status)) {
-      return NextResponse.json({ ok: false, error: "Nieprawidłowy status." }, { status: 400 });
+      return NextResponse.json({ ok: false, error: "NieprawidĹ‚owy status." }, { status: 400 });
     }
 
     const fp = dataFilePath();
     const list = readJsonArray(fp);
     const idx = list.findIndex((x) => String(x?.id) === id);
-    if (idx < 0) return NextResponse.json({ ok: false, error: "Nie znaleziono zgłoszenia." }, { status: 404 });
+    if (idx < 0) return NextResponse.json({ ok: false, error: "Nie znaleziono zgĹ‚oszenia." }, { status: 404 });
 
     const now = new Date().toISOString();
     list[idx] = { ...list[idx], status, updatedAt: now };
@@ -196,6 +196,7 @@ export async function PATCH(req: Request) {
 
     return NextResponse.json({ ok: true });
   } catch (e: any) {
-    return NextResponse.json({ ok: false, error: "Błąd serwera", message: e?.message || "" }, { status: 500 });
+    return NextResponse.json({ ok: false, error: "BĹ‚Ä…d serwera", message: e?.message || "" }, { status: 500 });
   }
 }
+

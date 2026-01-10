@@ -1,4 +1,4 @@
-export type LeadStatus =
+﻿export type LeadStatus =
   | "NEW"
   | "CONTACTED"
   | "QUALIFIED"
@@ -68,3 +68,4 @@ export function computeLeadTemperature(args: {
   score = Math.max(0, Math.min(100, score));
   return { temperature: score, lastContactAt: last };
 }
+

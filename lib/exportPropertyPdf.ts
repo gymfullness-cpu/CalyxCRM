@@ -1,4 +1,4 @@
-// lib/exportPropertyPdf.ts
+﻿// lib/exportPropertyPdf.ts
 export type Property = {
   id: number;
   title?: string;
@@ -9,19 +9,20 @@ export type Property = {
   price?: number;
   area?: number;
   elevator?: boolean;
-  // możesz mieć więcej pól – nie przeszkadza
+  // moĹĽesz mieÄ‡ wiÄ™cej pĂłl â€“ nie przeszkadza
 };
 
 /**
- * W TYM MIEJSCU wklejasz / przenosisz 1:1 swój istniejący kod eksportu PDF
- * z zakładki Properties.
+ * W TYM MIEJSCU wklejasz / przenosisz 1:1 swĂłj istniejÄ…cy kod eksportu PDF
+ * z zakĹ‚adki Properties.
  *
- * Ta funkcja ma robić dokładnie to samo co u Ciebie w Properties:
- * - generować PDF
- * - pobierać/otwierać PDF
+ * Ta funkcja ma robiÄ‡ dokĹ‚adnie to samo co u Ciebie w Properties:
+ * - generowaÄ‡ PDF
+ * - pobieraÄ‡/otwieraÄ‡ PDF
  */
 export async function exportPropertyPdf(property: Property) {
-  // TODO: Wklej tutaj swój istniejący kod eksportu PDF z Properties.
-  // (Ja nie zgaduję, bo nie wkleiłeś eksportu – ma być identycznie jak masz.)
-  console.warn("exportPropertyPdf() nie jest jeszcze podłączone. Wklej swój kod eksportu z Properties.");
+  // TODO: Wklej tutaj swĂłj istniejÄ…cy kod eksportu PDF z Properties.
+  // (Ja nie zgadujÄ™, bo nie wkleiĹ‚eĹ› eksportu â€“ ma byÄ‡ identycznie jak masz.)
+  console.warn("exportPropertyPdf() nie jest jeszcze podĹ‚Ä…czone. Wklej swĂłj kod eksportu z Properties.");
 }
+

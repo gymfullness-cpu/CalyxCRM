@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { FONT_LIBRARY, FONT_VARS_CLASSNAME } from "./fonts";
@@ -115,7 +115,7 @@ async function downloadPngFromSvg(svg: string, filename: string, width: number, 
 
   await new Promise<void>((resolve, reject) => {
     img.onload = () => resolve();
-    img.onerror = () => reject(new Error("Nie udało się załadować SVG do konwersji."));
+    img.onerror = () => reject(new Error("Nie udaĹ‚o siÄ™ zaĹ‚adowaÄ‡ SVG do konwersji."));
     img.src = url;
   });
 
@@ -168,7 +168,7 @@ const SWATCHES = [
 /* ================= STYLE PRESETS ================= */
 
 function preset(style: StylePresetKey) {
-  // Zasada: premium = mniej elementów + lepsze proporcje + mocny typograficzny tytuł + czytelny CTA
+  // Zasada: premium = mniej elementĂłw + lepsze proporcje + mocny typograficzny tytuĹ‚ + czytelny CTA
   if (style === "luxury") {
     return {
       label: "Luxury (Gold/Black)",
@@ -272,7 +272,7 @@ function defaultLayers(format: Format): Layer[] {
     z: baseZ + 1,
     visible: true,
     locked: false,
-    text: "Twoje miasto • Agent premium",
+    text: "Twoje miasto â€˘ Agent premium",
     fontFamily: "Inter, system-ui, -apple-system, Segoe UI, Roboto",
     fontSize: 24,
     fontWeight: 900,
@@ -288,7 +288,7 @@ function defaultLayers(format: Format): Layer[] {
   const title: TextLayer = {
     id: uid("txt"),
     type: "text",
-    name: "Tytuł",
+    name: "TytuĹ‚",
     x: 150,
     y: format === "square" ? 290 : 380,
     w: 820,
@@ -298,7 +298,7 @@ function defaultLayers(format: Format): Layer[] {
     z: baseZ + 2,
     visible: true,
     locked: false,
-    text: "Bezpłatna wycena\nnieruchomości",
+    text: "BezpĹ‚atna wycena\nnieruchomoĹ›ci",
     fontFamily: "Inter, system-ui, -apple-system, Segoe UI, Roboto",
     fontSize: format === "square" ? 86 : 96,
     fontWeight: 900,
@@ -321,7 +321,7 @@ function defaultLayers(format: Format): Layer[] {
     z: baseZ + 3,
     visible: true,
     locked: false,
-    text: "Bezpłatna wycena + plan sprzedaży\n(bez zobowiązań)",
+    text: "BezpĹ‚atna wycena + plan sprzedaĹĽy\n(bez zobowiÄ…zaĹ„)",
     fontFamily: "Inter, system-ui, -apple-system, Segoe UI, Roboto",
     fontSize: 34,
     fontWeight: 850,
@@ -370,7 +370,7 @@ function defaultLayers(format: Format): Layer[] {
     z: baseZ + 5,
     visible: true,
     locked: false,
-    text: "Paweł • Agent nieruchomości\n📞 500 600 700\n/prospects/form",
+    text: "PaweĹ‚ â€˘ Agent nieruchomoĹ›ci\nđź“ž 500 600 700\n/prospects/form",
     fontFamily: "Inter, system-ui, -apple-system, Segoe UI, Roboto",
     fontSize: 24,
     fontWeight: 850,
@@ -393,7 +393,7 @@ function applyPresetToDesign(style: StylePresetKey, format: Format, prevLayers: 
 
   const card = byName("karta") as BoxLayer | undefined;
   const badge = byName("badge") as PillLayer | undefined;
-  const title = byName("tytuł") as TextLayer | undefined;
+  const title = byName("tytuĹ‚") as TextLayer | undefined;
   const hook = byName("hook") as TextLayer | undefined;
   const cta = byName("cta") as PillLayer | undefined;
   const footer = byName("stopka") as TextLayer | undefined;
@@ -584,7 +584,7 @@ function ColorPicker({
   onChange: (v: string) => void;
   helper?: string;
 }) {
-  // value can be rgba() — input[type=color] wants hex, so we keep text input + swatches.
+  // value can be rgba() â€” input[type=color] wants hex, so we keep text input + swatches.
   return (
     <div>
       <label style={{ fontSize: 12, fontWeight: 900, marginBottom: 6, display: "block", color: "var(--text-muted)" }}>{label}</label>
@@ -658,7 +658,7 @@ function FontSelect({
           </option>
         ))}
       </select>
-      <div style={{ marginTop: 8, fontSize: 12, color: "var(--text-muted)" }}>Podgląd: <span style={{ fontFamily: value, color: "rgba(234,255,251,0.92)" }}>Bezpłatna wycena</span></div>
+      <div style={{ marginTop: 8, fontSize: 12, color: "var(--text-muted)" }}>PodglÄ…d: <span style={{ fontFamily: value, color: "rgba(234,255,251,0.92)" }}>BezpĹ‚atna wycena</span></div>
     </div>
   );
 }
@@ -749,9 +749,9 @@ export default function ProspectsAdsPage() {
   const copy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      alert("Skopiowano ✅");
+      alert("Skopiowano âś…");
     } catch {
-      alert("Nie udało się skopiować.");
+      alert("Nie udaĹ‚o siÄ™ skopiowaÄ‡.");
     }
   };
 
@@ -759,14 +759,14 @@ export default function ProspectsAdsPage() {
     const dataUrl = await new Promise<string>((resolve, reject) => {
       const r = new FileReader();
       r.onload = () => resolve(String(r.result || ""));
-      r.onerror = () => reject(new Error("Nie udało się wczytać pliku."));
+      r.onerror = () => reject(new Error("Nie udaĹ‚o siÄ™ wczytaÄ‡ pliku."));
       r.readAsDataURL(file);
     });
 
     const dims = await new Promise<{ w: number; h: number }>((resolve, reject) => {
       const img = new Image();
       img.onload = () => resolve({ w: img.naturalWidth || img.width, h: img.naturalHeight || img.height });
-      img.onerror = () => reject(new Error("Nie udało się odczytać obrazu."));
+      img.onerror = () => reject(new Error("Nie udaĹ‚o siÄ™ odczytaÄ‡ obrazu."));
       img.src = dataUrl;
     });
 
@@ -984,31 +984,31 @@ export default function ProspectsAdsPage() {
               color: "rgba(234,255,251,0.92)",
             }}
           >
-            <span style={{ color: "var(--accent)" }}>●</span> Pozyski • Premium Ads Studio
+            <span style={{ color: "var(--accent)" }}>â—Ź</span> Pozyski â€˘ Premium Ads Studio
           </div>
 
           <h1 className="mt-3 text-3xl font-extrabold tracking-tight" style={{ color: "var(--text-main)" }}>
-            🎨 Edytor kreacji — presety + pełna kontrola
+            đźŽ¨ Edytor kreacji â€” presety + peĹ‚na kontrola
           </h1>
-          <p className="mt-2 text-sm ce-muted">Wybierz styl (Luxury/Editorial/Nordic/Night) → dopracuj ręcznie → eksport PNG/SVG.</p>
+          <p className="mt-2 text-sm ce-muted">Wybierz styl (Luxury/Editorial/Nordic/Night) â†’ dopracuj rÄ™cznie â†’ eksport PNG/SVG.</p>
         </div>
 
         <div className="ce-row">
           <select className="input" style={uiInput()} value={format} onChange={(e) => setFormat(e.target.value as Format)}>
-            <option value="square">1080×1080 (post)</option>
-            <option value="story">1080×1920 (story/reels/tiktok)</option>
+            <option value="square">1080Ă—1080 (post)</option>
+            <option value="story">1080Ă—1920 (story/reels/tiktok)</option>
           </select>
 
-          <button style={uiBtn()} onClick={addText}>➕ Tekst</button>
-          <button style={uiBtn()} onClick={addPill}>➕ CTA/Pill</button>
-          <button style={uiBtn()} onClick={addBox}>➕ Box</button>
+          <button style={uiBtn()} onClick={addText}>âž• Tekst</button>
+          <button style={uiBtn()} onClick={addPill}>âž• CTA/Pill</button>
+          <button style={uiBtn()} onClick={addBox}>âž• Box</button>
 
           <button style={uiBtn(true)} onClick={async () => downloadPngFromSvg(exported.svg, `ad-${styleKey}-${format}.png`, exported.W, exported.H, bgHex)}>
-            🖼️ Eksport PNG
+            đź–Ľď¸Ź Eksport PNG
           </button>
 
           <button style={uiBtn()} onClick={async () => downloadSvg(exported.svg, `ad-${styleKey}-${format}.svg`)}>
-            📄 Eksport SVG
+            đź“„ Eksport SVG
           </button>
         </div>
       </div>
@@ -1018,8 +1018,8 @@ export default function ProspectsAdsPage() {
         <section className="p-4" style={uiCard()}>
           <div className="ce-row" style={{ justifyContent: "space-between" }}>
             <div>
-              <div className="text-sm font-extrabold">Podgląd</div>
-              <div className="text-xs ce-muted">Kliknij element, przeciągnij, zmień rozmiar uchwytem.</div>
+              <div className="text-sm font-extrabold">PodglÄ…d</div>
+              <div className="text-xs ce-muted">Kliknij element, przeciÄ…gnij, zmieĹ„ rozmiar uchwytem.</div>
             </div>
 
             <div className="ce-row">
@@ -1030,11 +1030,11 @@ export default function ProspectsAdsPage() {
                   setActiveId(null);
                 }}
               >
-                ♻ Reset layout
+                â™» Reset layout
               </button>
 
               <button style={uiBtn()} onClick={() => copy(exported.svg)}>
-                📋 Kopiuj SVG
+                đź“‹ Kopiuj SVG
               </button>
             </div>
           </div>
@@ -1119,26 +1119,26 @@ export default function ProspectsAdsPage() {
             </div>
 
             <div className="mt-3 text-xs ce-muted">
-              Preset ustawia: typografię + kolory + “karta/CTA”. Potem możesz ręcznie dopieszczać wszystko.
+              Preset ustawia: typografiÄ™ + kolory + â€śkarta/CTAâ€ť. Potem moĹĽesz rÄ™cznie dopieszczaÄ‡ wszystko.
             </div>
           </div>
 
           {/* BG */}
           <div className="mt-6">
-            <div className="text-xs font-extrabold ce-muted">Tło</div>
+            <div className="text-xs font-extrabold ce-muted">TĹ‚o</div>
 
-            <label style={uiLabel()}>Kolor tła (fallback)</label>
-            <ColorPicker label="" value={bgHex} onChange={setBgHex} helper="Używane, gdy nie masz wgranego zdjęcia." />
+            <label style={uiLabel()}>Kolor tĹ‚a (fallback)</label>
+            <ColorPicker label="" value={bgHex} onChange={setBgHex} helper="UĹĽywane, gdy nie masz wgranego zdjÄ™cia." />
 
-            <label style={uiLabel()}>Wczytaj zdjęcie tła</label>
+            <label style={uiLabel()}>Wczytaj zdjÄ™cie tĹ‚a</label>
             <input type="file" accept="image/*" style={uiInput()} onChange={(e) => e.target.files?.[0] && onUploadBg(e.target.files[0])} />
 
             <div className="mt-3 ce-row">
               <button style={uiBtn()} onClick={() => setBg((p) => ({ ...p, dataUrl: null, iw: 0, ih: 0 }))} disabled={!bg.dataUrl}>
-                🗑 Usuń tło
+                đź—‘ UsuĹ„ tĹ‚o
               </button>
               <button style={uiBtn()} onClick={() => setBg((p) => ({ ...p, scale: 1, offsetX: 0, offsetY: 0 }))}>
-                ↺ Reset kadru
+                â†ş Reset kadru
               </button>
             </div>
 
@@ -1176,18 +1176,18 @@ export default function ProspectsAdsPage() {
                         {l.name} <span className="ce-muted" style={{ fontWeight: 800 }}>{`(${l.type})`}</span>
                       </div>
                       <div className="ce-row">
-                        <button style={uiBtn()} onClick={(e) => { e.stopPropagation(); moveLayerZ(l.id, "up"); }}>↑</button>
-                        <button style={uiBtn()} onClick={(e) => { e.stopPropagation(); moveLayerZ(l.id, "down"); }}>↓</button>
+                        <button style={uiBtn()} onClick={(e) => { e.stopPropagation(); moveLayerZ(l.id, "up"); }}>â†‘</button>
+                        <button style={uiBtn()} onClick={(e) => { e.stopPropagation(); moveLayerZ(l.id, "down"); }}>â†“</button>
                       </div>
                     </div>
 
                     <div className="ce-row" style={{ marginTop: 8 }}>
                       <button style={uiBtn()} onClick={(e) => { e.stopPropagation(); setLayers((p) => p.map((x) => (x.id === l.id ? { ...x, visible: !x.visible } : x))); }}>
-                        {l.visible ? "👁 Widoczny" : "🚫 Ukryty"}
+                        {l.visible ? "đź‘ Widoczny" : "đźš« Ukryty"}
                       </button>
 
                       <button style={uiBtn()} onClick={(e) => { e.stopPropagation(); setLayers((p) => p.map((x) => (x.id === l.id ? { ...x, locked: !x.locked } : x))); }}>
-                        {l.locked ? "🔒 Zablok." : "🔓 Odblok."}
+                        {l.locked ? "đź”’ Zablok." : "đź”“ Odblok."}
                       </button>
                     </div>
                   </div>
@@ -1201,11 +1201,11 @@ export default function ProspectsAdsPage() {
             <div className="text-xs font-extrabold ce-muted">Edycja zaznaczonej warstwy</div>
 
             {!active ? (
-              <div className="mt-3 text-sm ce-muted">Kliknij element na podglądzie albo wybierz warstwę.</div>
+              <div className="mt-3 text-sm ce-muted">Kliknij element na podglÄ…dzie albo wybierz warstwÄ™.</div>
             ) : (
               <div className="mt-3" style={{ display: "grid", gap: 12 }}>
                 <div className="ce-row">
-                  <button style={uiBtn(false, true)} onClick={removeActive}>🗑 Usuń</button>
+                  <button style={uiBtn(false, true)} onClick={removeActive}>đź—‘ UsuĹ„</button>
                 </div>
 
                 <div>
@@ -1271,14 +1271,14 @@ export default function ProspectsAdsPage() {
                     </div>
 
                     <ColorPicker label="Kolor tekstu" value={active.color} onChange={(v) => updateActive({ color: v })} />
-                    <ColorPicker label="Tło (pill)" value={active.bg} onChange={(v) => updateActive({ bg: v })} />
+                    <ColorPicker label="TĹ‚o (pill)" value={active.bg} onChange={(v) => updateActive({ bg: v })} />
                     <ColorPicker label="Ramka (pill)" value={active.border} onChange={(v) => updateActive({ border: v })} />
                   </>
                 ) : null}
 
                 {active.type === "box" ? (
                   <>
-                    <ColorPicker label="Tło (box)" value={active.bg} onChange={(v) => updateActive({ bg: v })} />
+                    <ColorPicker label="TĹ‚o (box)" value={active.bg} onChange={(v) => updateActive({ bg: v })} />
                     <ColorPicker label="Ramka (box)" value={active.border} onChange={(v) => updateActive({ border: v })} />
 
                     <div style={{ display: "grid", gap: 10, gridTemplateColumns: "1fr 1fr" }}>
@@ -1452,3 +1452,4 @@ function uiBtn(primary = false, danger = false): React.CSSProperties {
     cursor: "pointer",
   };
 }
+

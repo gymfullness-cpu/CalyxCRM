@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
 export const runtime = "nodejs";
@@ -10,7 +10,7 @@ export async function POST(req: Request) {
 
     if (!Array.isArray(images) || images.length === 0) {
       return NextResponse.json(
-        { error: "Brak poprawnych linków do zdjęć" },
+        { error: "Brak poprawnych linkĂłw do zdjÄ™Ä‡" },
         { status: 400 }
       );
     }
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
 
     if (cleanedImages.length === 0) {
       return NextResponse.json(
-        { error: "Brak poprawnych linków do zdjęć" },
+        { error: "Brak poprawnych linkĂłw do zdjÄ™Ä‡" },
         { status: 400 }
       );
     }
@@ -38,13 +38,13 @@ export async function POST(req: Request) {
       apiKey: process.env.OPENAI_API_KEY,
     });
 
-    // ✅ content z literalami: kluczowe, żeby TS nie robił "type: string"
+    // âś… content z literalami: kluczowe, ĹĽeby TS nie robiĹ‚ "type: string"
     const content = [
       {
         type: "text" as const,
         text:
-          "Przeanalizuj stan techniczny nieruchomości na podstawie zdjęć. " +
-          "Opisz standard wykończenia, zużycie, ewentualne wady.",
+          "Przeanalizuj stan techniczny nieruchomoĹ›ci na podstawie zdjÄ™Ä‡. " +
+          "Opisz standard wykoĹ„czenia, zuĹĽycie, ewentualne wady.",
       },
       ...cleanedImages.map((url) => ({
         type: "image_url" as const,
@@ -66,7 +66,7 @@ export async function POST(req: Request) {
 
     if (!result) {
       return NextResponse.json(
-        { error: "AI nie zwróciło analizy" },
+        { error: "AI nie zwrĂłciĹ‚o analizy" },
         { status: 500 }
       );
     }
@@ -78,11 +78,12 @@ export async function POST(req: Request) {
         ? err.message
         : typeof err === "string"
           ? err
-          : "Nieznany błąd";
+          : "Nieznany bĹ‚Ä…d";
 
     return NextResponse.json(
-      { error: "Błąd serwera API", details: message },
+      { error: "BĹ‚Ä…d serwera API", details: message },
       { status: 500 }
     );
   }
 }
+

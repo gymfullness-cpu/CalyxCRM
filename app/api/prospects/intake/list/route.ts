@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
@@ -17,6 +17,7 @@ export async function GET() {
 
     return NextResponse.json({ ok: true, items: Array.isArray(items) ? items : [] });
   } catch (e: any) {
-    return NextResponse.json({ ok: false, error: "Błąd serwera", message: e?.message || "" }, { status: 500 });
+    return NextResponse.json({ ok: false, error: "BĹ‚Ä…d serwera", message: e?.message || "" }, { status: 500 });
   }
 }
+

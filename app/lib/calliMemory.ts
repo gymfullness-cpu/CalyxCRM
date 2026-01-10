@@ -1,4 +1,4 @@
-import fs from "node:fs";
+﻿import fs from "node:fs";
 import path from "node:path";
 
 export type Msg = { role: "user" | "assistant"; content: string };
@@ -46,3 +46,4 @@ export function saveMemory(record: MemoryRecord) {
   db[record.userId] = { ...record, updatedAt: Date.now() };
   writeAll(db);
 }
+

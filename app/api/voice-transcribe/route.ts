@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
@@ -27,8 +27,9 @@ export async function POST(req: Request) {
     console.error("VOICE TRANSCRIBE ERROR:", error);
 
     return NextResponse.json(
-      { error: "Błąd transkrypcji" },
+      { error: "BĹ‚Ä…d transkrypcji" },
       { status: 500 }
     );
   }
 }
+

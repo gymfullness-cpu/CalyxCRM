@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -55,10 +55,10 @@ export default function ProspectsIntakeAdminPage() {
     try {
       const res = await fetch("/api/prospects/intake/list", { cache: "no-store" });
       const data = await res.json().catch(() => null);
-      if (!res.ok || !data?.ok) throw new Error(data?.error || "Błąd pobierania.");
+      if (!res.ok || !data?.ok) throw new Error(data?.error || "BĹ‚Ä…d pobierania.");
       setItems(Array.isArray(data.items) ? data.items : []);
     } catch (e: any) {
-      setErr(e?.message || "Błąd");
+      setErr(e?.message || "BĹ‚Ä…d");
     } finally {
       setLoading(false);
     }
@@ -86,7 +86,7 @@ export default function ProspectsIntakeAdminPage() {
         x.propertyType,
       ]
         .filter(Boolean)
-        .join(" • ")
+        .join(" â€˘ ")
         .toLowerCase();
 
       return hay.includes(needle);
@@ -101,10 +101,10 @@ export default function ProspectsIntakeAdminPage() {
         body: JSON.stringify({ id, status: next }),
       });
       const data = await res.json().catch(() => null);
-      if (!res.ok || !data?.ok) throw new Error(data?.error || "Nie udało się zmienić statusu.");
+      if (!res.ok || !data?.ok) throw new Error(data?.error || "Nie udaĹ‚o siÄ™ zmieniÄ‡ statusu.");
       setItems((prev) => prev.map((x) => (x.id === id ? { ...x, status: next, updatedAt: new Date().toISOString() } : x)));
     } catch (e: any) {
-      alert(e?.message || "Błąd");
+      alert(e?.message || "BĹ‚Ä…d");
     }
   };
 
@@ -114,11 +114,11 @@ export default function ProspectsIntakeAdminPage() {
 
     const email = (p.email || "").trim() || null;
 
-    // dedupe po email (case-insensitive) jeśli jest
+    // dedupe po email (case-insensitive) jeĹ›li jest
     if (email) {
       const exists = list.some((c) => (c.email || "").trim().toLowerCase() === email.toLowerCase());
       if (exists) {
-        alert("Kontakt z tym emailem już istnieje.");
+        alert("Kontakt z tym emailem juĹĽ istnieje.");
         return;
       }
     }
@@ -127,13 +127,13 @@ export default function ProspectsIntakeAdminPage() {
       id: Date.now(),
       name: p.name,
       email,
-      marketingConsent: false, // UWAGA: to nie jest zgoda marketingowa z formularza "sprzedaż"
+      marketingConsent: false, // UWAGA: to nie jest zgoda marketingowa z formularza "sprzedaĹĽ"
       unsubscribedAt: null,
     };
 
     const next = [payload, ...list];
     localStorage.setItem("contacts", JSON.stringify(next));
-    alert("Dodano do kontaktów ✅");
+    alert("Dodano do kontaktĂłw âś…");
   };
 
   const addToLeads = (p: Prospect) => {
@@ -144,7 +144,7 @@ export default function ProspectsIntakeAdminPage() {
     const key = `${(p.name || "").trim().toLowerCase()}|${(p.phone || "").trim()}`;
     const exists = list.some((l) => `${(l.name || "").trim().toLowerCase()}|${(l.phone || "").trim()}` === key);
     if (exists) {
-      alert("Lead o tej samej nazwie/telefonie już istnieje.");
+      alert("Lead o tej samej nazwie/telefonie juĹĽ istnieje.");
       return;
     }
 
@@ -154,13 +154,13 @@ export default function ProspectsIntakeAdminPage() {
       p.street ? `Ulica: ${p.street}` : "",
       p.propertyType ? `Typ: ${p.propertyType}` : "",
       p.rooms ? `Pokoje: ${p.rooms}` : "",
-      p.area ? `Metraż: ${p.area} m²` : "",
-      p.price ? `Cena: ${p.price} zł` : "",
+      p.area ? `MetraĹĽ: ${p.area} mÂ˛` : "",
+      p.price ? `Cena: ${p.price} zĹ‚` : "",
       p.timeframe ? `Termin: ${p.timeframe}` : "",
       p.notes ? `Info: ${p.notes}` : "",
     ]
       .filter(Boolean)
-      .join(" • ");
+      .join(" â€˘ ");
 
     const payload: Lead = {
       id: Date.now(),
@@ -171,7 +171,7 @@ export default function ProspectsIntakeAdminPage() {
 
     const next = [payload, ...list];
     localStorage.setItem("leads", JSON.stringify(next));
-    alert("Dodano do leadów ✅");
+    alert("Dodano do leadĂłw âś…");
   };
 
   const badge = (s: Prospect["status"]) => {
@@ -225,19 +225,19 @@ export default function ProspectsIntakeAdminPage() {
             className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-extrabold"
             style={{ border: "1px solid rgba(45,212,191,0.25)", background: "rgba(45,212,191,0.08)", color: "rgba(234,255,251,0.92)" }}
           >
-            <span style={{ color: "var(--accent)" }}>●</span> Pozyski / Formularz
+            <span style={{ color: "var(--accent)" }}>â—Ź</span> Pozyski / Formularz
           </div>
 
           <h1 className="mt-3 text-3xl font-extrabold tracking-tight" style={{ color: "var(--text-main)" }}>
-            📣 Zgłoszenia sprzedaży
+            đź“Ł ZgĹ‚oszenia sprzedaĹĽy
           </h1>
           <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>
-            Publiczny formularz: <b>/prospects/form</b> • Panel: lista zgłoszeń + szybkie dodanie do kontaktów/leads.
+            Publiczny formularz: <b>/prospects/form</b> â€˘ Panel: lista zgĹ‚oszeĹ„ + szybkie dodanie do kontaktĂłw/leads.
           </p>
         </div>
 
         <button style={S.btn} onClick={load} disabled={loading}>
-          🔄 Odśwież
+          đź”„ OdĹ›wieĹĽ
         </button>
       </div>
 
@@ -245,7 +245,7 @@ export default function ProspectsIntakeAdminPage() {
         <div className="grid gap-3 md:grid-cols-3">
           <div className="md:col-span-2">
             <div style={S.label}>Szukaj</div>
-            <input style={S.input} value={q} onChange={(e) => setQ(e.target.value)} placeholder="np. email, imię, dzielnica..." />
+            <input style={S.input} value={q} onChange={(e) => setQ(e.target.value)} placeholder="np. email, imiÄ™, dzielnica..." />
           </div>
           <div>
             <div style={S.label}>Status</div>
@@ -253,7 +253,7 @@ export default function ProspectsIntakeAdminPage() {
               <option value="all">Wszystkie</option>
               <option value="new">Nowe</option>
               <option value="contacted">Skontaktowane</option>
-              <option value="closed">Zamknięte</option>
+              <option value="closed">ZamkniÄ™te</option>
               <option value="spam">Spam</option>
             </select>
           </div>
@@ -261,17 +261,17 @@ export default function ProspectsIntakeAdminPage() {
 
         {err ? (
           <div className="mt-4 text-sm" style={{ color: "rgba(255,220,220,0.95)" }}>
-            ⚠ {err}
+            âš  {err}
           </div>
         ) : null}
 
         {loading ? (
           <div className="mt-4 text-sm" style={{ color: "var(--text-muted)" }}>
-            ⏳ Ładuję…
+            âŹł ĹadujÄ™â€¦
           </div>
         ) : filtered.length === 0 ? (
           <div className="mt-4 text-sm" style={{ color: "var(--text-muted)" }}>
-            Brak zgłoszeń.
+            Brak zgĹ‚oszeĹ„.
           </div>
         ) : (
           <div className="mt-4 grid gap-12">
@@ -283,13 +283,13 @@ export default function ProspectsIntakeAdminPage() {
                       {p.name}
                     </div>
                     <div className="mt-1 text-xs" style={{ color: "var(--text-muted)", overflowWrap: "anywhere" }}>
-                      {p.email ? `✉️ ${p.email}` : ""} {p.phone ? ` • ☎️ ${p.phone}` : ""}
+                      {p.email ? `âś‰ď¸Ź ${p.email}` : ""} {p.phone ? ` â€˘ âŽď¸Ź ${p.phone}` : ""}
                     </div>
                     <div className="mt-2 text-sm" style={{ color: "rgba(255,255,255,0.78)", overflowWrap: "anywhere" }}>
-                      📍 {[p.city, p.district, p.street].filter(Boolean).join(", ") || "—"}
+                      đź“Ť {[p.city, p.district, p.street].filter(Boolean).join(", ") || "â€”"}
                     </div>
                     <div className="mt-2 text-xs" style={{ color: "var(--text-muted)" }}>
-                      ID: {p.id} • {p.createdAt ? new Date(p.createdAt).toLocaleString("pl-PL") : "—"}
+                      ID: {p.id} â€˘ {p.createdAt ? new Date(p.createdAt).toLocaleString("pl-PL") : "â€”"}
                     </div>
                   </div>
 
@@ -302,36 +302,36 @@ export default function ProspectsIntakeAdminPage() {
                   {[
                     p.propertyType ? `Typ: ${p.propertyType}` : "",
                     p.rooms ? `Pokoje: ${p.rooms}` : "",
-                    p.area ? `Metraż: ${p.area} m²` : "",
-                    p.price ? `Cena: ${p.price} zł` : "",
+                    p.area ? `MetraĹĽ: ${p.area} mÂ˛` : "",
+                    p.price ? `Cena: ${p.price} zĹ‚` : "",
                     p.timeframe ? `Termin: ${p.timeframe}` : "",
                   ]
                     .filter(Boolean)
-                    .join(" • ")}
+                    .join(" â€˘ ")}
                 </div>
 
                 {p.notes ? (
                   <div className="mt-3 rounded-xl px-3 py-2 text-sm" style={{ border: "1px solid rgba(255,255,255,0.10)", background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.86)" }}>
-                    📝 {p.notes}
+                    đź“ť {p.notes}
                   </div>
                 ) : null}
 
                 <div className="mt-4 flex flex-wrap gap-2">
                   <button style={S.btn} onClick={() => addToContacts(p)}>
-                    ➕ Kontakty
+                    âž• Kontakty
                   </button>
                   <button style={S.btn} onClick={() => addToLeads(p)}>
-                    ➕ Leady
+                    âž• Leady
                   </button>
 
                   <button style={S.btn} onClick={() => patchStatus(p.id, "contacted")}>
-                    ✅ Skontaktowany
+                    âś… Skontaktowany
                   </button>
                   <button style={S.btn} onClick={() => patchStatus(p.id, "closed")}>
-                    🟡 Zamknięty
+                    đźźˇ ZamkniÄ™ty
                   </button>
                   <button style={{ ...S.btn, border: "1px solid rgba(239,68,68,0.30)", background: "rgba(239,68,68,0.10)", color: "rgba(255,220,220,0.95)" }} onClick={() => patchStatus(p.id, "spam")}>
-                    🛑 Spam
+                    đź›‘ Spam
                   </button>
                 </div>
               </div>
@@ -339,7 +339,7 @@ export default function ProspectsIntakeAdminPage() {
 
             {filtered.length > 200 ? (
               <div className="text-xs" style={{ color: "var(--text-muted)" }}>
-                Lista ucięta do 200 (żeby było szybko).
+                Lista uciÄ™ta do 200 (ĹĽeby byĹ‚o szybko).
               </div>
             ) : null}
           </div>
@@ -348,3 +348,4 @@ export default function ProspectsIntakeAdminPage() {
     </main>
   );
 }
+

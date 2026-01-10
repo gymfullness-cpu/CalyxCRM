@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import crypto from "crypto";
 
@@ -38,7 +38,7 @@ const openai = process.env.OPENAI_API_KEY
   ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
   : null;
 
-/** ✅ Cache ostatniej dobrej odpowiedzi (żeby feed nie znikał przy chwilowych błędach) */
+/** âś… Cache ostatniej dobrej odpowiedzi (ĹĽeby feed nie znikaĹ‚ przy chwilowych bĹ‚Ä™dach) */
 type CachePayload = {
   ok: true;
   generatedAt: string;
@@ -83,7 +83,7 @@ function pickTag(block: string, tag: string) {
   return m?.[1] ? stripHtml(m[1]) : "";
 }
 
-/** ✅ Stabilne ID (bez kolizji) */
+/** âś… Stabilne ID (bez kolizji) */
 function makeStableId(category: RawItem["category"], link: string, title: string, pub: string | null) {
   const base = `${category}|${link}|${title}|${pub || ""}`;
   const h = crypto.createHash("sha256").update(base).digest("hex").slice(0, 20);
@@ -240,13 +240,13 @@ async function enrichOne(raw: RawItem): Promise<Omit<NewsItem, "summary" | "whyI
 
 function fallbackSummary(raw: RawItem) {
   const s = raw.snippet ? stripHtml(raw.snippet) : "";
-  const base = s ? (s.length > 180 ? s.slice(0, 180) + "…" : s) : "Krótki news z rynku nieruchomości.";
+  const base = s ? (s.length > 180 ? s.slice(0, 180) + "â€¦" : s) : "KrĂłtki news z rynku nieruchomoĹ›ci.";
   const why =
     raw.category === "Kredyty"
-      ? "Wpływa na zdolność kredytową klientów i tempo sprzedaży."
+      ? "WpĹ‚ywa na zdolnoĹ›Ä‡ kredytowÄ… klientĂłw i tempo sprzedaĹĽy."
       : raw.category === "Rynek"
-      ? "Pomaga ustawić cenę i argumenty w rozmowie z klientem."
-      : "Może zmienić wymagania formalne i ryzyka transakcyjne.";
+      ? "Pomaga ustawiÄ‡ cenÄ™ i argumenty w rozmowie z klientem."
+      : "MoĹĽe zmieniÄ‡ wymagania formalne i ryzyka transakcyjne.";
   return { summary: base, whyItMatters: why };
 }
 
@@ -286,14 +286,14 @@ async function aiSummaries(raw: RawItem[], enriched: Omit<NewsItem, "summary" | 
   } as const;
 
   const prompt = `
-Jesteś analitykiem rynku nieruchomości w Polsce i doradcą dla agenta.
+JesteĹ› analitykiem rynku nieruchomoĹ›ci w Polsce i doradcÄ… dla agenta.
 
-Dostajesz listę newsów (nagłówki + krótkie zajawki).
-Dla KAŻDEGO newsa zwróć:
-- summary: 2–3 zdania po polsku, konkretnie "co się zmieniło / co ogłoszono".
-- whyItMatters: 1 zdanie "co to znaczy dla agenta" (sprzedaż/negocjacje/kredyt/ryzyko).
+Dostajesz listÄ™ newsĂłw (nagĹ‚Ăłwki + krĂłtkie zajawki).
+Dla KAĹ»DEGO newsa zwrĂłÄ‡:
+- summary: 2â€“3 zdania po polsku, konkretnie "co siÄ™ zmieniĹ‚o / co ogĹ‚oszono".
+- whyItMatters: 1 zdanie "co to znaczy dla agenta" (sprzedaĹĽ/negocjacje/kredyt/ryzyko).
 
-Zwróć JSON zgodny ze schematem. Bez markdown.
+ZwrĂłÄ‡ JSON zgodny ze schematem. Bez markdown.
 `;
 
   const res = await openai.responses.create({
@@ -373,16 +373,16 @@ async function aiTop3(items: NewsItem[]): Promise<Top3[] | null> {
   } as const;
 
   const prompt = `
-Wybierz TOP 3 newsy "na dziś" dla agenta nieruchomości w Polsce.
-Kryterium: wpływ na sprzedaż/negocjacje/kredyty/popyt/ryzyko transakcji.
+Wybierz TOP 3 newsy "na dziĹ›" dla agenta nieruchomoĹ›ci w Polsce.
+Kryterium: wpĹ‚yw na sprzedaĹĽ/negocjacje/kredyty/popyt/ryzyko transakcji.
 
-Zwróć:
-- title: krótki tytuł (może być lekko skrócony)
+ZwrĂłÄ‡:
+- title: krĂłtki tytuĹ‚ (moĹĽe byÄ‡ lekko skrĂłcony)
 - why: 1 zdanie: "co to znaczy dla agenta"
-- url: link do źródła
+- url: link do ĹşrĂłdĹ‚a
 - category: Kredyty/Rynek/Prawo
 
-Zwróć JSON zgodny ze schematem. Bez markdown.
+ZwrĂłÄ‡ JSON zgodny ze schematem. Bez markdown.
 `;
 
   const res = await openai.responses.create({
@@ -417,8 +417,8 @@ export async function GET(req: Request) {
 
     const [k1, r1, p1] = await Promise.all([
       getRssForQuery(`kredyty hipoteczne Polska${cityBoost}stopy procentowe banki`, "Kredyty"),
-      getRssForQuery(`rynek nieruchomości Polska${cityBoost}ceny mieszkania sprzedaż`, "Rynek"),
-      getRssForQuery(`ustawa nieruchomości Polska${cityBoost}deweloper uokik regulacje`, "Prawo"),
+      getRssForQuery(`rynek nieruchomoĹ›ci Polska${cityBoost}ceny mieszkania sprzedaĹĽ`, "Rynek"),
+      getRssForQuery(`ustawa nieruchomoĹ›ci Polska${cityBoost}deweloper uokik regulacje`, "Prawo"),
     ]);
 
     const rawAll = [...k1.slice(0, 8), ...r1.slice(0, 8), ...p1.slice(0, 8)];
@@ -432,7 +432,7 @@ export async function GET(req: Request) {
       return true;
     });
 
-    // ✅ jeśli Google News nie dał nic – nie zwracaj pustki, spróbuj cache
+    // âś… jeĹ›li Google News nie daĹ‚ nic â€“ nie zwracaj pustki, sprĂłbuj cache
     if (raw.length === 0) {
       const cached = getCached(city);
       if (cached) return NextResponse.json(cached, { status: 200 });
@@ -480,18 +480,19 @@ export async function GET(req: Request) {
       items: final,
     };
 
-    // ✅ zapisz cache (ostatnia dobra odpowiedź)
+    // âś… zapisz cache (ostatnia dobra odpowiedĹş)
     setCached(city, payload);
 
     return NextResponse.json(payload, { status: 200 });
   } catch (e: any) {
-    // ✅ jak coś padnie, a mamy cache – oddaj cache zamiast pustki (żeby UI nie migał)
+    // âś… jak coĹ› padnie, a mamy cache â€“ oddaj cache zamiast pustki (ĹĽeby UI nie migaĹ‚)
     const cached = getCached(city);
     if (cached) return NextResponse.json(cached, { status: 200 });
 
     return NextResponse.json(
-      { ok: false, error: "Błąd news-feed", details: e?.message || "unknown" },
+      { ok: false, error: "BĹ‚Ä…d news-feed", details: e?.message || "unknown" },
       { status: 500 }
     );
   }
 }
+

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 
@@ -15,29 +15,29 @@ export default function DashboardPage() {
               color: "rgba(234,255,251,0.92)",
             }}
           >
-            <span style={{ color: "var(--accent)" }}>●</span> Centrum dowodzenia
+            <span style={{ color: "var(--accent)" }}>â—Ź</span> Centrum dowodzenia
           </div>
 
           <h1
             className="mt-3 text-3xl font-extrabold tracking-tight"
             style={{ color: "var(--text-main)" }}
           >
-            📊 Dashboard
+            đź“Š Dashboard
           </h1>
 
           <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>
-            Szybki dostęp do modułów. Wszystko w jednym miejscu.
+            Szybki dostÄ™p do moduĹ‚Ăłw. Wszystko w jednym miejscu.
           </p>
         </div>
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        <Tile title="📅 Kalendarz" desc="Spotkania, przypomnienia, follow-up." href="/calendar" />
-        <Tile title="🧲 Pozyski" desc="Pozyskiwanie ofert i właścicieli." href="/prospects" />
-        <Tile title="🏠 Nieruchomości" desc="Baza ofert, zdjęcia, parametry." href="/properties" />
-        <Tile title="🤖 AI: Analiza" desc="AI: analiza i porządek zdjęć." href="/analyzed" />
-        <Tile title="🧮 AI: Wycena" desc="Szybka wycena nieruchomości." href="/valuation" />
-        <Tile title="📞 Leady" desc="Leady, statusy, kontakty." href="/leads" />
+        <Tile title="đź“… Kalendarz" desc="Spotkania, przypomnienia, follow-up." href="/calendar" />
+        <Tile title="đź§˛ Pozyski" desc="Pozyskiwanie ofert i wĹ‚aĹ›cicieli." href="/prospects" />
+        <Tile title="đźŹ  NieruchomoĹ›ci" desc="Baza ofert, zdjÄ™cia, parametry." href="/properties" />
+        <Tile title="đź¤– AI: Analiza" desc="AI: analiza i porzÄ…dek zdjÄ™Ä‡." href="/analyzed" />
+        <Tile title="đź§® AI: Wycena" desc="Szybka wycena nieruchomoĹ›ci." href="/valuation" />
+        <Tile title="đź“ž Leady" desc="Leady, statusy, kontakty." href="/leads" />
       </div>
     </main>
   );
@@ -64,7 +64,7 @@ function Tile({ title, desc, href }: { title: string; desc: string; href: string
             color: "rgba(234,255,251,0.95)",
           }}
         >
-          Otwórz →
+          OtwĂłrz â†’
         </div>
       </div>
 
@@ -104,3 +104,4 @@ function Tag({ children }: { children: React.ReactNode }) {
     </span>
   );
 }
+

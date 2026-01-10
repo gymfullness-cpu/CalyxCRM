@@ -1,5 +1,5 @@
-// Zamiast importu z @prisma/client (który u Ciebie nie ma LeadStatus)
-// definiujemy lokalny typ zgodny z tym, co wykorzystuje logika poniżej.
+﻿// Zamiast importu z @prisma/client (ktĂłry u Ciebie nie ma LeadStatus)
+// definiujemy lokalny typ zgodny z tym, co wykorzystuje logika poniĹĽej.
 export type LeadStatus =
   | "NEW"
   | "IN_PROGRESS"
@@ -7,7 +7,7 @@ export type LeadStatus =
   | "WON"
   | "LOST"
   | "ARCHIVED"
-  | (string & {}); // pozwala przeżyć, jeśli w DB pojawi się inny string
+  | (string & {}); // pozwala przeĹĽyÄ‡, jeĹ›li w DB pojawi siÄ™ inny string
 
 export function proposeFollowUp(args: {
   lead: {
@@ -44,8 +44,8 @@ export function proposeFollowUp(args: {
 
   const messageDraft =
     lead.temperature >= 70
-      ? `Cześć ${lead.fullName}! Wracam do naszej rozmowy — chcesz, żebym podesłał 2–3 najlepsze opcje?`
-      : `Cześć ${lead.fullName}! Daj znać proszę, czy temat jest nadal aktualny — jeśli tak, dopasuję świeże oferty.`;
+      ? `CzeĹ›Ä‡ ${lead.fullName}! Wracam do naszej rozmowy â€” chcesz, ĹĽebym podesĹ‚aĹ‚ 2â€“3 najlepsze opcje?`
+      : `CzeĹ›Ä‡ ${lead.fullName}! Daj znaÄ‡ proszÄ™, czy temat jest nadal aktualny â€” jeĹ›li tak, dopasujÄ™ Ĺ›wieĹĽe oferty.`;
 
   return {
     title: `Follow-up do ${lead.fullName}`,
@@ -59,3 +59,4 @@ export function proposeFollowUp(args: {
     },
   };
 }
+

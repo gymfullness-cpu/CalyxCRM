@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/app/lib/db";
+﻿import { NextResponse } from "next/server";
+import { prisma } from "@/app/lib/prisma";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -24,3 +24,4 @@ export async function GET(req: Request) {
 
   return NextResponse.json({ tasks });
 }
+

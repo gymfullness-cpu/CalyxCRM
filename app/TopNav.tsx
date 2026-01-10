@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { usePathname } from "next/navigation";
@@ -19,16 +19,16 @@ export default function TopNav() {
     if (detailsRef.current) detailsRef.current.open = false;
   };
 
-  // ✅ zamykaj menu po zmianie trasy (klik w link)
+  // âś… zamykaj menu po zmianie trasy (klik w link)
   useEffect(() => {
     closeMenu();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   /**
-   * ✅ ZACHOWANIE:
-   * - chowaj topbar gdy scroll w dół
-   * - pokaż gdy scroll w górę / na górze
+   * âś… ZACHOWANIE:
+   * - chowaj topbar gdy scroll w dĂłĹ‚
+   * - pokaĹĽ gdy scroll w gĂłrÄ™ / na gĂłrze
    */
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -43,7 +43,7 @@ export default function TopNav() {
         const y = window.scrollY || 0;
         const delta = y - lastY.current;
 
-        // ✅ na samej górze zawsze pokaż
+        // âś… na samej gĂłrze zawsze pokaĹĽ
         if (y < 8) {
           setHidden(false);
           lastY.current = y;
@@ -65,7 +65,7 @@ export default function TopNav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // ✅ klik w link w dropdown -> zamknij details
+  // âś… klik w link w dropdown -> zamknij details
   const onDropdownClick = (e: MouseEvent) => {
     const el = e.target as HTMLElement | null;
     const a = el?.closest?.("a");
@@ -74,7 +74,7 @@ export default function TopNav() {
 
   return (
     <>
-      {/* ✅ CSS tylko do responsywnego menu */}
+      {/* âś… CSS tylko do responsywnego menu */}
       <style>{`
         .ce-desktop-links { display: none; }
         .ce-mobile-menu { display: block; }
@@ -161,33 +161,33 @@ export default function TopNav() {
           {/* MOBILE */}
           <div className="ce-mobile-menu">
             <details ref={detailsRef}>
-              <summary className="ce-hamburger">☰ Menu</summary>
+              <summary className="ce-hamburger">â° Menu</summary>
 
               <div className="ce-dropdown" onClick={onDropdownClick}>
                 <div className="ce-grid">
-                  <NavLink href="/dashboard">📊 Dashboard</NavLink>
-                  <NavLink href="/leads">📞 Leady</NavLink>
-                  <NavLink href="/contacts">👥 Kontakty</NavLink>
-                  <NavLink href="/agents">🧑‍💼 Agenci</NavLink>
+                  <NavLink href="/dashboard">đź“Š Dashboard</NavLink>
+                  <NavLink href="/leads">đź“ž Leady</NavLink>
+                  <NavLink href="/contacts">đź‘Ą Kontakty</NavLink>
+                  <NavLink href="/agents">đź§‘â€Ťđź’Ľ Agenci</NavLink>
 
-                  <NavLink href="/prospects">🎯 Pozyski</NavLink>
-                  <NavLink href="/prospects/intake">🧾 Pozyski z formularzy</NavLink>
-                  <NavLink href="/prospects/ads">📣 Reklamy / Social</NavLink>
-                  <NavLink href="/prospects/form">📝 Formularz</NavLink>
+                  <NavLink href="/prospects">đźŽŻ Pozyski</NavLink>
+                  <NavLink href="/prospects/intake">đź§ľ Pozyski z formularzy</NavLink>
+                  <NavLink href="/prospects/ads">đź“Ł Reklamy / Social</NavLink>
+                  <NavLink href="/prospects/form">đź“ť Formularz</NavLink>
 
-                  <NavLink href="/properties">🏠 Nieruchomości</NavLink>
+                  <NavLink href="/properties">đźŹ  NieruchomoĹ›ci</NavLink>
 
-                  <NavLink href="/calendar">📅 Kalendarz</NavLink>
-                  <NavLink href="/followups">🔔 Follow-up</NavLink>
+                  <NavLink href="/calendar">đź“… Kalendarz</NavLink>
+                  <NavLink href="/followups">đź”” Follow-up</NavLink>
 
-                  <NavLink href="/analyzed">🤖 AI: Analiza</NavLink>
-                  <NavLink href="/assistant/live">🎧 AI: Coach</NavLink>
+                  <NavLink href="/analyzed">đź¤– AI: Analiza</NavLink>
+                  <NavLink href="/assistant/live">đźŽ§ AI: Coach</NavLink>
 
-                  <NavLink href="/news">🗞️ Prasówka</NavLink>
-                  <NavLink href="/newsletter">✉️ Newsletter</NavLink>
-                  <NavLink href="/market">🌍 Market</NavLink>
-                  <NavLink href="/voice-notes">🎙️ Głosówki</NavLink>
-                  <NavLink href="/documents/sale">📄 Dokumenty</NavLink>
+                  <NavLink href="/news">đź—žď¸Ź PrasĂłwka</NavLink>
+                  <NavLink href="/newsletter">âś‰ď¸Ź Newsletter</NavLink>
+                  <NavLink href="/market">đźŚŤ Market</NavLink>
+                  <NavLink href="/voice-notes">đźŽ™ď¸Ź GĹ‚osĂłwki</NavLink>
+                  <NavLink href="/documents/sale">đź“„ Dokumenty</NavLink>
                 </div>
               </div>
             </details>
@@ -195,28 +195,29 @@ export default function TopNav() {
 
           {/* DESKTOP */}
           <div className="ce-desktop-links" style={{ gap: 10, flexWrap: "wrap", alignItems: "center" }}>
-            <NavLink href="/dashboard">📊 Dashboard</NavLink>
-            <NavLink href="/leads">📞 Leady</NavLink>
-            <NavLink href="/contacts">👥 Kontakty</NavLink>
-            <NavLink href="/agents">🧑‍💼 Agenci</NavLink>
+            <NavLink href="/dashboard">đź“Š Dashboard</NavLink>
+            <NavLink href="/leads">đź“ž Leady</NavLink>
+            <NavLink href="/contacts">đź‘Ą Kontakty</NavLink>
+            <NavLink href="/agents">đź§‘â€Ťđź’Ľ Agenci</NavLink>
 
-            <NavLink href="/prospects">🎯 Pozyski</NavLink>
-            <NavLink href="/properties">🏠 Nieruchomości</NavLink>
+            <NavLink href="/prospects">đźŽŻ Pozyski</NavLink>
+            <NavLink href="/properties">đźŹ  NieruchomoĹ›ci</NavLink>
 
-            <NavLink href="/calendar">📅 Kalendarz</NavLink>
-            <NavLink href="/followups">🔔 Follow-up</NavLink>
+            <NavLink href="/calendar">đź“… Kalendarz</NavLink>
+            <NavLink href="/followups">đź”” Follow-up</NavLink>
 
-            <NavLink href="/analyzed">🤖 AI: Analiza</NavLink>
-            <NavLink href="/assistant/live">🎧 AI: Coach</NavLink>
+            <NavLink href="/analyzed">đź¤– AI: Analiza</NavLink>
+            <NavLink href="/assistant/live">đźŽ§ AI: Coach</NavLink>
 
-            <NavLink href="/market">🌍 Market</NavLink>
-            <NavLink href="/voice-notes">🎙️ Głosówki</NavLink>
-            <NavLink href="/documents/sale">📄 Dokumenty</NavLink>
-            <NavLink href="/news">🗞️ Prasówka</NavLink>
-            <NavLink href="/newsletter">✉️ Newsletter</NavLink>
+            <NavLink href="/market">đźŚŤ Market</NavLink>
+            <NavLink href="/voice-notes">đźŽ™ď¸Ź GĹ‚osĂłwki</NavLink>
+            <NavLink href="/documents/sale">đź“„ Dokumenty</NavLink>
+            <NavLink href="/news">đź—žď¸Ź PrasĂłwka</NavLink>
+            <NavLink href="/newsletter">âś‰ď¸Ź Newsletter</NavLink>
           </div>
         </div>
       </nav>
     </>
   );
 }
+

@@ -1,4 +1,4 @@
-type Property = {
+﻿type Property = {
   id: number;
   title: string;
   city: string;
@@ -39,3 +39,4 @@ export function matchProperties(
     .sort((a, b) => b.score - a.score)
     .slice(0, 3);
 }
+

@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
@@ -23,12 +23,12 @@ export async function POST(req: Request) {
         {
           role: "system",
           content:
-            "Jesteś agentem nieruchomości. Wyciągnij dane kontaktowe sprzedającego.",
+            "JesteĹ› agentem nieruchomoĹ›ci. WyciÄ…gnij dane kontaktowe sprzedajÄ…cego.",
         },
         {
           role: "user",
           content: `
-Zwróć CZYSTY JSON (bez markdown):
+ZwrĂłÄ‡ CZYSTY JSON (bez markdown):
 
 {
   name: string | null,
@@ -56,8 +56,9 @@ ${html.slice(0, 8000)}
     return NextResponse.json({ success: true, prospect });
   } catch (e: any) {
     return NextResponse.json(
-      { error: "Błąd serwera", details: e.message },
+      { error: "BĹ‚Ä…d serwera", details: e.message },
       { status: 500 }
     );
   }
 }
+

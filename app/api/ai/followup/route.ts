@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/app/lib/db";
+﻿import { NextResponse } from "next/server";
+import { prisma } from "@/app/lib/prisma";
 import { proposeFollowUp } from "@/app/lib/ai/followup";
 
 export async function POST(req: Request) {
@@ -37,7 +37,7 @@ export async function POST(req: Request) {
       });
     }
 
-    // brak duplikatów pending FOLLOW_UP
+    // brak duplikatĂłw pending FOLLOW_UP
     const existing = await prisma.aITask.findFirst({
       where: {
         leadId: lead.id,
@@ -77,3 +77,4 @@ export async function POST(req: Request) {
     );
   }
 }
+

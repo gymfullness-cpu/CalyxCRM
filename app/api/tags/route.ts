@@ -1,11 +1,11 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 
 export const runtime = "nodejs";
 
 function errorPayload(e: any) {
   return {
-    error: "Błąd serwera /api/tags",
+    error: "BĹ‚Ä…d serwera /api/tags",
     message: e?.message ?? String(e),
     code: e?.code ?? null,
   };
@@ -46,3 +46,4 @@ export async function POST(req: Request) {
     return NextResponse.json(errorPayload(e), { status: 500 });
   }
 }
+

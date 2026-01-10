@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -85,25 +85,25 @@ function speakerLabel(s: Segment["speaker"]) {
 function objectionMeta(t: CoachObjection["type"]) {
   switch (t) {
     case "commission":
-      return { title: "💰 Prowizja", bg: "rgba(239,68,68,0.12)", bd: "rgba(239,68,68,0.35)", pill: "#ef4444" };
+      return { title: "đź’° Prowizja", bg: "rgba(239,68,68,0.12)", bd: "rgba(239,68,68,0.35)", pill: "#ef4444" };
     case "exclusive_fear":
-      return { title: "🔒 Obawa przed wyłącznością", bg: "rgba(245,158,11,0.14)", bd: "rgba(245,158,11,0.35)", pill: "#f59e0b" };
+      return { title: "đź”’ Obawa przed wyĹ‚Ä…cznoĹ›ciÄ…", bg: "rgba(245,158,11,0.14)", bd: "rgba(245,158,11,0.35)", pill: "#f59e0b" };
     case "open_only":
-      return { title: "📣 Tylko otwarta", bg: "rgba(59,130,246,0.12)", bd: "rgba(59,130,246,0.35)", pill: "#3b82f6" };
+      return { title: "đź“Ł Tylko otwarta", bg: "rgba(59,130,246,0.12)", bd: "rgba(59,130,246,0.35)", pill: "#3b82f6" };
     case "think_about_it":
-      return { title: "🤔 Muszę się zastanowić", bg: "rgba(168,85,247,0.12)", bd: "rgba(168,85,247,0.35)", pill: "#a855f7" };
+      return { title: "đź¤” MuszÄ™ siÄ™ zastanowiÄ‡", bg: "rgba(168,85,247,0.12)", bd: "rgba(168,85,247,0.35)", pill: "#a855f7" };
     case "no_agent":
-      return { title: "🙅 Bez pośrednika", bg: "rgba(34,197,94,0.12)", bd: "rgba(34,197,94,0.35)", pill: "#22c55e" };
+      return { title: "đź™… Bez poĹ›rednika", bg: "rgba(34,197,94,0.12)", bd: "rgba(34,197,94,0.35)", pill: "#22c55e" };
     case "many_agents":
-      return { title: "👥 Wielu agentów", bg: "rgba(14,165,233,0.12)", bd: "rgba(14,165,233,0.35)", pill: "#0ea5e9" };
+      return { title: "đź‘Ą Wielu agentĂłw", bg: "rgba(14,165,233,0.12)", bd: "rgba(14,165,233,0.35)", pill: "#0ea5e9" };
     case "price_too_high":
-      return { title: "🏷️ Cena", bg: "rgba(244,63,94,0.10)", bd: "rgba(244,63,94,0.30)", pill: "#f43f5e" };
+      return { title: "đźŹ·ď¸Ź Cena", bg: "rgba(244,63,94,0.10)", bd: "rgba(244,63,94,0.30)", pill: "#f43f5e" };
     case "trust":
-      return { title: "🤝 Zaufanie", bg: "rgba(100,116,139,0.12)", bd: "rgba(100,116,139,0.35)", pill: "#64748b" };
+      return { title: "đź¤ť Zaufanie", bg: "rgba(100,116,139,0.12)", bd: "rgba(100,116,139,0.35)", pill: "#64748b" };
     case "timing":
-      return { title: "⏱️ Timing", bg: "rgba(20,184,166,0.12)", bd: "rgba(20,184,166,0.35)", pill: "#14b8a6" };
+      return { title: "âŹ±ď¸Ź Timing", bg: "rgba(20,184,166,0.12)", bd: "rgba(20,184,166,0.35)", pill: "#14b8a6" };
     default:
-      return { title: "💬 Obiekcja", bg: "rgba(15,23,42,0.06)", bd: "rgba(15,23,42,0.14)", pill: "#0f172a" };
+      return { title: "đź’¬ Obiekcja", bg: "rgba(15,23,42,0.06)", bd: "rgba(15,23,42,0.14)", pill: "#0f172a" };
   }
 }
 
@@ -114,11 +114,11 @@ function stageLabel(stage: VoiceAnalyzeResponse["stage"]) {
     case "needs":
       return "Potrzeby";
     case "value":
-      return "Wartość";
+      return "WartoĹ›Ä‡";
     case "terms":
       return "Warunki";
     case "close":
-      return "Domknięcie";
+      return "DomkniÄ™cie";
     default:
       return "Nieznane";
   }
@@ -130,17 +130,17 @@ function stageLabel(stage: VoiceAnalyzeResponse["stage"]) {
 
 function buildClosePack() {
   return [
-    "„Jeśli omówiliśmy plan i warunki, to czy możemy dziś podpisać (na 30 dni próbnie) wyłączność?”",
-    "„Co musiałoby się jeszcze wydarzyć, żebyśmy mogli dziś podjąć decyzję o współpracy?”",
-    "„Jeśli teraz ustalimy zasady i zakres, to kiedy możemy ruszyć z marketingiem — od jutra czy od poniedziałku?”",
+    "â€žJeĹ›li omĂłwiliĹ›my plan i warunki, to czy moĹĽemy dziĹ› podpisaÄ‡ (na 30 dni prĂłbnie) wyĹ‚Ä…cznoĹ›Ä‡?â€ť",
+    "â€žCo musiaĹ‚oby siÄ™ jeszcze wydarzyÄ‡, ĹĽebyĹ›my mogli dziĹ› podjÄ…Ä‡ decyzjÄ™ o wspĂłĹ‚pracy?â€ť",
+    "â€žJeĹ›li teraz ustalimy zasady i zakres, to kiedy moĹĽemy ruszyÄ‡ z marketingiem â€” od jutra czy od poniedziaĹ‚ku?â€ť",
   ];
 }
 
 function chooseBestCloseLine(objections: CoachObjection[]) {
   const hasExclusiveFear = objections.some((o) => o.type === "exclusive_fear");
   const hasCommission = objections.some((o) => o.type === "commission");
-  if (hasExclusiveFear) return "„Zróbmy 30 dni próbnie na wyłączność — jeśli nie dowiozę, wracamy do otwartej. Pasuje?”";
-  if (hasCommission) return "„Jeśli dowiozę wynik i bezpieczeństwo transakcji, to możemy dziś ustalić warunki i podpisać?”";
+  if (hasExclusiveFear) return "â€žZrĂłbmy 30 dni prĂłbnie na wyĹ‚Ä…cznoĹ›Ä‡ â€” jeĹ›li nie dowiozÄ™, wracamy do otwartej. Pasuje?â€ť";
+  if (hasCommission) return "â€žJeĹ›li dowiozÄ™ wynik i bezpieczeĹ„stwo transakcji, to moĹĽemy dziĹ› ustaliÄ‡ warunki i podpisaÄ‡?â€ť";
   return buildClosePack()[0];
 }
 
@@ -173,7 +173,7 @@ export default function LiveAssistantPage() {
     }, ms);
   }
 
-  // ✅ Teleprompter
+  // âś… Teleprompter
   const [teleprompterOn, setTeleprompterOn] = useState(true);
   const [teleFont, setTeleFont] = useState(26);
   const [teleSpeed, setTeleSpeed] = useState(10);
@@ -194,7 +194,7 @@ export default function LiveAssistantPage() {
       return chooseBestCloseLine(objections);
     }
 
-    return "— czekam na rozmowę —";
+    return "â€” czekam na rozmowÄ™ â€”";
   }, [nextLine, shouldShowClose, objections]);
 
   const recorderRef = useRef<MediaRecorder | null>(null);
@@ -215,7 +215,7 @@ export default function LiveAssistantPage() {
   ========================= */
 
   async function start() {
-    setStatus("🎧 Słucham…");
+    setStatus("đźŽ§ SĹ‚uchamâ€¦");
 
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     streamRef.current = stream;
@@ -242,7 +242,7 @@ export default function LiveAssistantPage() {
 
       if (!mountedRef.current) return;
 
-      setStatus("🤖 Analiza…");
+      setStatus("đź¤– Analizaâ€¦");
 
       try {
         const form = new FormData();
@@ -254,7 +254,7 @@ export default function LiveAssistantPage() {
         if (!mountedRef.current) return;
 
         if (!res.ok || data.success === false) {
-          setStatus("⚠️ Błąd analizy");
+          setStatus("âš ď¸Ź BĹ‚Ä…d analizy");
         } else {
           if (!pauseMode && (typeof data.nextLine === "string" || data.nextLine === null)) {
             setNextLine(data.nextLine ?? null);
@@ -287,11 +287,11 @@ export default function LiveAssistantPage() {
             }
           }
 
-          setStatus("🎧 Słucham…");
+          setStatus("đźŽ§ SĹ‚uchamâ€¦");
         }
       } catch {
         if (!mountedRef.current) return;
-        setStatus("⚠️ Błąd analizy (JSON/API)");
+        setStatus("âš ď¸Ź BĹ‚Ä…d analizy (JSON/API)");
       }
 
       if (mountedRef.current && recorderRef.current && recording) {
@@ -316,7 +316,7 @@ export default function LiveAssistantPage() {
 
   function stop() {
     setRecording(false);
-    setStatus("⏹️ Zatrzymano");
+    setStatus("âŹąď¸Ź Zatrzymano");
 
     if (timerRef.current) window.clearTimeout(timerRef.current);
     timerRef.current = null;
@@ -360,7 +360,7 @@ export default function LiveAssistantPage() {
         }
       `}</style>
 
-      {/* ✅ TELEPROMPTER (sticky top) */}
+      {/* âś… TELEPROMPTER (sticky top) */}
       {teleprompterOn ? (
         <div
           style={{
@@ -376,10 +376,10 @@ export default function LiveAssistantPage() {
           }}
         >
           <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-            <span style={{ fontWeight: 950, opacity: 0.9 }}>🎬 Teleprompter</span>
+            <span style={{ fontWeight: 950, opacity: 0.9 }}>đźŽ¬ Teleprompter</span>
             {badge(`Stage: ${stageLabel(stage)}`)}
             {recording ? badge("MIC: ON") : badge("MIC: OFF")}
-            {pauseMode ? badge("⏸️ PAUZA – odpowiedz teraz") : null}
+            {pauseMode ? badge("âŹ¸ď¸Ź PAUZA â€“ odpowiedz teraz") : null}
             <span style={{ marginLeft: "auto", fontWeight: 900, opacity: 0.9 }}>{status}</span>
           </div>
 
@@ -394,8 +394,8 @@ export default function LiveAssistantPage() {
                 color: "#fff",
               }}
             >
-              <div style={{ fontWeight: 950 }}>🚨 Alert: {objectionMeta(topAlert.type).title}</div>
-              <div style={{ marginTop: 6, opacity: 0.95, fontWeight: 800 }}>Klient: „{topAlert.evidence}”</div>
+              <div style={{ fontWeight: 950 }}>đźš¨ Alert: {objectionMeta(topAlert.type).title}</div>
+              <div style={{ marginTop: 6, opacity: 0.95, fontWeight: 800 }}>Klient: â€ž{topAlert.evidence}â€ť</div>
             </div>
           ) : null}
 
@@ -416,7 +416,7 @@ export default function LiveAssistantPage() {
                 fontWeight: 900,
               }}
             >
-              📎 Kopiuj zdanie
+              đź“Ž Kopiuj zdanie
             </button>
 
             {shouldShowClose ? (
@@ -435,7 +435,7 @@ export default function LiveAssistantPage() {
                   fontWeight: 950,
                 }}
               >
-                ✅ Ustaw domknięcie
+                âś… Ustaw domkniÄ™cie
               </button>
             ) : null}
 
@@ -464,7 +464,7 @@ export default function LiveAssistantPage() {
             </label>
 
             <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
-              <span style={{ fontWeight: 900, opacity: 0.9 }}>Tempo tła</span>
+              <span style={{ fontWeight: 900, opacity: 0.9 }}>Tempo tĹ‚a</span>
               <input type="range" min={5} max={25} value={teleSpeed} onChange={(e) => setTeleSpeed(Number(e.target.value))} />
             </label>
           </div>
@@ -483,15 +483,15 @@ export default function LiveAssistantPage() {
               color: LIGHT_TEXT,
             }}
           >
-            🎬 Pokaż teleprompter
+            đźŽ¬ PokaĹĽ teleprompter
           </button>
         </div>
       )}
 
       {/* HEADER (ON DARK) */}
-      <h1 style={{ fontSize: 28, fontWeight: 950, marginTop: 8, color: LIGHT_TEXT }}>🎧 Live AI Coach</h1>
+      <h1 style={{ fontSize: 28, fontWeight: 950, marginTop: 8, color: LIGHT_TEXT }}>đźŽ§ Live AI Coach</h1>
       <p style={{ marginTop: 6, color: LIGHT_MUTED }}>
-        AI słucha rozmowy i <b>podpowiada co powiedzieć dalej</b>, wykrywa obiekcje i pomaga domykać.
+        AI sĹ‚ucha rozmowy i <b>podpowiada co powiedzieÄ‡ dalej</b>, wykrywa obiekcje i pomaga domykaÄ‡.
       </p>
 
       {/* CONTROLS (ON DARK) */}
@@ -508,7 +508,7 @@ export default function LiveAssistantPage() {
             color: LIGHT_TEXT,
           }}
         >
-          {recording ? "⏹️ Stop" : "🎤 Start"}
+          {recording ? "âŹąď¸Ź Stop" : "đźŽ¤ Start"}
         </button>
 
         <button
@@ -523,7 +523,7 @@ export default function LiveAssistantPage() {
             color: LIGHT_TEXT,
           }}
         >
-          Wyczyść
+          WyczyĹ›Ä‡
         </button>
 
         {badge(`Stage: ${stageLabel(stage)}`)}
@@ -544,13 +544,13 @@ export default function LiveAssistantPage() {
               color: TEXT,
             }}
           >
-            <div style={{ fontWeight: 950, color: TEXT }}>🧩 Wykryte obiekcje</div>
+            <div style={{ fontWeight: 950, color: TEXT }}>đź§© Wykryte obiekcje</div>
             <div style={{ marginTop: 6, color: MUTED2 }}>
-              Jeśli obiekcja się pojawi — dostaniesz gotową odpowiedź + pytanie.
+              JeĹ›li obiekcja siÄ™ pojawi â€” dostaniesz gotowÄ… odpowiedĹş + pytanie.
             </div>
 
             {objections.length === 0 ? (
-              <div style={{ marginTop: 12, color: MUTED2 }}>— brak obiekcji w ostatnim fragmencie —</div>
+              <div style={{ marginTop: 12, color: MUTED2 }}>â€” brak obiekcji w ostatnim fragmencie â€”</div>
             ) : (
               <div style={{ display: "grid", gap: 10, marginTop: 12 }}>
                 {objections.map((o, idx) => {
@@ -579,10 +579,10 @@ export default function LiveAssistantPage() {
                         >
                           {m.title}
                         </span>
-                        <span style={{ fontWeight: 900, color: MUTED }}>„{o.evidence}”</span>
+                        <span style={{ fontWeight: 900, color: MUTED }}>â€ž{o.evidence}â€ť</span>
                       </div>
 
-                      <div style={{ marginTop: 10, fontWeight: 950, color: TEXT }}>Co odpowiedzieć:</div>
+                      <div style={{ marginTop: 10, fontWeight: 950, color: TEXT }}>Co odpowiedzieÄ‡:</div>
                       <div style={{ marginTop: 4, fontWeight: 800, color: TEXT }}>{o.response}</div>
 
                       <div style={{ marginTop: 10, fontWeight: 950, color: TEXT }}>Pytanie dalej:</div>
@@ -601,7 +601,7 @@ export default function LiveAssistantPage() {
                             color: TEXT,
                           }}
                         >
-                          📎 Kopiuj odpowiedź
+                          đź“Ž Kopiuj odpowiedĹş
                         </button>
                         <button
                           onClick={() => navigator.clipboard.writeText(o.question)}
@@ -615,7 +615,7 @@ export default function LiveAssistantPage() {
                             color: TEXT,
                           }}
                         >
-                          ❓ Kopiuj pytanie
+                          âť“ Kopiuj pytanie
                         </button>
                       </div>
                     </div>
@@ -635,9 +635,9 @@ export default function LiveAssistantPage() {
               color: TEXT,
             }}
           >
-            <div style={{ fontWeight: 950, color: TEXT }}>✅ Podpowiedzi</div>
+            <div style={{ fontWeight: 950, color: TEXT }}>âś… Podpowiedzi</div>
             {tips.length === 0 ? (
-              <div style={{ marginTop: 12, color: MUTED2 }}>— brak tipów —</div>
+              <div style={{ marginTop: 12, color: MUTED2 }}>â€” brak tipĂłw â€”</div>
             ) : (
               <div style={{ display: "grid", gap: 10, marginTop: 12 }}>
                 {tips.slice(0, 6).map((t, idx) => (
@@ -654,11 +654,11 @@ export default function LiveAssistantPage() {
                       cursor: "pointer",
                       fontWeight: 900,
                     }}
-                    title="Kliknij, żeby skopiować"
+                    title="Kliknij, ĹĽeby skopiowaÄ‡"
                   >
                     {t}
                     <div style={{ marginTop: 6, fontSize: 12, color: MUTED2, fontWeight: 800 }}>
-                      Kliknij, aby skopiować
+                      Kliknij, aby skopiowaÄ‡
                     </div>
                   </button>
                 ))}
@@ -677,9 +677,9 @@ export default function LiveAssistantPage() {
                 color: TEXT,
               }}
             >
-              <div style={{ fontWeight: 950, color: TEXT }}>✅ Automatyczne domykanie</div>
+              <div style={{ fontWeight: 950, color: TEXT }}>âś… Automatyczne domykanie</div>
               <div style={{ marginTop: 6, color: MUTED, fontWeight: 800 }}>
-                Wykryłem etap <b>{stageLabel(stage)}</b>. Poniżej masz gotowe domknięcia:
+                WykryĹ‚em etap <b>{stageLabel(stage)}</b>. PoniĹĽej masz gotowe domkniÄ™cia:
               </div>
 
               <div style={{ display: "grid", gap: 10, marginTop: 12 }}>
@@ -700,11 +700,11 @@ export default function LiveAssistantPage() {
                       cursor: "pointer",
                       fontWeight: 950,
                     }}
-                    title="Kliknij, aby ustawić jako nextLine i skopiować"
+                    title="Kliknij, aby ustawiÄ‡ jako nextLine i skopiowaÄ‡"
                   >
                     {line}
                     <div style={{ marginTop: 6, fontSize: 12, color: MUTED2, fontWeight: 800 }}>
-                      Kliknij: ustawię jako „Powiedz teraz” + skopiuję
+                      Kliknij: ustawiÄ™ jako â€žPowiedz terazâ€ť + skopiujÄ™
                     </div>
                   </button>
                 ))}
@@ -725,7 +725,7 @@ export default function LiveAssistantPage() {
           }}
         >
           <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
-            <div style={{ fontWeight: 950, color: TEXT }}>🗣️ Transkrypcja</div>
+            <div style={{ fontWeight: 950, color: TEXT }}>đź—Łď¸Ź Transkrypcja</div>
             <button
               onClick={() =>
                 navigator.clipboard.writeText(segments.map((s) => `${speakerLabel(s.speaker)}: ${s.text}`).join("\n"))
@@ -740,13 +740,13 @@ export default function LiveAssistantPage() {
                 color: TEXT,
               }}
             >
-              📎 Kopiuj transkrypcję
+              đź“Ž Kopiuj transkrypcjÄ™
             </button>
           </div>
 
           <div style={{ marginTop: 12, display: "grid", gap: 10 }}>
             {segments.length === 0 ? (
-              <div style={{ color: MUTED2 }}>— jeszcze nic —</div>
+              <div style={{ color: MUTED2 }}>â€” jeszcze nic â€”</div>
             ) : (
               segments.map((s) => (
                 <div
@@ -772,10 +772,11 @@ export default function LiveAssistantPage() {
           </div>
 
           <div style={{ marginTop: 14, fontSize: 12, color: MUTED2 }}>
-            Szybkość: tniemy rozmowę co ~3 sekundy (stabilne dla API). Teleprompter zawsze pokazuje najnowszą sugestię.
+            SzybkoĹ›Ä‡: tniemy rozmowÄ™ co ~3 sekundy (stabilne dla API). Teleprompter zawsze pokazuje najnowszÄ… sugestiÄ™.
           </div>
         </section>
       </div>
     </main>
   );
 }
+

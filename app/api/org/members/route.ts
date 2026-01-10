@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/app/lib/db";
+﻿import { NextResponse } from "next/server";
+import { prisma } from "@/app/lib/prisma";
 
 export async function GET(req: Request) {
   try {
@@ -38,7 +38,7 @@ export async function POST(req: Request) {
 
     if (!body?.name) {
       return NextResponse.json(
-        { error: "Wymagane: name (imię i nazwisko)" },
+        { error: "Wymagane: name (imiÄ™ i nazwisko)" },
         { status: 400 }
       );
     }
@@ -50,20 +50,20 @@ const role = body.role ?? "AGENT";
 const org = await prisma.organization.findUnique({ where: { id: orgId } });
 if (!org) {
   return NextResponse.json(
-    { error: "Nieprawidłowy orgId (biuro nie istnieje)" },
+    { error: "NieprawidĹ‚owy orgId (biuro nie istnieje)" },
     { status: 400 }
   );
 }
 
 
-    // ✅ blokada na duplikaty email w obrębie org
+    // âś… blokada na duplikaty email w obrÄ™bie org
     const existing = await prisma.orgMember.findFirst({
       where: { orgId, email },
     });
 
     if (existing) {
       return NextResponse.json(
-        { error: "Taki email już istnieje w tym biurze", existing },
+        { error: "Taki email juĹĽ istnieje w tym biurze", existing },
         { status: 409 }
       );
     }
@@ -87,3 +87,4 @@ if (!org) {
     );
   }
 }
+

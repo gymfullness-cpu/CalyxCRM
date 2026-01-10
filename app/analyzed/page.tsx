@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 
@@ -40,7 +40,7 @@ export default function AnalyzedImagesPage() {
 
     try {
       if (cleanedImages.length === 0) {
-        throw new Error("Dodaj przynajmniej 1 link do zdjęcia.");
+        throw new Error("Dodaj przynajmniej 1 link do zdjÄ™cia.");
       }
 
       const res = await fetch("/api/analyzed-images", {
@@ -59,7 +59,7 @@ export default function AnalyzedImagesPage() {
       }
 
       if (!res.ok) {
-        throw new Error(data?.error ?? data?.detail ?? "Błąd analizy AI");
+        throw new Error(data?.error ?? data?.detail ?? "BĹ‚Ä…d analizy AI");
       }
 
       if (!data?.result) {
@@ -68,7 +68,7 @@ export default function AnalyzedImagesPage() {
 
       setResult(String(data.result));
     } catch (err: any) {
-      setError(err?.message || "Błąd analizy");
+      setError(err?.message || "BĹ‚Ä…d analizy");
     } finally {
       setLoading(false);
     }
@@ -83,17 +83,17 @@ export default function AnalyzedImagesPage() {
             className="text-3xl font-extrabold tracking-tight"
             style={{ color: "var(--text-main)" }}
           >
-            🤖 Analiza zdjęć nieruchomości (AI)
+            đź¤– Analiza zdjÄ™Ä‡ nieruchomoĹ›ci (AI)
           </h1>
           <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>
-            Wklej linki do zdjęć. AI opisze standard, mocne/słabe strony i sugestie do ogłoszenia.
+            Wklej linki do zdjÄ™Ä‡. AI opisze standard, mocne/sĹ‚abe strony i sugestie do ogĹ‚oszenia.
           </p>
         </div>
 
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
           <Kpi label="Wszystkie pola" value={images.length} tone="neutral" />
           <Kpi label="Gotowe linki" value={cleanedImages.length} tone="mint" />
-          <Kpi label="Status" value={loading ? "Analiza…" : "Gotowe"} tone="blue" />
+          <Kpi label="Status" value={loading ? "Analizaâ€¦" : "Gotowe"} tone="blue" />
         </div>
       </div>
 
@@ -109,18 +109,18 @@ export default function AnalyzedImagesPage() {
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div>
             <div className="text-xs font-extrabold uppercase tracking-wide" style={{ color: "rgba(15,23,42,0.60)" }}>
-              Zdjęcia
+              ZdjÄ™cia
             </div>
             <div className="mt-1 text-lg font-black" style={{ color: "#0f172a" }}>
               Linki do fotografii
             </div>
             <div className="mt-1 text-sm" style={{ color: "rgba(15,23,42,0.66)" }}>
-              Możesz dodać kilka zdjęć (np. salon, kuchnia, łazienka, elewacja).
+              MoĹĽesz dodaÄ‡ kilka zdjÄ™Ä‡ (np. salon, kuchnia, Ĺ‚azienka, elewacja).
             </div>
           </div>
 
           <button onClick={addField} style={pillBtn} disabled={loading} title="Dodaj kolejne pole">
-            ➕ Dodaj
+            âž• Dodaj
           </button>
         </div>
 
@@ -140,7 +140,7 @@ export default function AnalyzedImagesPage() {
               >
                 <div className="flex items-center justify-between gap-3">
                   <div className="text-xs font-extrabold" style={{ color: "rgba(15,23,42,0.65)" }}>
-                    Zdjęcie {i + 1}
+                    ZdjÄ™cie {i + 1}
                   </div>
 
                   <button
@@ -154,9 +154,9 @@ export default function AnalyzedImagesPage() {
                       cursor: loading ? "not-allowed" : "pointer",
                       opacity: loading ? 0.6 : 1,
                     }}
-                    title="Usuń to pole"
+                    title="UsuĹ„ to pole"
                   >
-                    🗑️ Usuń
+                    đź—‘ď¸Ź UsuĹ„
                   </button>
                 </div>
 
@@ -164,7 +164,7 @@ export default function AnalyzedImagesPage() {
                   <input
                     value={val}
                     onChange={(e) => setField(i, e.target.value)}
-                    placeholder={`Wklej link do zdjęcia (https://...)`}
+                    placeholder={`Wklej link do zdjÄ™cia (https://...)`}
                     className="w-full"
                     style={inputLight}
                     disabled={loading}
@@ -183,7 +183,7 @@ export default function AnalyzedImagesPage() {
                       fontWeight: 900,
                       fontSize: 12,
                     }}
-                    title={isValidUrl ? "Podgląd" : "Wklej poprawny link"}
+                    title={isValidUrl ? "PodglÄ…d" : "Wklej poprawny link"}
                   >
                     {isValidUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -192,19 +192,19 @@ export default function AnalyzedImagesPage() {
                         alt={`preview-${i}`}
                         style={{ width: "100%", height: "100%", objectFit: "cover" }}
                         onError={(e) => {
-                          // jeśli obraz się nie ładuje, pokaż fallback
+                          // jeĹ›li obraz siÄ™ nie Ĺ‚aduje, pokaĹĽ fallback
                           (e.currentTarget as HTMLImageElement).style.display = "none";
                         }}
                       />
                     ) : (
-                      "Podgląd"
+                      "PodglÄ…d"
                     )}
                   </div>
                 </div>
 
                 {!val.trim() ? null : (
                   <div className="mt-2 text-xs" style={{ color: isValidUrl ? "rgba(15,23,42,0.65)" : "rgba(185,28,28,0.95)" }}>
-                    {isValidUrl ? "✅ Link wygląda ok" : "⚠️ To nie wygląda na poprawny URL (powinno zaczynać się od http/https)"}
+                    {isValidUrl ? "âś… Link wyglÄ…da ok" : "âš ď¸Ź To nie wyglÄ…da na poprawny URL (powinno zaczynaÄ‡ siÄ™ od http/https)"}
                   </div>
                 )}
               </div>
@@ -223,7 +223,7 @@ export default function AnalyzedImagesPage() {
             cursor: canAnalyze ? "pointer" : "not-allowed",
           }}
         >
-          {loading ? "⏳ Analiza w toku…" : "🤖 Analizuj AI"}
+          {loading ? "âŹł Analiza w tokuâ€¦" : "đź¤– Analizuj AI"}
         </button>
 
         {error ? (
@@ -236,7 +236,7 @@ export default function AnalyzedImagesPage() {
               whiteSpace: "pre-wrap",
             }}
           >
-            ❌ {error}
+            âťŚ {error}
           </div>
         ) : null}
       </section>
@@ -257,7 +257,7 @@ export default function AnalyzedImagesPage() {
                 Wynik
               </div>
               <div className="mt-1 text-lg font-black" style={{ color: "#0f172a" }}>
-                📋 Analiza AI
+                đź“‹ Analiza AI
               </div>
             </div>
 
@@ -266,7 +266,7 @@ export default function AnalyzedImagesPage() {
               style={pillBtn}
               title="Skopiuj wynik do schowka"
             >
-              📎 Kopiuj
+              đź“Ž Kopiuj
             </button>
           </div>
 
@@ -356,3 +356,4 @@ function Kpi({
     </div>
   );
 }
+

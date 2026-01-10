@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -26,7 +26,7 @@ export default function ProspectsPage() {
         note: p.note || "",
         followUpDate: p.followUpDate || "",
         meetingDate: p.meetingDate || "",
-        source: p.source || "Ogłoszenie",
+        source: p.source || "OgĹ‚oszenie",
         createdAt: p.createdAt || new Date().toISOString(),
       }));
       setProspects(parsed);
@@ -40,7 +40,7 @@ export default function ProspectsPage() {
   };
 
   const saveFollowUp = (p: Prospect) => {
-    if (!p.followUpDate) return alert("Wybierz datę follow-upu");
+    if (!p.followUpDate) return alert("Wybierz datÄ™ follow-upu");
 
     const followups = JSON.parse(localStorage.getItem("followups") || "[]");
 
@@ -53,11 +53,11 @@ export default function ProspectsPage() {
     });
 
     localStorage.setItem("followups", JSON.stringify(followups));
-    alert("✅ Follow-up zapisany");
+    alert("âś… Follow-up zapisany");
   };
 
   const saveMeeting = (p: Prospect) => {
-    if (!p.meetingDate) return alert("Wybierz datę spotkania");
+    if (!p.meetingDate) return alert("Wybierz datÄ™ spotkania");
 
     const meetings = JSON.parse(localStorage.getItem("meetings") || "[]");
 
@@ -72,7 +72,7 @@ export default function ProspectsPage() {
     });
 
     localStorage.setItem("meetings", JSON.stringify(meetings));
-    alert("📅 Spotkanie dodane do kalendarza");
+    alert("đź“… Spotkanie dodane do kalendarza");
   };
 
   const stats = useMemo(() => {
@@ -95,11 +95,11 @@ export default function ProspectsPage() {
               color: "rgba(234,255,251,0.92)",
             }}
           >
-            <span style={{ color: "var(--accent)" }}>●</span> Pozyski / CRM
+            <span style={{ color: "var(--accent)" }}>â—Ź</span> Pozyski / CRM
           </div>
 
           <h1 className="mt-3 text-3xl font-extrabold tracking-tight" style={{ color: "var(--text-main)" }}>
-            🎯 Pozyski
+            đźŽŻ Pozyski
           </h1>
           <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>
             Notatki, follow-upy i spotkania pozyskowe w jednym miejscu.
@@ -117,7 +117,7 @@ export default function ProspectsPage() {
       {prospects.length === 0 ? (
         <section className="mt-7 rounded-2xl p-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border-soft)" }}>
           <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-            Brak pozysków. Dodaj pierwszego (np. z modułu „Market” albo ręcznie).
+            Brak pozyskĂłw. Dodaj pierwszego (np. z moduĹ‚u â€žMarketâ€ť albo rÄ™cznie).
           </p>
         </section>
       ) : null}
@@ -130,16 +130,16 @@ export default function ProspectsPage() {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <div className="text-xs font-extrabold uppercase tracking-wide" style={{ color: "rgba(15,23,42,0.60)" }}>
-                  Źródło
+                  ĹąrĂłdĹ‚o
                 </div>
                 <div className="mt-1 text-sm font-black" style={{ color: "#0f172a" }}>
-                  {p.source || "—"}
+                  {p.source || "â€”"}
                 </div>
               </div>
 
               <div className="flex gap-2 flex-wrap justify-end">
-                {(p.followUpDate ?? "").trim() ? <Badge tone="mint">🔔 follow-up</Badge> : <Badge tone="neutral">brak follow-up</Badge>}
-                {(p.meetingDate ?? "").trim() ? <Badge tone="blue">📅 spotkanie</Badge> : null}
+                {(p.followUpDate ?? "").trim() ? <Badge tone="mint">đź”” follow-up</Badge> : <Badge tone="neutral">brak follow-up</Badge>}
+                {(p.meetingDate ?? "").trim() ? <Badge tone="blue">đź“… spotkanie</Badge> : null}
               </div>
             </div>
 
@@ -147,7 +147,7 @@ export default function ProspectsPage() {
 
             <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="md:col-span-2">
-                <label className="label-light">Imię i nazwisko</label>
+                <label className="label-light">ImiÄ™ i nazwisko</label>
                 <input
                   className="input-light"
                   placeholder="Jan Kowalski"
@@ -170,14 +170,14 @@ export default function ProspectsPage() {
                 <label className="label-light">Notatka</label>
                 <textarea
                   className="input-light h-24 resize-y"
-                  placeholder="Szczegóły rozmowy…"
+                  placeholder="SzczegĂłĹ‚y rozmowyâ€¦"
                   value={p.note}
                   onChange={(e) => updateProspect(p.id, { note: e.target.value })}
                 />
               </div>
 
               <div>
-                <label className="label-light">🔔 Follow-up</label>
+                <label className="label-light">đź”” Follow-up</label>
                 <input
                   className="input-light"
                   type="date"
@@ -190,7 +190,7 @@ export default function ProspectsPage() {
               </div>
 
               <div>
-                <label className="label-light">📅 Spotkanie pozyskowe</label>
+                <label className="label-light">đź“… Spotkanie pozyskowe</label>
                 <input
                   className="input-light"
                   type="datetime-local"
@@ -332,3 +332,4 @@ function Badge({ children, tone }: { children: React.ReactNode; tone: "mint" | "
     </span>
   );
 }
+

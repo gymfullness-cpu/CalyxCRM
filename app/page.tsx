@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import NavLink from "./NavLink";
@@ -11,18 +11,18 @@ type CalendarEvent = {
 };
 
 const MODULES = [
-  { href: "/calendar", icon: "📅", title: "Kalendarz", desc: "Plan dnia i spotkania" },
-  { href: "/leads", icon: "📞", title: "Leady", desc: "Popyt i historia kontaktu" },
-  { href: "/properties", icon: "🏠", title: "Nieruchomości", desc: "Oferty i ceny" },
-  { href: "/prospects", icon: "🎯", title: "Pozyski", desc: "Pipeline właścicieli" },
-  { href: "/dashboard", icon: "📊", title: "Dashboard", desc: "KPI i skróty" },
-  { href: "/assistant/live", icon: "🎧", title: "AI Coach", desc: "Wsparcie rozmów" },
+  { href: "/calendar", icon: "đź“…", title: "Kalendarz", desc: "Plan dnia i spotkania" },
+  { href: "/leads", icon: "đź“ž", title: "Leady", desc: "Popyt i historia kontaktu" },
+  { href: "/properties", icon: "đźŹ ", title: "NieruchomoĹ›ci", desc: "Oferty i ceny" },
+  { href: "/prospects", icon: "đźŽŻ", title: "Pozyski", desc: "Pipeline wĹ‚aĹ›cicieli" },
+  { href: "/dashboard", icon: "đź“Š", title: "Dashboard", desc: "KPI i skrĂłty" },
+  { href: "/assistant/live", icon: "đźŽ§", title: "AI Coach", desc: "Wsparcie rozmĂłw" },
 ];
 
 export default function HomePage() {
   const [todayEvents, setTodayEvents] = useState<CalendarEvent[]>([]);
 
-  // ✅ localStorage tylko po mount (BRAK błędu SSR)
+  // âś… localStorage tylko po mount (BRAK bĹ‚Ä™du SSR)
   useEffect(() => {
     try {
       const raw = localStorage.getItem("calendar-events");
@@ -45,17 +45,17 @@ export default function HomePage() {
         <h1 className="ce-title">
           Premium AI CRM
           <br />
-          dla nieruchomości
+          dla nieruchomoĹ›ci
         </h1>
 
         <p className="ce-sub">
           Kalendarz, leady, oferty i AI Coach w jednym
-          ekosystemie zaprojektowanym dla agentów premium.
+          ekosystemie zaprojektowanym dla agentĂłw premium.
         </p>
 
         <div className="ce-actions">
-          <NavLink href="/calendar">📅 Otwórz kalendarz</NavLink>
-          <NavLink href="/assistant/live">🎧 AI Coach</NavLink>
+          <NavLink href="/calendar">đź“… OtwĂłrz kalendarz</NavLink>
+          <NavLink href="/assistant/live">đźŽ§ AI Coach</NavLink>
         </div>
       </section>
 
@@ -64,7 +64,7 @@ export default function HomePage() {
         <div className="ce-today-title">Dzisiaj</div>
 
         {todayEvents.length === 0 ? (
-          <div className="ce-today-empty">Brak zaplanowanych spotkań</div>
+          <div className="ce-today-empty">Brak zaplanowanych spotkaĹ„</div>
         ) : (
           <div className="ce-today-list">
             {todayEvents.map((e) => (
@@ -84,7 +84,7 @@ export default function HomePage() {
             <div className="ce-card-icon">{m.icon}</div>
             <div className="ce-card-title">{m.title}</div>
             <div className="ce-card-desc">{m.desc}</div>
-            <div className="ce-card-cta">Otwórz →</div>
+            <div className="ce-card-cta">OtwĂłrz â†’</div>
           </a>
         ))}
       </section>
@@ -214,3 +214,4 @@ export default function HomePage() {
     </div>
   );
 }
+

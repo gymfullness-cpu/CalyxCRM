@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 
 export const runtime = "nodejs"; // bezpiecznie na Windows/dev
 export const dynamic = "force-dynamic";
@@ -18,12 +18,12 @@ function json(data: any, status = 200) {
 
 /**
  * DEV-SAFE endpoint:
- * - Nigdy nie powinien wysypywać 500 (żeby UI nie spamował konsolą).
- * - Jeśli masz kiedyś prawdziwą organizację z DB/auth, podmień logikę w tym miejscu.
+ * - Nigdy nie powinien wysypywaÄ‡ 500 (ĹĽeby UI nie spamowaĹ‚ konsolÄ…).
+ * - JeĹ›li masz kiedyĹ› prawdziwÄ… organizacjÄ™ z DB/auth, podmieĹ„ logikÄ™ w tym miejscu.
  */
 export async function GET() {
   try {
-    // 1) Jeśli masz ENV z org (opcjonalnie)
+    // 1) JeĹ›li masz ENV z org (opcjonalnie)
     const envOrgId = process.env.ORG_ID?.trim();
     const envOrgName = process.env.ORG_NAME?.trim();
 
@@ -32,18 +32,19 @@ export async function GET() {
       return json({ ok: true, org });
     }
 
-    // 2) Fallback lokalny — żeby UI działało zawsze
+    // 2) Fallback lokalny â€” ĹĽeby UI dziaĹ‚aĹ‚o zawsze
     const org: Org = { id: "local", name: "Local Workspace", plan: "dev" };
     return json({ ok: true, org });
   } catch (err: any) {
-    // Zamiast 500 — zwróć fallback 200, żeby nie blokować UI
+    // Zamiast 500 â€” zwrĂłÄ‡ fallback 200, ĹĽeby nie blokowaÄ‡ UI
     const org: Org = { id: "local", name: "Local Workspace", plan: "dev" };
     return json({
       ok: true,
       org,
       warning: "Falling back to local org because /api/org/current threw an error.",
-      // NIE wywalaj całego stack trace do klienta w produkcji — ale w dev może pomóc:
+      // NIE wywalaj caĹ‚ego stack trace do klienta w produkcji â€” ale w dev moĹĽe pomĂłc:
       error: String(err?.message || err),
     });
   }
 }
+

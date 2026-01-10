@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 
 type FeedItem = {
   source: string;
@@ -19,14 +19,14 @@ type Rates = {
 };
 
 const FEEDS: { source: string; url: string; category: string }[] = [
-  // NBP RSS (kursy) – działa jako XML, pobieramy tylko jako news/źródło oficjalne
+  // NBP RSS (kursy) â€“ dziaĹ‚a jako XML, pobieramy tylko jako news/ĹşrĂłdĹ‚o oficjalne
   { source: "NBP (RSS)", url: "https://rss.nbp.pl/kursy/TabelaA.xml", category: "Makro" },
 
-  // UOKiK RSS (może dotyczyć rynku/umów/deweloperów)
+  // UOKiK RSS (moĹĽe dotyczyÄ‡ rynku/umĂłw/deweloperĂłw)
   { source: "UOKiK (RSS)", url: "https://uokik.gov.pl/feed", category: "Prawo / Rynek" },
 
-  // PAP Samorząd (często: mieszkaniówka, planowanie, podaż)
-  { source: "PAP Samorząd (RSS)", url: "https://samorzad.pap.pl/rss.xml", category: "Rynek / Regulacje" },
+  // PAP SamorzÄ…d (czÄ™sto: mieszkaniĂłwka, planowanie, podaĹĽ)
+  { source: "PAP SamorzÄ…d (RSS)", url: "https://samorzad.pap.pl/rss.xml", category: "Rynek / Regulacje" },
 ];
 
 function stripHtml(s: string) {
@@ -88,7 +88,7 @@ async function fetchText(url: string) {
       "User-Agent": "Mozilla/5.0 (CalyxAI; +https://example.local)",
       Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     },
-    // cache w Next (żeby nie mielić non stop)
+    // cache w Next (ĹĽeby nie mieliÄ‡ non stop)
     next: { revalidate: 60 * 15 }, // 15 minut
   });
   const text = await res.text();
@@ -104,8 +104,8 @@ async function fetchNbpRates(): Promise<Rates> {
   const { ok, text } = await fetchText(url);
   if (!ok) return { rawText: null };
 
-  // bardzo proste wyłuskanie liczb typu "4,00" i daty "2025-12-04" ze strony
-  // (działa “wystarczająco” dla UI; jak NBP zmieni HTML – łatwo poprawić)
+  // bardzo proste wyĹ‚uskanie liczb typu "4,00" i daty "2025-12-04" ze strony
+  // (dziaĹ‚a â€śwystarczajÄ…coâ€ť dla UI; jak NBP zmieni HTML â€“ Ĺ‚atwo poprawiÄ‡)
   const clean = stripHtml(text);
 
   const grab = (label: string) => {
@@ -142,7 +142,7 @@ export async function GET() {
       }
     }
 
-    // sort po dacie (jak się da), inaczej po prostu zostaje kolejność
+    // sort po dacie (jak siÄ™ da), inaczej po prostu zostaje kolejnoĹ›Ä‡
     const sorted = all
       .slice()
       .sort((a, b) => {
@@ -160,8 +160,9 @@ export async function GET() {
     });
   } catch (e: any) {
     return NextResponse.json(
-      { ok: false, error: "Błąd prasówki", details: e?.message || "unknown" },
+      { ok: false, error: "BĹ‚Ä…d prasĂłwki", details: e?.message || "unknown" },
       { status: 500 }
     );
   }
 }
+

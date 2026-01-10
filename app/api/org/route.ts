@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/app/lib/db";
+﻿import { NextResponse } from "next/server";
+import { prisma } from "@/app/lib/prisma";
 
 export async function POST(req: Request) {
   const body = await req.json();
@@ -22,3 +22,4 @@ export async function GET() {
   });
   return NextResponse.json({ orgs });
 }
+

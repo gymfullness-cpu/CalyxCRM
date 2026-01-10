@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
         {
           role: "system",
           content:
-            "Jesteś ekspertem OCR. Odczytujesz NUMER TELEFONU z obrazu.",
+            "JesteĹ› ekspertem OCR. Odczytujesz NUMER TELEFONU z obrazu.",
         },
         {
           role: "user",
@@ -31,8 +31,8 @@ export async function POST(req: Request) {
               type: "text",
               text: `
 Odczytaj numer telefonu z obrazu.
-Zwróć TYLKO numer telefonu.
-Jeśli numeru nie ma → napisz "BRAK NUMERU".
+ZwrĂłÄ‡ TYLKO numer telefonu.
+JeĹ›li numeru nie ma â†’ napisz "BRAK NUMERU".
               `,
             },
             {
@@ -57,10 +57,11 @@ Jeśli numeru nie ma → napisz "BRAK NUMERU".
 
     return NextResponse.json(
       {
-        error: "Błąd OCR",
+        error: "BĹ‚Ä…d OCR",
         details: error.message,
       },
       { status: 500 }
     );
   }
 }
+

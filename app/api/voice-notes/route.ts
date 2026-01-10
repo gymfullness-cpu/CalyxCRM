@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
@@ -16,20 +16,20 @@ function extractJSON(text: string) {
   }
 }
 
-// Główna funkcja POST do transkrypcji i analizy
+// GĹ‚Ăłwna funkcja POST do transkrypcji i analizy
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
     const file = formData.get("audio") as File | null;
 
-    // Walidacja obecności pliku
+    // Walidacja obecnoĹ›ci pliku
     if (!file) {
       return NextResponse.json({ success: false, error: "Brak audio" });
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    // 1️⃣ Transkrypcja
+    // 1ď¸ŹâŁ Transkrypcja
     const transcription = await openai.audio.transcriptions.create({
       file: new File([buffer], "audio.webm", { type: file.type }),
       model: "gpt-4o-mini-transcribe",
@@ -44,20 +44,20 @@ export async function POST(req: Request) {
       });
     }
 
-    // 2️⃣ Analiza AI (Zastosowanie modelu GPT do analizy)
+    // 2ď¸ŹâŁ Analiza AI (Zastosowanie modelu GPT do analizy)
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: "Zwracaj WYŁĄCZNIE czysty JSON. Bez markdown, bez ```.",
+          content: "Zwracaj WYĹÄ„CZNIE czysty JSON. Bez markdown, bez ```.",
         },
         {
           role: "user",
           content: `
-Wyciągnij dane z notatki głosowej.
+WyciÄ…gnij dane z notatki gĹ‚osowej.
 
-Zwróć:
+ZwrĂłÄ‡:
 {
   "name": string | null,
   "phone": string | null,
@@ -76,16 +76,16 @@ ${text}
     const raw = completion.choices[0].message.content || "";
     const parsed = extractJSON(raw);
 
-    // Sprawdzenie, czy odpowiedź jest poprawnym JSON
+    // Sprawdzenie, czy odpowiedĹş jest poprawnym JSON
     if (!parsed) {
       return NextResponse.json({
         success: false,
-        error: "Nie udało się sparsować JSON",
+        error: "Nie udaĹ‚o siÄ™ sparsowaÄ‡ JSON",
         raw,
       });
     }
 
-    // Zwrócenie odpowiedzi w odpowiednim formacie
+    // ZwrĂłcenie odpowiedzi w odpowiednim formacie
     return NextResponse.json({
       success: true,
       transcript: text,
@@ -103,7 +103,8 @@ ${text}
     console.error("VOICE API ERROR:", err);
     return NextResponse.json({
       success: false,
-      error: err.message || "Nieoczekiwany błąd",
+      error: err.message || "Nieoczekiwany bĹ‚Ä…d",
     });
   }
 }
+

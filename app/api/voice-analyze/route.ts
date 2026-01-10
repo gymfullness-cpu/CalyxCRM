@@ -1,4 +1,4 @@
-export const runtime = "nodejs";
+﻿export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
@@ -303,31 +303,31 @@ export async function POST(req: Request) {
         {
           role: "system",
           content: [
-            "Jesteś asystentem CRM + trenerem rozmów dla agenta nieruchomości w Polsce.",
-            "Masz zwracać WYŁĄCZNIE czysty JSON (bez markdown, bez komentarzy).",
+            "JesteĹ› asystentem CRM + trenerem rozmĂłw dla agenta nieruchomoĹ›ci w Polsce.",
+            "Masz zwracaÄ‡ WYĹÄ„CZNIE czysty JSON (bez markdown, bez komentarzy).",
             "",
-            "Zwracasz jednocześnie:",
-            "1) actions[] (CRM) — jak dotychczas",
+            "Zwracasz jednoczeĹ›nie:",
+            "1) actions[] (CRM) â€” jak dotychczas",
             "2) COACHING dla rozmowy: speaker, stage, objections[], tips[], nextLine",
             "",
-            "Tryb rozmowy (mode): exclusive (wyłączność) albo open (otwarta).",
+            "Tryb rozmowy (mode): exclusive (wyĹ‚Ä…cznoĹ›Ä‡) albo open (otwarta).",
             "",
-            "Reguły dat:",
-            "- Jeżeli użytkownik nie poda roku, przyjmij bieżący rok względem `nowISO`.",
-            "- Jeżeli data bez roku jest już w przeszłości względem `nowISO`, ustaw kolejny rok.",
+            "ReguĹ‚y dat:",
+            "- JeĹĽeli uĹĽytkownik nie poda roku, przyjmij bieĹĽÄ…cy rok wzglÄ™dem `nowISO`.",
+            "- JeĹĽeli data bez roku jest juĹĽ w przeszĹ‚oĹ›ci wzglÄ™dem `nowISO`, ustaw kolejny rok.",
             "- Formaty: date = YYYY-MM-DD, time = HH:mm.",
             "",
-            "Typy eventów: pozysk | prezentacja | umowa | inne.",
+            "Typy eventĂłw: pozysk | prezentacja | umowa | inne.",
             "Follow-up: followupType: pozysk | prezentacja.",
             "",
-            "Ważne: Nie wymyślaj numerów telefonu/email jeśli ich nie ma.",
-            "Jeśli komenda CRM jest niepełna: actions = [] i hint z krótką sugestią.",
+            "WaĹĽne: Nie wymyĹ›laj numerĂłw telefonu/email jeĹ›li ich nie ma.",
+            "JeĹ›li komenda CRM jest niepeĹ‚na: actions = [] i hint z krĂłtkÄ… sugestiÄ….",
             "",
             "COACHING:",
-            "- speaker: kto mówi w tym fragmencie transkrypcji (client/agent/unknown).",
-            "- stage: raport/needs/value/terms/close/unknown (jeden wybór).",
-            "- objections: max 4. Każda ma: type, evidence (krótki cytat), response (co agent ma powiedzieć), question (pytanie domykające).",
-            "- tips: max 6, krótkie konkretne zdania do użycia teraz.",
+            "- speaker: kto mĂłwi w tym fragmencie transkrypcji (client/agent/unknown).",
+            "- stage: raport/needs/value/terms/close/unknown (jeden wybĂłr).",
+            "- objections: max 4. KaĹĽda ma: type, evidence (krĂłtki cytat), response (co agent ma powiedzieÄ‡), question (pytanie domykajÄ…ce).",
+            "- tips: max 6, krĂłtkie konkretne zdania do uĹĽycia teraz.",
             "- nextLine: jedno najlepsze zdanie do powiedzenia TERAZ (pod tryb mode).",
           ].join("\n"),
         },
@@ -339,7 +339,7 @@ mode: ${mode}
 TRANSKRYPCJA (ostatni fragment):
 ${transcript}
 
-Zwróć JSON o strukturze:
+ZwrĂłÄ‡ JSON o strukturze:
 {
   "actions": [
     // { "type": "create_lead", "payload": { "name": "...", "phone": "...", "preferences": "..." } }
@@ -362,15 +362,15 @@ Zwróć JSON o strukturze:
   ]
 }
 
-Jeśli z transkrypcji wynika: klient szuka mieszkania + data spotkania, zwróć DWIE akcje:
+JeĹ›li z transkrypcji wynika: klient szuka mieszkania + data spotkania, zwrĂłÄ‡ DWIE akcje:
 - create_lead
 - create_calendar_event
 
-Jeśli z transkrypcji wynika: "dodaj follow up ...", zwróć create_followup.
-Jeśli z transkrypcji wynika: "wyślij sms/email ...", zwróć draft_sms/draft_email (tylko draft).`,
+JeĹ›li z transkrypcji wynika: "dodaj follow up ...", zwrĂłÄ‡ create_followup.
+JeĹ›li z transkrypcji wynika: "wyĹ›lij sms/email ...", zwrĂłÄ‡ draft_sms/draft_email (tylko draft).`,
         },
       ],
-      // trochę szybciej / stabilniej w JSON: ucinamy kreatywność
+      // trochÄ™ szybciej / stabilniej w JSON: ucinamy kreatywnoĹ›Ä‡
       temperature: 0.2,
     });
 
@@ -382,7 +382,7 @@ Jeśli z transkrypcji wynika: "wyślij sms/email ...", zwróć draft_sms/draft_e
 
     const coach = coerceCoach(parsed);
 
-    /* 3) Legacy (żeby nic nie popsuć): lead/meeting */
+    /* 3) Legacy (ĹĽeby nic nie popsuÄ‡): lead/meeting */
     const leadAction = actions.find((a) => a.type === "create_lead") as
       | { type: "create_lead"; payload: { name: string; phone?: string | null; preferences?: string | null } }
       | undefined;
@@ -416,7 +416,7 @@ Jeśli z transkrypcji wynika: "wyślij sms/email ...", zwróć draft_sms/draft_e
     if (eventAction) {
       legacyMeeting = {
         id: Date.now(),
-        title: eventAction.payload.title || "Spotkanie z głosówki",
+        title: eventAction.payload.title || "Spotkanie z gĹ‚osĂłwki",
         date: eventAction.payload.date,
         time: eventAction.payload.time,
       };
@@ -442,7 +442,8 @@ Jeśli z transkrypcji wynika: "wyślij sms/email ...", zwróć draft_sms/draft_e
     });
   } catch (e: any) {
     console.error(e);
-    const msg = typeof e?.message === "string" ? e.message : "Błąd serwera voice-analyze";
+    const msg = typeof e?.message === "string" ? e.message : "BĹ‚Ä…d serwera voice-analyze";
     return NextResponse.json({ success: false, error: msg }, { status: 500 });
   }
 }
+
