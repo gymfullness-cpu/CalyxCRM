@@ -58,8 +58,8 @@ function writeJson(fp: string, data: any) {
   fs.writeFileSync(fp, JSON.stringify(data, null, 2), "utf8");
 }
 
-function getClientIp() {
-  const h = headers();
+async function getClientIp() {
+  const h = await headers();
   const xff = h.get("x-forwarded-for");
   if (xff) return xff.split(",")[0].trim();
   const xr = h.get("x-real-ip");
@@ -116,7 +116,7 @@ export async function POST(req: Request) {
     }
 
     // ✅ rate limit per IP
-    const ip = getClientIp();
+    const ip = await getClientIp();
     const rl = checkRateLimit(ip);
     if (!rl.ok) return NextResponse.json({ ok: false, error: rl.error }, { status: 429 });
 

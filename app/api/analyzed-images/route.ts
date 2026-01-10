@@ -5,17 +5,32 @@ export const runtime = "nodejs";
 
 export async function POST(req: Request) {
   try {
-    console.log("▶ API: request received");
+    const body = await req.json().catch(() => ({}));
+    const { images } = body as { images?: unknown };
 
-    const body = await req.json();
-    console.log("▶ BODY:", body);
-
-    const { images } = body as { images?: string[] };
-
-    if (!images || !Array.isArray(images) || images.length === 0) {
+    if (!Array.isArray(images) || images.length === 0) {
       return NextResponse.json(
         { error: "Brak poprawnych linków do zdjęć" },
         { status: 400 }
+      );
+    }
+
+    const cleanedImages = images
+      .filter((u): u is string => typeof u === "string")
+      .map((u) => u.trim())
+      .filter((u) => u.length > 0);
+
+    if (cleanedImages.length === 0) {
+      return NextResponse.json(
+        { error: "Brak poprawnych linków do zdjęć" },
+        { status: 400 }
+      );
+    }
+
+    if (!process.env.OPENAI_API_KEY) {
+      return NextResponse.json(
+        { error: "Brak OPENAI_API_KEY w env" },
+        { status: 500 }
       );
     }
 
@@ -23,35 +38,33 @@ export async function POST(req: Request) {
       apiKey: process.env.OPENAI_API_KEY,
     });
 
-    console.log("▶ Calling OpenAI...");
+    // ✅ content z literalami: kluczowe, żeby TS nie robił "type: string"
+    const content = [
+      {
+        type: "text" as const,
+        text:
+          "Przeanalizuj stan techniczny nieruchomości na podstawie zdjęć. " +
+          "Opisz standard wykończenia, zużycie, ewentualne wady.",
+      },
+      ...cleanedImages.map((url) => ({
+        type: "image_url" as const,
+        image_url: { url },
+      })),
+    ];
 
     const response = await client.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
           role: "user",
-          content: [
-            {
-              type: "text" as const,
-              text:
-                "Przeanalizuj stan techniczny nieruchomości na podstawie zdjęć. " +
-                "Opisz standard wykończenia, zużycie, ewentualne wady.",
-            },
-            ...images.map((url: string) => ({
-              type: "image_url" as const,
-              image_url: { url },
-            })),
-          ],
+          content,
         },
       ],
     });
 
-    console.log("▶ OpenAI response received");
-
-    const result = response.choices[0]?.message?.content;
+    const result = response.choices?.[0]?.message?.content;
 
     if (!result) {
-      console.error("❌ Brak treści w odpowiedzi AI");
       return NextResponse.json(
         { error: "AI nie zwróciło analizy" },
         { status: 500 }
@@ -60,16 +73,15 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ result });
   } catch (err: unknown) {
-    console.error("❌ API ERROR:", err);
-
     const message =
-      err instanceof Error ? err.message : typeof err === "string" ? err : "Nieznany błąd";
+      err instanceof Error
+        ? err.message
+        : typeof err === "string"
+          ? err
+          : "Nieznany błąd";
 
     return NextResponse.json(
-      {
-        error: "Błąd serwera API",
-        details: message,
-      },
+      { error: "Błąd serwera API", details: message },
       { status: 500 }
     );
   }

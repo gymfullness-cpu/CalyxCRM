@@ -47,14 +47,50 @@ function typeMeta(t: FollowUp["type"]) {
   };
 }
 
+/** Bezpieczne wczytanie follow-upów z localStorage (JSON.parse zwraca unknown i psuje uniony) */
+function readStoredFollowUps(): FollowUp[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+
+    const out: FollowUp[] = [];
+    for (const x of parsed) {
+      if (!x || typeof x !== "object") continue;
+
+      const obj = x as any;
+
+      const id = typeof obj.id === "number" ? obj.id : Number(obj.id);
+      const relatedId = typeof obj.relatedId === "number" ? obj.relatedId : Number(obj.relatedId);
+      const type = obj.type === "pozysk" || obj.type === "prezentacja" ? obj.type : null;
+      const dueDate = typeof obj.dueDate === "string" ? obj.dueDate : "";
+      const status = obj.status === "pending" || obj.status === "done" ? obj.status : "pending";
+
+      if (!Number.isFinite(id) || !Number.isFinite(relatedId) || !type) continue;
+
+      out.push({
+        id,
+        relatedId,
+        type,
+        dueDate,
+        status,
+      });
+    }
+    return out;
+  } catch {
+    return [];
+  }
+}
+
 export default function FollowUpsPage() {
   const [items, setItems] = useState<FollowUp[]>([]);
   const [filter, setFilter] = useState<"all" | "pending" | "done">("pending");
   const [sort, setSort] = useState<"dateAsc" | "dateDesc">("dateAsc");
 
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) setItems(JSON.parse(saved));
+    // ✅ Najważniejsze: wczytujemy jako FollowUp[], bez "status: string"
+    setItems(readStoredFollowUps());
   }, []);
 
   const persist = (data: FollowUp[]) => {
@@ -63,12 +99,12 @@ export default function FollowUpsPage() {
   };
 
   const markDone = (id: number) => {
-    const updated = items.map((f) => (f.id === id ? { ...f, status: "done" } : f));
+    const updated: FollowUp[] = items.map((f) => (f.id === id ? { ...f, status: "done" as const } : f));
     persist(updated);
   };
 
   const reopen = (id: number) => {
-    const updated = items.map((f) => (f.id === id ? { ...f, status: "pending" } : f));
+    const updated: FollowUp[] = items.map((f) => (f.id === id ? { ...f, status: "pending" as const } : f));
     persist(updated);
   };
 
@@ -137,7 +173,7 @@ export default function FollowUpsPage() {
         <div className="flex items-center gap-2">
           <select
             value={sort}
-            onChange={(e) => setSort(e.target.value as any)}
+            onChange={(e) => setSort(e.target.value as "dateAsc" | "dateDesc")}
             style={{
               background: "rgba(255,255,255,0.06)",
               border: "1px solid rgba(255,255,255,0.10)",

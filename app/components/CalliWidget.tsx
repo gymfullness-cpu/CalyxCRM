@@ -4,6 +4,48 @@ import { useEffect, useRef, useState } from "react";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
+function renderContentWithLinks(text: string) {
+  // Zamień URL-e na klikalne linki (proste i bez bibliotek)
+  const urlRegex = /(https?:\/\/[^\s)]+)|(\bwww\.[^\s)]+)/g;
+
+  const parts: Array<string | { url: string; label: string }> = [];
+  let lastIndex = 0;
+
+  const matches = text.matchAll(urlRegex);
+  for (const match of matches) {
+    const raw = match[0];
+    const index = match.index ?? 0;
+
+    if (index > lastIndex) {
+      parts.push(text.slice(lastIndex, index));
+    }
+
+    const url = raw.startsWith("http") ? raw : `https://${raw}`;
+    parts.push({ url, label: raw });
+
+    lastIndex = index + raw.length;
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+
+  return parts.map((p, i) => {
+    if (typeof p === "string") return <span key={i}>{p}</span>;
+    return (
+      <a
+        key={i}
+        href={p.url}
+        target="_blank"
+        rel="noreferrer noopener"
+        style={{ textDecoration: "underline" }}
+      >
+        {p.label}
+      </a>
+    );
+  });
+}
+
 export default function CalliWidget() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
@@ -11,21 +53,23 @@ export default function CalliWidget() {
     {
       role: "assistant",
       content:
-        "Cześć 👋 Jestem **Calli Chat**.\n\nPomagam w nieruchomościach (KW, notariusz, urząd, dokumenty), ale mogę też odpowiedzieć na dowolne pytanie i sprawdzić aktualne informacje w sieci.\n\nZadaj pytanie 👇",
+        "Cześć 👋 Jestem Calli Chat.\n\nPomagam w nieruchomościach (KW, notariusz, urząd, dokumenty), ale mogę też odpowiedzieć na dowolne pytanie i sprawdzić aktualne informacje w sieci.\n\nZadaj pytanie 👇",
     },
   ]);
   const [loading, setLoading] = useState(false);
   const listRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    listRef.current?.scrollTo({ top: listRef.current.scrollHeight });
+    const el = listRef.current;
+    if (!el) return;
+    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
   }, [messages, open]);
 
   async function send() {
     const text = input.trim();
     if (!text || loading) return;
 
-    const next = [...messages, { role: "user", content: text }];
+    const next = [...messages, { role: "user" as const, content: text }];
     setMessages(next);
     setInput("");
     setLoading(true);
@@ -47,7 +91,8 @@ export default function CalliWidget() {
         const srcText = data.sources
           .slice(0, 5)
           .map((s: any, i: number) => {
-            const title = typeof s?.title === "string" && s.title.trim() ? s.title.trim() : "";
+            const title =
+              typeof s?.title === "string" && s.title.trim() ? s.title.trim() : "";
             const url = typeof s?.url === "string" ? s.url : "";
             return `${i + 1}. ${title ? title + " — " : ""}${url}`;
           })
@@ -59,12 +104,12 @@ export default function CalliWidget() {
         }
       }
 
-      setMessages((m) => [...m, { role: "assistant", content }]);
+      setMessages((m) => [...m, { role: "assistant" as const, content }]);
     } catch {
       setMessages((m) => [
         ...m,
         {
-          role: "assistant",
+          role: "assistant" as const,
           content: "⚠️ Wystąpił błąd. Spróbuj ponownie za chwilę.",
         },
       ]);
@@ -135,9 +180,7 @@ export default function CalliWidget() {
             }}
           >
             ☁️ Calli Chat
-            <div style={{ fontSize: 12, color: C.muted }}>
-              AI • nieruchomości • web
-            </div>
+            <div style={{ fontSize: 12, color: C.muted }}>AI • nieruchomości • web</div>
           </div>
 
           {/* Messages */}
@@ -165,12 +208,10 @@ export default function CalliWidget() {
                   whiteSpace: "pre-wrap",
                   fontSize: 14,
                   overflowWrap: "anywhere",
-wordBreak: "break-word",
-maxWidth: "88%",
-
+                  wordBreak: "break-word",
                 }}
               >
-                {m.content}
+                {renderContentWithLinks(m.content)}
               </div>
             ))}
             {loading && (
@@ -189,8 +230,21 @@ maxWidth: "88%",
           >
             <input
               value={input}
+              disabled={loading}
               onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && send()}
+              onKeyDown={(e) => {
+                // Nie wysyłaj podczas IME (np. chiński/japoński)
+                if ((e as any).isComposing) return;
+
+                // Shift+Enter = nowa linia
+                if (e.key === "Enter" && e.shiftKey) return;
+
+                // Enter = wyślij
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  void send();
+                }
+              }}
               placeholder="Zadaj pytanie…"
               style={{
                 flex: 1,
@@ -200,10 +254,12 @@ maxWidth: "88%",
                 color: C.text,
                 padding: "10px 12px",
                 outline: "none",
+                opacity: loading ? 0.7 : 1,
+                cursor: loading ? "not-allowed" : "text",
               }}
             />
             <button
-              onClick={send}
+              onClick={() => void send()}
               disabled={loading}
               style={{
                 borderRadius: 12,
@@ -211,7 +267,8 @@ maxWidth: "88%",
                 background: C.userBg,
                 color: C.userText,
                 fontWeight: 800,
-                cursor: "pointer",
+                cursor: loading ? "not-allowed" : "pointer",
+                opacity: loading ? 0.7 : 1,
               }}
             >
               Wyślij

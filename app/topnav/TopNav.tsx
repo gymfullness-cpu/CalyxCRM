@@ -1,11 +1,40 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { usePathname } from "next/navigation";
-import NavLink from "./NavLink";
 import { AppBrand } from "../components/AppBrand";
 import ThemeSwitcher from "../components/ThemeSwitcher";
 
+function NavLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 8,
+        padding: "10px 12px",
+        borderRadius: 12,
+        border: "1px solid rgba(255,255,255,0.14)",
+        background: "rgba(255,255,255,0.06)",
+        color: "var(--text-main)",
+        fontWeight: 800,
+        textDecoration: "none",
+        userSelect: "none",
+        cursor: "pointer",
+      }}
+    >
+      {children}
+    </Link>
+  );
+}
 
 export default function TopNav() {
   const [hidden, setHidden] = useState(false);

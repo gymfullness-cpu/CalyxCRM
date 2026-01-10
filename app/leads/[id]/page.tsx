@@ -8,12 +8,17 @@ import CallButton from "./CallButton";
 import StatusSwitcher from "./StatusSwitcher";
 
 type LeadRole = "właściciel" | "kupujący";
+type LeadStatus = "Nowy" | "Oddzwonić" | "Zamknięty";
+
+function normalizeLeadStatus(s: unknown): LeadStatus {
+  return s === "Nowy" || s === "Oddzwonić" || s === "Zamknięty" ? s : "Nowy";
+}
 
 type Lead = {
   id: number;
   name: string;
   phone: string;
-  status: string;
+  status: LeadStatus;
   role?: LeadRole;
   propertyIds?: number[];
 };
@@ -25,7 +30,7 @@ type Property = {
 
 export default function LeadPage() {
   const params = useParams();
-  const id = Number(params.id);
+  const id = Number((params as any).id);
 
   const [lead, setLead] = useState<Lead | null>(null);
   const [properties, setProperties] = useState<Property[]>([]);
@@ -35,7 +40,29 @@ export default function LeadPage() {
     const saved = localStorage.getItem("leads");
     if (!saved) return;
 
-    const list: Lead[] = JSON.parse(saved);
+    const parsed: unknown = JSON.parse(saved);
+    if (!Array.isArray(parsed)) {
+      setLead(null);
+      return;
+    }
+
+    // normalizacja danych z localStorage
+    const list: Lead[] = parsed
+      .filter((x) => x && typeof x === "object")
+      .map((x: any) => ({
+        id: typeof x.id === "number" ? x.id : Number(x.id),
+        name: typeof x.name === "string" ? x.name : "",
+        phone: typeof x.phone === "string" ? x.phone : "",
+        status: normalizeLeadStatus(x.status),
+        role: x.role === "właściciel" || x.role === "kupujący" ? x.role : undefined,
+        propertyIds: Array.isArray(x.propertyIds)
+          ? x.propertyIds
+              .map((v: any) => (typeof v === "number" ? v : Number(v)))
+              .filter((n: number) => Number.isFinite(n))
+          : undefined,
+      }))
+      .filter((l) => Number.isFinite(l.id) && l.name.trim() && l.phone.trim());
+
     const found = list.find((l) => l.id === id) || null;
     setLead(found);
   }, [id]);
@@ -43,9 +70,20 @@ export default function LeadPage() {
   // 🔹 NIERUCHOMOŚCI
   useEffect(() => {
     const saved = localStorage.getItem("properties");
-    if (saved) {
-      setProperties(JSON.parse(saved));
-    }
+    if (!saved) return;
+
+    const parsed: unknown = JSON.parse(saved);
+    if (!Array.isArray(parsed)) return;
+
+    const list: Property[] = parsed
+      .filter((x) => x && typeof x === "object")
+      .map((x: any) => ({
+        id: typeof x.id === "number" ? x.id : Number(x.id),
+        street: typeof x.street === "string" ? x.street : "",
+      }))
+      .filter((p) => Number.isFinite(p.id) && p.street.trim());
+
+    setProperties(list);
   }, []);
 
   if (!lead) {
@@ -53,15 +91,23 @@ export default function LeadPage() {
   }
 
   const saveLead = (updated: Lead) => {
-    setLead(updated);
+    // upewnij się, że status zawsze jest poprawny
+    const safeUpdated: Lead = { ...updated, status: normalizeLeadStatus(updated.status) };
+
+    setLead(safeUpdated);
 
     const saved = localStorage.getItem("leads");
     if (!saved) return;
 
-    const list: Lead[] = JSON.parse(saved);
-    const newList = list.map((l) =>
-      l.id === updated.id ? updated : l
-    );
+    const parsed: unknown = JSON.parse(saved);
+    if (!Array.isArray(parsed)) return;
+
+    // zapisujemy z zachowaniem reszty pól w storage, ale status normalizujemy
+    const newList = parsed.map((x: any) => {
+      const xid = typeof x?.id === "number" ? x.id : Number(x?.id);
+      if (xid === safeUpdated.id) return safeUpdated;
+      return x;
+    });
 
     localStorage.setItem("leads", JSON.stringify(newList));
   };
@@ -123,41 +169,48 @@ export default function LeadPage() {
         </select>
       </p>
 
+      {/* ✅ tu już zawsze idzie poprawny union */}
       <StatusSwitcher leadId={lead.id} initialStatus={lead.status} />
 
       <p>
         <strong>Telefon:</strong>{" "}
         <a href={`tel:${lead.phone}`}>{lead.phone}</a>
       </p>
-<hr />
 
-<h3>📅 Spotkania</h3>
+      <hr />
 
-{(() => {
-  const saved = localStorage.getItem("meetings");
-  if (!saved) return <p>Brak spotkań</p>;
+      <h3>📅 Spotkania</h3>
 
-  const meetings = JSON.parse(saved).filter(
-    (m: any) => m.leadId === lead.id
-  );
+      {(() => {
+        const saved = localStorage.getItem("meetings");
+        if (!saved) return <p>Brak spotkań</p>;
 
-  if (meetings.length === 0) {
-    return <p>Brak spotkań</p>;
-  }
+        let meetingsRaw: unknown;
+        try {
+          meetingsRaw = JSON.parse(saved);
+        } catch {
+          return <p>Brak spotkań</p>;
+        }
 
-  return (
-    <ul>
-      {meetings.map((m: any) => (
-        <li key={m.id}>
-          {m.date} {m.time} —{" "}
-          {m.type === "pozyskowe"
-            ? "✍️ Pozyskowe"
-            : "🏠 Prezentacja"}
-        </li>
-      ))}
-    </ul>
-  );
-})()}
+        if (!Array.isArray(meetingsRaw)) return <p>Brak spotkań</p>;
+
+        const meetings = meetingsRaw.filter((m: any) => m?.leadId === lead.id);
+
+        if (meetings.length === 0) {
+          return <p>Brak spotkań</p>;
+        }
+
+        return (
+          <ul>
+            {meetings.map((m: any) => (
+              <li key={m.id}>
+                {m.date} {m.time} —{" "}
+                {m.type === "pozyskowe" ? "✍️ Pozyskowe" : "🏠 Prezentacja"}
+              </li>
+            ))}
+          </ul>
+        );
+      })()}
 
       <CallButton phone={lead.phone} />
       <Notes leadId={lead.id} />
