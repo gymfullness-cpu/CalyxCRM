@@ -1,13 +1,10 @@
 generator client {
   provider   = "prisma-client-js"
   engineType = "library"
-   url      = env("DATABASE_URL")
 }
-
 
 datasource db {
   provider = "sqlite"
-   
 }
 
 enum OrgMemberRole {
@@ -68,7 +65,7 @@ model OrgMember {
   email String
   name  String?
   phone String?
-  rank  String? // np. "Senior", "Junior", "Top Performer"
+  rank  String?
 
   role      OrgMemberRole @default(AGENT)
   createdAt DateTime      @default(now())
@@ -164,6 +161,7 @@ model AgentProfile {
 
   member OrgMember @relation(fields: [memberId], references: [id])
 }
+
 enum ContactType {
   SELLER
   BUYER
@@ -171,12 +169,11 @@ enum ContactType {
 }
 
 model Contact {
-  id        String      @id @default(cuid())
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  // ważne: kontakty w obrębie organizacji (biura)
-  orgId     String
+  orgId String
 
   type      ContactType @default(OTHER)
   firstName String
@@ -184,19 +181,21 @@ model Contact {
   phone     String?
   email     String?
   notes     String?
-tags      ContactTagOnContact[]
+
+  tags ContactTagOnContact[]
 
   @@index([orgId])
   @@index([orgId, lastName])
 }
+
 model ContactTag {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  orgId     String
-  name      String
+  orgId String
+  name  String
 
-  contacts  ContactTagOnContact[]
+  contacts ContactTagOnContact[]
 
   @@unique([orgId, name])
   @@index([orgId])
@@ -207,8 +206,8 @@ model ContactTagOnContact {
   tagId     String
   createdAt DateTime @default(now())
 
-  contact   Contact    @relation(fields: [contactId], references: [id], onDelete: Cascade)
-  tag       ContactTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  contact Contact    @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  tag     ContactTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([contactId, tagId])
   @@index([tagId])
