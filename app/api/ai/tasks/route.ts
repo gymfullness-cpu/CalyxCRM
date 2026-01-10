@@ -1,6 +1,10 @@
 ﻿import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const orgId = searchParams.get("orgId");

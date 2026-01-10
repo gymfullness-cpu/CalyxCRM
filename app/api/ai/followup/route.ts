@@ -2,6 +2,10 @@
 import { prisma } from "@/app/lib/prisma";
 import { proposeFollowUp } from "@/app/lib/ai/followup";
 
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();

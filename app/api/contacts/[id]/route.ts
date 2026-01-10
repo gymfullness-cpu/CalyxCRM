@@ -1,5 +1,5 @@
-import { NextResponse, type NextRequest } from "next/server";
-import { prisma } from "@/app/lib/db";
+﻿import { NextResponse, type NextRequest } from "next/server";
+import { prisma } from "@/app/lib/prisma";
 
 export const runtime = "nodejs";
 
@@ -31,7 +31,7 @@ export async function PATCH(req: NextRequest, ctx: Ctx) {
         if (tagIds.length > 0) {
           await tx.contactTagOnContact.createMany({
             data: tagIds.map((tagId) => ({ contactId: id, tagId })),
-            // ✅ USUNIĘTE: skipDuplicates (Twoja wersja Prisma nie wspiera tego pola)
+            // âś… USUNIÄTE: skipDuplicates (Twoja wersja Prisma nie wspiera tego pola)
           });
         }
       }
@@ -46,7 +46,7 @@ export async function PATCH(req: NextRequest, ctx: Ctx) {
   } catch (e: any) {
     console.log("ERROR /api/contacts/[id] PATCH:", e);
     return NextResponse.json(
-      { error: "Błąd serwera PATCH contact" },
+      { error: "BĹ‚Ä…d serwera PATCH contact" },
       { status: 500 }
     );
   }
@@ -60,7 +60,7 @@ export async function DELETE(_req: NextRequest, ctx: Ctx) {
   } catch (e: any) {
     console.log("ERROR /api/contacts/[id] DELETE:", e);
     return NextResponse.json(
-      { error: "Błąd serwera DELETE contact" },
+      { error: "BĹ‚Ä…d serwera DELETE contact" },
       { status: 500 }
     );
   }
