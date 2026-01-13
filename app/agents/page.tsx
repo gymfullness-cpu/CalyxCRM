@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
@@ -48,7 +48,10 @@ function RoleBadge({ role }: { role: string }) {
   };
 
   return (
-    <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-extrabold" style={styleByTone[tone]}>
+    <span
+      className="inline-flex items-center rounded-full px-3 py-1 text-xs font-extrabold"
+      style={styleByTone[tone]}
+    >
       {role}
     </span>
   );
@@ -67,7 +70,7 @@ export default function AgentsPage() {
   const [rank, setRank] = useState("");
   const [role, setRole] = useState("AGENT");
 
-  // âś… localStorage czytamy dopiero po mount (bez hydration mismatch)
+  // ✅ localStorage czytamy dopiero po mount (bez hydration mismatch)
   useEffect(() => {
     async function initOrg() {
       setHydrated(true);
@@ -107,7 +110,7 @@ export default function AgentsPage() {
   async function addAgent() {
     if (!orgId) return alert("Brak orgId w localStorage");
     if (!email.trim()) return alert("Podaj email");
-    if (!fullName.trim()) return alert("Podaj imiÄ™ i nazwisko");
+    if (!fullName.trim()) return alert("Podaj imię i nazwisko");
 
     const res = await fetch("/api/org/members", {
       method: "POST",
@@ -122,7 +125,7 @@ export default function AgentsPage() {
       }),
     });
 
-    // âś… odporne na brak JSON
+    // ✅ odporne na brak JSON
     let data: any = null;
     const text = await res.text();
     try {
@@ -132,7 +135,7 @@ export default function AgentsPage() {
     }
 
     if (!res.ok) {
-      alert(data?.error ?? data?.detail ?? text ?? "BĹ‚Ä…d");
+      alert(data?.error ?? data?.detail ?? text ?? "Błąd");
       return;
     }
 
@@ -153,15 +156,18 @@ export default function AgentsPage() {
     return { all, owners, admins, managers };
   }, [agents]);
 
-  // âś… podczas SSR i zanim useEffect odpali, render stabilny
+  // ✅ podczas SSR i zanim useEffect odpali, render stabilny
   if (!hydrated) {
     return (
       <main className="mx-auto max-w-7xl px-6 py-8">
-        <h1 className="text-3xl font-extrabold tracking-tight" style={{ color: "var(--text-main)" }}>
-          đź§‘â€Ťđź’Ľ Agenci
+        <h1
+          className="text-3xl font-extrabold tracking-tight"
+          style={{ color: "var(--text-main)" }}
+        >
+          🧑‍💼 Agenci
         </h1>
         <div className="mt-3 text-sm" style={{ color: "var(--text-muted)" }}>
-          âŹł Ĺadowanie...
+          ⏳ Ładowanie...
         </div>
       </main>
     );
@@ -170,17 +176,29 @@ export default function AgentsPage() {
   if (!orgId) {
     return (
       <main className="mx-auto max-w-7xl px-6 py-8">
-        <h1 className="text-3xl font-extrabold tracking-tight" style={{ color: "var(--text-main)" }}>
-          đź§‘â€Ťđź’Ľ Agenci
+        <h1
+          className="text-3xl font-extrabold tracking-tight"
+          style={{ color: "var(--text-main)" }}
+        >
+          🧑‍💼 Agenci
         </h1>
 
-        <div className="mt-4 rounded-2xl p-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border-soft)" }}>
-          <div className="text-sm font-extrabold" style={{ color: "rgba(255,220,220,0.95)" }}>
-            âťŚ Brak orgId w localStorage.
+        <div
+          className="mt-4 rounded-2xl p-6"
+          style={{
+            background: "var(--bg-card)",
+            border: "1px solid var(--border-soft)",
+          }}
+        >
+          <div
+            className="text-sm font-extrabold"
+            style={{ color: "rgba(255,220,220,0.95)" }}
+          >
+            ❌ Brak orgId w localStorage.
           </div>
 
           <div className="mt-3 text-sm" style={{ color: "var(--text-muted)" }}>
-            OtwĂłrz DevTools â†’ Console i wklej:
+            Otwórz DevTools → Console i wklej:
           </div>
 
           <pre
@@ -211,14 +229,17 @@ export default function AgentsPage() {
               color: "rgba(234,255,251,0.92)",
             }}
           >
-            <span style={{ color: "var(--accent)" }}>â—Ź</span> ZespĂłĹ‚ / Uprawnienia
+            <span style={{ color: "var(--accent)" }}>●</span> Zespół / Uprawnienia
           </div>
 
-          <h1 className="mt-3 text-3xl font-extrabold tracking-tight" style={{ color: "var(--text-main)" }}>
-            đź§‘â€Ťđź’Ľ Agenci
+          <h1
+            className="mt-3 text-3xl font-extrabold tracking-tight"
+            style={{ color: "var(--text-main)" }}
+          >
+            🧑‍💼 Agenci
           </h1>
           <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>
-            Dodawaj czĹ‚onkĂłw biura, przypisuj role i zarzÄ…dzaj dostÄ™pem.
+            Dodawaj członków biura, przypisuj role i zarządzaj dostępem.
           </p>
         </div>
 
@@ -234,15 +255,18 @@ export default function AgentsPage() {
       {/* FORM */}
       <section
         className="mt-7 rounded-2xl p-6 md:p-7"
-        style={{ background: "var(--bg-card)", border: "1px solid var(--border-soft)" }}
+        style={{
+          background: "var(--bg-card)",
+          border: "1px solid var(--border-soft)",
+        }}
       >
         <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <div>
             <h2 className="text-xl font-extrabold" style={{ color: "var(--text-main)" }}>
-              âž• Dodaj agenta
+              ➕ Dodaj agenta
             </h2>
             <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
-              Minimalnie: email i imiÄ™/nazwisko.
+              Minimalnie: email i imię/nazwisko.
             </p>
           </div>
 
@@ -263,7 +287,7 @@ export default function AgentsPage() {
           </div>
 
           <div>
-            <label className="label">ImiÄ™ i nazwisko</label>
+            <label className="label">Imię i nazwisko</label>
             <input
               className="input"
               value={fullName}
@@ -274,12 +298,22 @@ export default function AgentsPage() {
 
           <div>
             <label className="label">Telefon</label>
-            <input className="input" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="500600700" />
+            <input
+              className="input"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="500600700"
+            />
           </div>
 
           <div>
             <label className="label">Ranga (np. Senior / Junior / Top)</label>
-            <input className="input" value={rank} onChange={(e) => setRank(e.target.value)} placeholder="Senior" />
+            <input
+              className="input"
+              value={rank}
+              onChange={(e) => setRank(e.target.value)}
+              placeholder="Senior"
+            />
           </div>
 
           <div className="md:col-span-2">
@@ -303,7 +337,8 @@ export default function AgentsPage() {
             background: rgba(255, 255, 255, 0.04);
             color: var(--text-main);
             outline: none;
-            transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease,
+              background 0.15s ease;
           }
           .input:focus {
             border-color: rgba(45, 212, 191, 0.55);
@@ -326,24 +361,36 @@ export default function AgentsPage() {
         <div className="flex items-end justify-between gap-3 flex-wrap">
           <div>
             <h2 className="text-xl font-extrabold" style={{ color: "var(--text-main)" }}>
-              Lista agentĂłw
+              Lista agentów
             </h2>
             <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
-              {loading ? "Ĺadowanieâ€¦" : `ĹÄ…cznie: ${agents.length}`}
+              {loading ? "Ładowanie…" : `Łącznie: ${agents.length}`}
             </p>
           </div>
         </div>
 
         {loading ? (
-          <div className="mt-4 rounded-2xl p-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border-soft)" }}>
+          <div
+            className="mt-4 rounded-2xl p-6"
+            style={{
+              background: "var(--bg-card)",
+              border: "1px solid var(--border-soft)",
+            }}
+          >
             <div className="text-sm" style={{ color: "var(--text-muted)" }}>
-              âŹł Ĺadowanie agentĂłw...
+              ⏳ Ładowanie agentów...
             </div>
           </div>
         ) : agents.length === 0 ? (
-          <div className="mt-4 rounded-2xl p-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border-soft)" }}>
+          <div
+            className="mt-4 rounded-2xl p-6"
+            style={{
+              background: "var(--bg-card)",
+              border: "1px solid var(--border-soft)",
+            }}
+          >
             <div className="text-sm" style={{ color: "var(--text-muted)" }}>
-              Brak agentĂłw w tym biurze. Dodaj pierwszego powyĹĽej đź‘†
+              Brak agentów w tym biurze. Dodaj pierwszego powyżej 👆
             </div>
           </div>
         ) : (
@@ -351,7 +398,7 @@ export default function AgentsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr style={{ background: "rgba(15,23,42,0.04)" }}>
-                  <Th>ImiÄ™ i nazwisko</Th>
+                  <Th>Imię i nazwisko</Th>
                   <Th>Email</Th>
                   <Th>Telefon</Th>
                   <Th>Ranga</Th>
@@ -362,7 +409,11 @@ export default function AgentsPage() {
 
               <tbody>
                 {agents.map((a) => (
-                  <tr key={a.id} className="border-t" style={{ borderColor: "rgba(15,23,42,0.10)" }}>
+                  <tr
+                    key={a.id}
+                    className="border-t"
+                    style={{ borderColor: "rgba(15,23,42,0.10)" }}
+                  >
                     <Td strong>{a.name ?? "-"}</Td>
                     <Td>{a.email}</Td>
                     <Td>{a.phone ?? "-"}</Td>
@@ -381,7 +432,7 @@ export default function AgentsPage() {
                           color: "#0f172a",
                         }}
                       >
-                        Profil â†’
+                        Profil →
                       </Link>
                     </Td>
                   </tr>
@@ -456,7 +507,6 @@ function Th({ children }: { children?: React.ReactNode }) {
   );
 }
 
-
 function Td({
   children,
   strong,
@@ -469,10 +519,12 @@ function Td({
   return (
     <td
       className={`px-5 py-3 ${alignRight ? "text-right" : ""}`}
-      style={{ color: strong ? "#0f172a" : "rgba(15,23,42,0.80)", fontWeight: strong ? 900 : 600 }}
+      style={{
+        color: strong ? "#0f172a" : "rgba(15,23,42,0.80)",
+        fontWeight: strong ? 900 : 600,
+      }}
     >
       {children}
     </td>
   );
 }
-

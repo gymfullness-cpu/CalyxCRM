@@ -1,12 +1,35 @@
-﻿import { NextResponse } from "next/server";
+?import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+
+function getOpenAI() {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) return null;
+
+  // Import runtime, żeby build nie evaluował modułu OpenAI bez env
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const OpenAI = require("openai").default as any;
+
+  return new OpenAI({ apiKey });
+}
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 export async function POST(req: Request) {
-  try {
+  
+    const openai = getOpenAI();
+    if (!openai) {
+      return NextResponse.json(
+        { error: "Missing OPENAI_API_KEY", details: "Ustaw OPENAI_API_KEY w Vercel -> Project Settings -> Environment Variables." },
+        { status: 500 }
+      );
+    }
+try {
     const { imageUrl } = await req.json();
 
     if (!imageUrl) {
@@ -22,7 +45,7 @@ export async function POST(req: Request) {
         {
           role: "system",
           content:
-            "JesteĹ› ekspertem OCR. Odczytujesz NUMER TELEFONU z obrazu.",
+            "Jesteś ekspertem OCR. Odczytujesz NUMER TELEFONU z obrazu.",
         },
         {
           role: "user",
@@ -31,8 +54,8 @@ export async function POST(req: Request) {
               type: "text",
               text: `
 Odczytaj numer telefonu z obrazu.
-ZwrĂłÄ‡ TYLKO numer telefonu.
-JeĹ›li numeru nie ma â†’ napisz "BRAK NUMERU".
+Zwróć TYLKO numer telefonu.
+Jeśli numeru nie ma †’ napisz "BRAK NUMERU".
               `,
             },
             {
@@ -57,11 +80,10 @@ JeĹ›li numeru nie ma â†’ napisz "BRAK NUMERU".
 
     return NextResponse.json(
       {
-        error: "BĹ‚Ä…d OCR",
+        error: "Błąd OCR",
         details: error.message,
       },
       { status: 500 }
     );
   }
 }
-

@@ -1,4 +1,4 @@
-﻿import { Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import NavLink from "./NavLink";
 import Script from "next/script";
@@ -239,40 +239,40 @@ export default function RootLayout({
                 Calyx AI
               </span>
 
-              {/* âś… tu jest przeĹ‚Ä…cznik motywĂłw */}
+              {/* … tu jest przeÄąâ€šć…cznik motywów */}
               <ThemeSwitcher />
             </div>
 
             {/* MOBILE */}
             <div className="ce-mobile-menu">
               <details id="ce-mobile-details">
-                <summary className="ce-hamburger">â° Menu</summary>
+                <summary className="ce-hamburger">ÂÂ° Menu</summary>
 
                 <div className="ce-dropdown" id="ce-mobile-dropdown">
                   <div className="ce-grid">
-                    <NavLink href="/dashboard">đź“Š Dashboard</NavLink>
-                    <NavLink href="/leads">đź“ž Leady</NavLink>
-                    <NavLink href="/contacts">đź‘Ą Kontakty</NavLink>
-                    <NavLink href="/agents">đź§‘â€Ťđź’Ľ Agenci</NavLink>
+                    <NavLink href="/dashboard">📊 Ĺ  Dashboard</NavLink>
+                    <NavLink href="/leads">📊 Ĺľ Leady</NavLink>
+                    <NavLink href="/contacts">â€Ä„ Kontakty</NavLink>
+                    <NavLink href="/agents">Â§â€â‚¬Ĺ¤’Ä˝ Agenci</NavLink>
 
-                    <NavLink href="/prospects">đźŽŻ Pozyski</NavLink>
-                    <NavLink href="/prospects/intake">đź§ľ Pozyski z formularzy</NavLink>
-                    <NavLink href="/prospects/ads">đź“Ł Reklamy / Social</NavLink>
-                    <NavLink href="/prospects/form">đź“ť Formularz</NavLink>
+                    <NavLink href="/prospects">Ĺ» Pozyski</NavLink>
+                    <NavLink href="/prospects/intake">Â§Äľ Pozyski z formularzy</NavLink>
+                    <NavLink href="/prospects/ads">📊 Ĺ Reklamy / Social</NavLink>
+                    <NavLink href="/prospects/form">📊 ĹĄ Formularz</NavLink>
 
-                    <NavLink href="/properties">đźŹ  NieruchomoĹ›ci</NavLink>
+                    <NavLink href="/properties">ĹąÂ  NieruchomoÄąâ€şci</NavLink>
 
-                    <NavLink href="/calendar">đź“… Kalendarz</NavLink>
-                    <NavLink href="/followups">đź”” Follow-up</NavLink>
+                    <NavLink href="/calendar">📊 … Kalendarz</NavLink>
+                    <NavLink href="/followups">”” Follow-up</NavLink>
 
-                    <NavLink href="/analyzed">đź¤– AI: Analiza</NavLink>
-                    <NavLink href="/assistant/live">đźŽ§ AI: Coach</NavLink>
+                    <NavLink href="/analyzed">Â¤â— AI: Analiza</NavLink>
+                    <NavLink href="/assistant/live">Â§ AI: Coach</NavLink>
 
-                    <NavLink href="/news">đź—žď¸Ź PrasĂłwka</NavLink>
-                    <NavLink href="/newsletter">âś‰ď¸Ź Newsletter</NavLink>
-                    <NavLink href="/market">đźŚŤ Market</NavLink>
-                    <NavLink href="/voice-notes">đźŽ™ď¸Ź GĹ‚osĂłwki</NavLink>
-                    <NavLink href="/documents/sale">đź“„ Dokumenty</NavLink>
+                    <NavLink href="/news">â—ĹľÄ🏠Â¸Ĺą Prasówka</NavLink>
+                    <NavLink href="/newsletter">â€°Ä🏠Â¸Ĺą Newsletter</NavLink>
+                    <NavLink href="/market">ĹšĹ¤ Market</NavLink>
+                    <NavLink href="/voice-notes">â„˘Ä🏠Â¸Ĺą GÄąâ€šosÄ‚łwki</NavLink>
+                    <NavLink href="/documents/sale">📊 â€ž Dokumenty</NavLink>
                   </div>
                 </div>
               </details>
@@ -283,25 +283,25 @@ export default function RootLayout({
               className="ce-desktop-links"
               style={{ gap: 10, flexWrap: "wrap", alignItems: "center" }}
             >
-              <NavLink href="/dashboard">đź“Š Dashboard</NavLink>
-              <NavLink href="/leads">đź“ž Leady</NavLink>
-              <NavLink href="/contacts">đź‘Ą Kontakty</NavLink>
-              <NavLink href="/agents">đź§‘â€Ťđź’Ľ Agenci</NavLink>
+              <NavLink href="/dashboard">📊 Ĺ  Dashboard</NavLink>
+              <NavLink href="/leads">📊 Ĺľ Leady</NavLink>
+              <NavLink href="/contacts">â€Ä„ Kontakty</NavLink>
+              <NavLink href="/agents">Â§â€â‚¬Ĺ¤’Ä˝ Agenci</NavLink>
 
-              <NavLink href="/prospects">đźŽŻ Pozyski</NavLink>
-              <NavLink href="/properties">đźŹ  NieruchomoĹ›ci</NavLink>
+              <NavLink href="/prospects">Ĺ» Pozyski</NavLink>
+              <NavLink href="/properties">ĹąÂ  NieruchomoÄąâ€şci</NavLink>
 
-              <NavLink href="/calendar">đź“… Kalendarz</NavLink>
-              <NavLink href="/followups">đź”” Follow-up</NavLink>
+              <NavLink href="/calendar">📊 … Kalendarz</NavLink>
+              <NavLink href="/followups">”” Follow-up</NavLink>
 
-              <NavLink href="/analyzed">đź¤– AI: Analiza</NavLink>
-              <NavLink href="/assistant/live">đźŽ§ AI: Coach</NavLink>
+              <NavLink href="/analyzed">Â¤â— AI: Analiza</NavLink>
+              <NavLink href="/assistant/live">Â§ AI: Coach</NavLink>
 
-              <NavLink href="/market">đźŚŤ Market</NavLink>
-              <NavLink href="/voice-notes">đźŽ™ď¸Ź GĹ‚osĂłwki</NavLink>
-              <NavLink href="/documents/sale">đź“„ Dokumenty</NavLink>
-              <NavLink href="/news">đź—žď¸Ź PrasĂłwka</NavLink>
-              <NavLink href="/newsletter">âś‰ď¸Ź Newsletter</NavLink>
+              <NavLink href="/market">ĹšĹ¤ Market</NavLink>
+              <NavLink href="/voice-notes">â„˘Ä🏠Â¸Ĺą GÄąâ€šosÄ‚łwki</NavLink>
+              <NavLink href="/documents/sale">📊 â€ž Dokumenty</NavLink>
+              <NavLink href="/news">â—ĹľÄ🏠Â¸Ĺą Prasówka</NavLink>
+              <NavLink href="/newsletter">â€°Ä🏠Â¸Ĺą Newsletter</NavLink>
             </div>
           </div>
         </nav>
@@ -322,4 +322,3 @@ export default function RootLayout({
     </html>
   );
 }
-

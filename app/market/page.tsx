@@ -1,4 +1,4 @@
-﻿"use client";
+?"use client";
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -12,10 +12,10 @@ type MarketItem = {
   city?: string;
   district?: string;
 
-  // score moĹĽe byÄ‡ stary (0-100) albo nowy (1-10) â€” obsĹ‚uĹĽymy oba
+  // score może być‡ stary (0-100) albo nowy (1-10) — obsłużymy oba
   score?: number;
 
-  // âś… NOWE: wyĹ›wietlenia (jeĹ›li masz w danych)
+  // … NOWE: wyświetlenia (jeśli masz w danych)
   views?: number;
 
   url?: string;
@@ -26,12 +26,12 @@ type MarketItem = {
 };
 
 function fmtMoney(v?: number) {
-  if (v === undefined || v === null) return "â€”";
-  return `${v.toLocaleString("pl-PL")} zĹ‚`;
+  if (v === undefined || v === null) return "—";
+  return `${v.toLocaleString("pl-PL")} zł`;
 }
 
 function fmtNum(v?: number) {
-  if (v === undefined || v === null) return "â€”";
+  if (v === undefined || v === null) return "—";
   return v.toLocaleString("pl-PL");
 }
 
@@ -43,20 +43,20 @@ function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n));
 }
 
-// âś… score 1â€“10: jeĹ›li w danych masz 0â€“100 -> przeliczamy na 1â€“10
+// … score 1—10: jeśli w danych masz 0—100 -> przeliczamy na 1—10
 function score10(raw?: number): number | null {
   if (typeof raw !== "number" || Number.isNaN(raw)) return null;
 
-  // jeĹ›li ktoĹ› juĹĽ zapisuje 1â€“10
+  // jeśli ktoś już zapisuje 1—10
   if (raw >= 1 && raw <= 10) return Math.round(raw);
 
-  // jeĹ›li stary format 0â€“100
+  // jeśli stary format 0—100
   if (raw >= 0 && raw <= 100) {
     const s = Math.round((raw / 100) * 10);
     return clamp(s === 0 ? 1 : s, 1, 10);
   }
 
-  // dziwne wartoĹ›ci â€” znormalizuj
+  // dziwne wartości — znormalizuj
   const s = Math.round(raw);
   return clamp(s, 1, 10);
 }
@@ -65,8 +65,8 @@ function scoreLabel(s: number) {
   if (s >= 9) return "Wybitna";
   if (s >= 8) return "Bardzo dobra";
   if (s >= 7) return "Dobra";
-  if (s >= 6) return "OK / Ĺ›rednia";
-  if (s >= 4) return "SĹ‚aba";
+  if (s >= 6) return "OK / średnia";
+  if (s >= 4) return "Słaba";
   return "Ryzykowna";
 }
 
@@ -81,68 +81,68 @@ function buildDetailedAnalysis(i: MarketItem) {
 
   const s10 = score10(i.score);
 
-  // âś… Bardziej â€śdokĹ‚adneâ€ť sekcje oparte o to co juĹĽ mamy
+  // … Bardziej €śdokładne€ť sekcje oparte o to co już mamy
   const summary: string[] = [];
-  if (i.title) summary.push(`TytuĹ‚: ${i.title}`);
+  if (i.title) summary.push(`Tytuł: ${i.title}`);
   if (i.portal) summary.push(`Portal: ${i.portal}`);
   if (i.city || i.district) summary.push(`Lokalizacja: ${[i.city, i.district].filter(Boolean).join(", ")}`);
   if (hasPrice) summary.push(`Cena: ${fmtMoney(i.price)}`);
-  if (hasArea) summary.push(`MetraĹĽ: ${fmtNum(i.area)} mÂ˛`);
-  if (ppm2) summary.push(`Cena za mÂ˛: ${fmtMoney(Math.round(ppm2))}/mÂ˛`);
-  if (typeof i.views === "number") summary.push(`WyĹ›wietlenia: ${fmtNum(i.views)}`);
+  if (hasArea) summary.push(`Metraż: ${fmtNum(i.area)} m˛`);
+  if (ppm2) summary.push(`Cena za m˛: ${fmtMoney(Math.round(ppm2))}/m˛`);
+  if (typeof i.views === "number") summary.push(`Wyświetlenia: ${fmtNum(i.views)}`);
 
   const whatToVerify: string[] = [];
-  // brak opisu = masa pytaĹ„
+  // brak opisu = masa pytań
   if (!i.description) {
     whatToVerify.push("Brak opisu: dopytaj o standard, stan instalacji, rok remontu, wady i co zostaje w cenie.");
   }
-  if (!hasPrice) whatToVerify.push("Brak ceny: bez ceny nie da siÄ™ rzetelnie porĂłwnaÄ‡ oferty.");
-  if (!hasArea) whatToVerify.push("Brak metraĹĽu: bez metraĹĽu nie policzysz ceny za mÂ˛.");
-  if (!i.city) whatToVerify.push("Brak miasta: doprecyzuj lokalizacjÄ™.");
-  if (!i.district) whatToVerify.push("Brak dzielnicy: dopytaj o dokĹ‚adne poĹ‚oĹĽenie i otoczenie.");
+  if (!hasPrice) whatToVerify.push("Brak ceny: bez ceny nie da się rzetelnie porównać‡ oferty.");
+  if (!hasArea) whatToVerify.push("Brak metrażu: bez metrażu nie policzysz ceny za m˛.");
+  if (!i.city) whatToVerify.push("Brak miasta: doprecyzuj lokalizacjć™.");
+  if (!i.district) whatToVerify.push("Brak dzielnicy: dopytaj o dokładne położenie i otoczenie.");
 
-  // Pros/cons w â€śdokĹ‚adniejszejâ€ť formie: wnioski
+  // Pros/cons w €śdokładniejszej€ť formie: wnioski
   const conclusions: string[] = [];
 
-  if (pros.length >= 3) conclusions.push("PlusĂłw jest sporo â€” oferta wyglÄ…da na dopracowanÄ… albo dobrze wycenionÄ….");
-  if (cons.length >= 3) conclusions.push("Jest kilka ryzyk â€” negocjuj twardo i wymagaj konkretĂłw na piĹ›mie.");
-  if (pros.length === 0) conclusions.push("Nie wpisano plusĂłw â€” dodaj je, ĹĽeby szybciej oceniÄ‡ atrakcyjnoĹ›Ä‡.");
-  if (cons.length === 0) conclusions.push("Nie wpisano minusĂłw â€” warto je dopisaÄ‡ (to najlepsze argumenty do negocjacji).");
+  if (pros.length >= 3) conclusions.push("Plusów jest sporo — oferta wyglć…da na dopracowanć… albo dobrze wycenionć….");
+  if (cons.length >= 3) conclusions.push("Jest kilka ryzyk — negocjuj twardo i wymagaj konkretów na piśmie.");
+  if (pros.length === 0) conclusions.push("Nie wpisano plusów — dodaj je, żeby szybciej ocenić‡ atrakcyjność‡.");
+  if (cons.length === 0) conclusions.push("Nie wpisano minusów — warto je dopisać‡ (to najlepsze argumenty do negocjacji).");
 
   if (typeof i.views === "number") {
-    if (i.views >= 5000) conclusions.push("Bardzo duĹĽo wyĹ›wietleĹ„: oferta jest popularna albo cena przyciÄ…ga uwagÄ™.");
-    else if (i.views >= 1500) conclusions.push("DuĹĽo wyĹ›wietleĹ„: warto sprawdziÄ‡, czy nie ma â€žukrytego haczykaâ€ť.");
-    else if (i.views <= 200) conclusions.push("MaĹ‚o wyĹ›wietleĹ„: moĹĽliwe, ĹĽe oferta Ĺ›wieĹĽa albo sĹ‚abo opisana/zdjÄ™cia sĹ‚abe.");
+    if (i.views >= 5000) conclusions.push("Bardzo dużo wyświetleń: oferta jest popularna albo cena przycić…ga uwagć™.");
+    else if (i.views >= 1500) conclusions.push("Dużo wyświetleń: warto sprawdzić‡, czy nie ma €žukrytego haczyka€ť.");
+    else if (i.views <= 200) conclusions.push("Mało wyświetleń: możliwe, że oferta świeża albo słabo opisana/zdjć™cia słabe.");
   }
 
-  if (ppm2) conclusions.push("Cena za mÂ˛ jest policzona â€” porĂłwnaj jÄ… do podobnych ofert w okolicy.");
+  if (ppm2) conclusions.push("Cena za m˛ jest policzona — porównaj jć… do podobnych ofert w okolicy.");
 
   // negocjacje: konkretne ruchy
   const negotiation: string[] = [];
-  if (cons.length > 0) negotiation.push("Oprzyj negocjacje o minusy + kosztorys (remont, opĹ‚aty, naprawy).");
-  if (!i.description) negotiation.push("Najpierw zbierz dane (opis/standard), potem skĹ‚adaj ofertÄ™ cenowÄ….");
-  if (s10 !== null && s10 <= 5) negotiation.push("Niska ocena: zacznij od mocno niĹĽszej oferty i zostaw przestrzeĹ„ na kompromis.");
-  if (s10 !== null && s10 >= 8) negotiation.push("Wysoka ocena: negocjuj warunki (termin wydania, wyposaĹĽenie, drobne rabaty).");
-  if (negotiation.length === 0) negotiation.push("Negocjuj konkretem: termin wydania, wyposaĹĽenie, koszty staĹ‚e, stan techniczny.");
+  if (cons.length > 0) negotiation.push("Oprzyj negocjacje o minusy + kosztorys (remont, opłaty, naprawy).");
+  if (!i.description) negotiation.push("Najpierw zbierz dane (opis/standard), potem składaj ofertć™ cenowć….");
+  if (s10 !== null && s10 <= 5) negotiation.push("Niska ocena: zacznij od mocno niższej oferty i zostaw przestrzeń na kompromis.");
+  if (s10 !== null && s10 >= 8) negotiation.push("Wysoka ocena: negocjuj warunki (termin wydania, wyposażenie, drobne rabaty).");
+  if (negotiation.length === 0) negotiation.push("Negocjuj konkretem: termin wydania, wyposażenie, koszty stałe, stan techniczny.");
 
-  // pytania do sprzedajÄ…cego (dokĹ‚adne)
+  // pytania do sprzedajć…cego (dokładne)
   const questions: string[] = [
     "Jaki jest stan prawny i czy jest KW?",
-    "Jakie sÄ… miesiÄ™czne koszty staĹ‚e (czynsz/opĹ‚aty/media)?",
-    "Kiedy moĹĽliwe jest wydanie nieruchomoĹ›ci?",
+    "Jakie sć… miesięczne koszty stałe (czynsz/opłaty/media)?",
+    "Kiedy możliwe jest wydanie nieruchomości?",
     "Co zostaje w cenie (meble/AGD)?",
-    "Czy byĹ‚y remonty? Kiedy i co dokĹ‚adnie byĹ‚o robione?",
-    "Czy sÄ… wady/usterki (wilgoÄ‡, pÄ™kniÄ™cia, instalacje)?",
+    "Czy były remonty? Kiedy i co dokładnie było robione?",
+    "Czy sć… wady/usterki (wilgoć‡, pć™knić™cia, instalacje)?",
   ];
 
   // dla kogo ta oferta (heurystyka)
   const forWho: string[] = [];
   if (ppm2 && hasPrice) {
-    forWho.push("Dla kupujÄ…cego, ktĂłry chce szybko porĂłwnaÄ‡ oferty cenÄ…/mÂ˛ i negocjowaÄ‡ na liczbach.");
+    forWho.push("Dla kupujć…cego, który chce szybko porównać‡ oferty cenć…/m˛ i negocjować‡ na liczbach.");
   }
-  if (cons.length >= 2) forWho.push("Dla kogoĹ›, kto nie boi siÄ™ negocjacji i dopinania formalnoĹ›ci.");
-  if (pros.length >= 2) forWho.push("Dla kupujÄ…cego, ktĂłry szuka â€žpewniakaâ€ť i chce ograniczyÄ‡ ryzyka.");
-  if (forWho.length === 0) forWho.push("Dla kupujÄ…cego, ktĂłry chce zebraÄ‡ wiÄ™cej danych i dopiero podjÄ…Ä‡ decyzjÄ™.");
+  if (cons.length >= 2) forWho.push("Dla kogoś, kto nie boi się negocjacji i dopinania formalności.");
+  if (pros.length >= 2) forWho.push("Dla kupujć…cego, który szuka €žpewniaka€ť i chce ograniczyć‡ ryzyka.");
+  if (forWho.length === 0) forWho.push("Dla kupujć…cego, który chce zebrać‡ wić™cej danych i dopiero podjć…ć‡ decyzjć™.");
 
   return {
     pros,
@@ -173,7 +173,7 @@ export default function MarketPage() {
   };
 
   const deleteAnalysis = (id: number) => {
-    if (!confirm("UsunÄ…Ä‡ tÄ™ analizÄ™ z Market?")) return;
+    if (!confirm("Usunć…ć‡ tć™ analizć™ z Market?")) return;
     const next = items.filter((x) => x.id !== id);
     persist(next);
     setOpenId((prev) => (prev === id ? null : prev));
@@ -277,7 +277,7 @@ export default function MarketPage() {
       {/* HEADER */}
       <div className="mb-8">
         <h1 className="text-3xl font-extrabold tracking-tight" style={{ color: "var(--text-main)" }}>
-          đź“Š Market
+          “Š Market
         </h1>
         <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>
           Analiza ofert rynkowych + wnioski AI
@@ -330,22 +330,22 @@ export default function MarketPage() {
                     }}
                     title={scoreLabel(score)}
                   >
-                    â­ {score}/10
+                    ­ {score}/10
                   </div>
                 )}
               </div>
 
               {/* META */}
               <div className="mt-4 grid grid-cols-2 gap-2 text-sm" style={S.soft}>
-                <div>đź’° {fmtMoney(i.price)}</div>
-                <div>đź“ {i.area ? `${fmtNum(i.area)} mÂ˛` : "â€”"}</div>
-                <div>đź“Š {analysis.ppm2 ? `${fmtMoney(analysis.ppm2)}/mÂ˛` : "â€”"}</div>
+                <div>’° {fmtMoney(i.price)}</div>
+                <div>“ {i.area ? `${fmtNum(i.area)} m˛` : "—"}</div>
+                <div>“Š {analysis.ppm2 ? `${fmtMoney(analysis.ppm2)}/m˛` : "—"}</div>
                 <div>
-                  đź“Ť {i.city || "â€”"}
+                  “Ť {i.city || "—"}
                   {i.district ? `, ${i.district}` : ""}
                 </div>
-                <div>đź‘€ WyĹ›wietlenia: {typeof i.views === "number" ? fmtNum(i.views) : "â€”"}</div>
-                <div>{score !== null ? `đźŹ·ď¸Ź ${scoreLabel(score)}` : "đźŹ·ď¸Ź Brak oceny"}</div>
+                <div>‘€ Wyświetlenia: {typeof i.views === "number" ? fmtNum(i.views) : "—"}</div>
+                <div>{score !== null ? `🏠·ď¸🏠 ${scoreLabel(score)}` : "🏠·ď¸🏠 Brak oceny"}</div>
               </div>
 
               {/* SZYBKIE WNIOSKI */}
@@ -353,9 +353,9 @@ export default function MarketPage() {
               <div style={S.label}>Szybkie wnioski</div>
               <ul className="mt-2 space-y-1 text-sm" style={S.muted}>
                 {analysis.conclusions.length > 0 ? (
-                  analysis.conclusions.slice(0, 4).map((t, idx) => <li key={idx}>â€˘ {t}</li>)
+                  analysis.conclusions.slice(0, 4).map((t, idx) => <li key={idx}>€˘ {t}</li>)
                 ) : (
-                  <li>â€˘ Brak wnioskĂłw â€” uzupeĹ‚nij pros/cons/opis.</li>
+                  <li>€˘ Brak wniosków — uzupełnij pros/cons/opis.</li>
                 )}
               </ul>
 
@@ -363,7 +363,7 @@ export default function MarketPage() {
               <div className="mt-4 flex gap-2">
                 {i.url && (
                   <a href={i.url} target="_blank" style={S.btnLink} className="flex-1">
-                    đź”— Oferta
+                    ”— Oferta
                   </a>
                 )}
 
@@ -372,7 +372,7 @@ export default function MarketPage() {
                   className="flex-1"
                   style={S.btn}
                 >
-                  {isOpen ? "â–˛ SzczegĂłĹ‚y" : "â–Ľ SzczegĂłĹ‚y"}
+                  {isOpen ? "–˛ Szczegóły" : "–Ľ Szczegóły"}
                 </button>
               </div>
 
@@ -384,7 +384,7 @@ export default function MarketPage() {
                   className="w-full"
                   title="Usuwa wpis z Market (localStorage)."
                 >
-                  đź—‘ UsuĹ„ analizÄ™
+                  —‘ Usuń analizć™
                 </button>
               </div>
 
@@ -395,21 +395,21 @@ export default function MarketPage() {
                   <div style={S.label}>Podsumowanie danych</div>
                   <ul className="mt-2 space-y-1" style={S.muted}>
                     {analysis.summary.map((t, idx) => (
-                      <li key={idx}>â€˘ {t}</li>
+                      <li key={idx}>€˘ {t}</li>
                     ))}
                   </ul>
 
                   <div style={S.hr} />
 
                   {/* Opis */}
-                  <div style={S.label}>Opis ogĹ‚oszenia</div>
+                  <div style={S.label}>Opis ogłoszenia</div>
                   {i.description ? (
                     <p className="mt-2" style={{ color: "rgba(15,23,42,0.82)", lineHeight: 1.55 }}>
                       {i.description}
                     </p>
                   ) : (
                     <p className="mt-2" style={S.muted}>
-                      Brak opisu â€” bez tego analiza jest mniej dokĹ‚adna.
+                      Brak opisu — bez tego analiza jest mniej dokładna.
                     </p>
                   )}
 
@@ -418,30 +418,30 @@ export default function MarketPage() {
                   {/* Plusy / minusy */}
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div style={S.boxGood}>
-                      <div className="font-extrabold">âś… Plusy</div>
+                      <div className="font-extrabold">… Plusy</div>
                       {analysis.pros.length === 0 ? (
                         <div className="mt-2" style={S.muted}>
-                          Brak plusĂłw.
+                          Brak plusów.
                         </div>
                       ) : (
                         <ul className="mt-2 space-y-1" style={{ color: "rgba(15,23,42,0.86)" }}>
                           {analysis.pros.map((p, idx) => (
-                            <li key={idx}>â€˘ {p}</li>
+                            <li key={idx}>€˘ {p}</li>
                           ))}
                         </ul>
                       )}
                     </div>
 
                     <div style={S.boxWarn}>
-                      <div className="font-extrabold">âš ď¸Ź Minusy / ryzyka</div>
+                      <div className="font-extrabold">š ď¸🏠 Minusy / ryzyka</div>
                       {analysis.cons.length === 0 ? (
                         <div className="mt-2" style={S.muted}>
-                          Brak minusĂłw.
+                          Brak minusów.
                         </div>
                       ) : (
                         <ul className="mt-2 space-y-1" style={{ color: "rgba(15,23,42,0.86)" }}>
                           {analysis.cons.map((c, idx) => (
-                            <li key={idx}>â€˘ {c}</li>
+                            <li key={idx}>€˘ {c}</li>
                           ))}
                         </ul>
                       )}
@@ -452,10 +452,10 @@ export default function MarketPage() {
                   {analysis.whatToVerify.length > 0 && (
                     <>
                       <div style={S.hr} />
-                      <div style={S.label}>Braki / co trzeba zweryfikowaÄ‡</div>
+                      <div style={S.label}>Braki / co trzeba zweryfikować‡</div>
                       <ul className="mt-2 space-y-1" style={S.muted}>
                         {analysis.whatToVerify.map((t, idx) => (
-                          <li key={idx}>â€˘ {t}</li>
+                          <li key={idx}>€˘ {t}</li>
                         ))}
                       </ul>
                     </>
@@ -467,17 +467,17 @@ export default function MarketPage() {
                   <div style={S.label}>Strategia negocjacji</div>
                   <ul className="mt-2 space-y-1" style={S.muted}>
                     {analysis.negotiation.map((t, idx) => (
-                      <li key={idx}>â€˘ {t}</li>
+                      <li key={idx}>€˘ {t}</li>
                     ))}
                   </ul>
 
                   <div style={S.hr} />
 
                   {/* Pytania */}
-                  <div style={S.label}>Pytania do sprzedajÄ…cego (checklista)</div>
+                  <div style={S.label}>Pytania do sprzedajć…cego (checklista)</div>
                   <ul className="mt-2 space-y-1" style={S.muted}>
                     {analysis.questions.map((t, idx) => (
-                      <li key={idx}>â€˘ {t}</li>
+                      <li key={idx}>€˘ {t}</li>
                     ))}
                   </ul>
 
@@ -487,21 +487,21 @@ export default function MarketPage() {
                   <div style={S.label}>Dla kogo ta oferta</div>
                   <ul className="mt-2 space-y-1" style={S.muted}>
                     {analysis.forWho.map((t, idx) => (
-                      <li key={idx}>â€˘ {t}</li>
+                      <li key={idx}>€˘ {t}</li>
                     ))}
                   </ul>
 
                   {/* Rekomendacja AI */}
                   {i.recommendation && (
                     <div className="mt-4" style={S.boxAi}>
-                      đź¤– <b>Rekomendacja AI:</b> {i.recommendation}
+                      🤖 <b>Rekomendacja AI:</b> {i.recommendation}
                     </div>
                   )}
 
                   <div className="mt-4" style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                    {score !== null ? <span style={S.pill}>â­ Score: {score}/10</span> : null}
-                    {analysis.ppm2 ? <span style={S.pill}>đź“Š {fmtMoney(analysis.ppm2)}/mÂ˛</span> : null}
-                    {typeof i.views === "number" ? <span style={S.pill}>đź‘€ {fmtNum(i.views)} wyĹ›wietleĹ„</span> : null}
+                    {score !== null ? <span style={S.pill}>­ Score: {score}/10</span> : null}
+                    {analysis.ppm2 ? <span style={S.pill}>“Š {fmtMoney(analysis.ppm2)}/m˛</span> : null}
+                    {typeof i.views === "number" ? <span style={S.pill}>‘€ {fmtNum(i.views)} wyświetleń</span> : null}
                   </div>
                 </div>
               )}
@@ -512,4 +512,3 @@ export default function MarketPage() {
     </main>
   );
 }
-

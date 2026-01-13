@@ -1,4 +1,4 @@
-﻿import { NextResponse } from "next/server";
+?import { NextResponse } from "next/server";
 
 export async function GET() {
   if (!process.env.OPENAI_API_KEY) {
@@ -10,8 +10,7 @@ export async function GET() {
 
   return NextResponse.json({
     ok: true,
-    message: "OPENAI_API_KEY dziaĹ‚a đźŽ‰",
+    message: "OPENAI_API_KEY działa ‰",
     keyLength: process.env.OPENAI_API_KEY.length,
   });
 }
-

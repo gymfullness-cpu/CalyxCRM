@@ -1,4 +1,4 @@
-﻿import { NextResponse } from "next/server";
+?import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 
 
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Lead not found" }, { status: 404 });
   }
 
-  // 1) wybieramy agentĂłw z biura
+  // 1) wybieramy agentów z biura
   const agents = await prisma.orgMember.findMany({
     where: {
       orgId: lead.orgId,
@@ -31,12 +31,12 @@ export async function POST(req: Request) {
 
   if (agents.length === 0) {
     return NextResponse.json(
-      { error: "Brak agentĂłw w biurze" },
+      { error: "Brak agentów w biurze" },
       { status: 400 }
     );
   }
 
-  // 2) policz ile leadĂłw ma kaĹĽdy agent
+  // 2) policz ile leadów ma każdy agent
   const counts = await prisma.lead.groupBy({
     by: ["ownerId"],
     where: { orgId: lead.orgId, ownerId: { not: null } },
@@ -48,7 +48,7 @@ export async function POST(req: Request) {
     if (c.ownerId) countMap.set(c.ownerId, c._count._all);
   }
 
-  // 3) wybierz tego z najmniejszÄ… liczbÄ… leadĂłw
+  // 3) wybierz tego z najmniejszć… liczbć… leadów
   let best = agents[0];
   let bestCount = countMap.get(best.id) ?? 0;
 
@@ -73,4 +73,3 @@ export async function POST(req: Request) {
     ownerLeadCount: bestCount,
   });
 }
-

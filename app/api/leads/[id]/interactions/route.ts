@@ -1,4 +1,4 @@
-﻿import { NextResponse } from "next/server";
+?import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { computeLeadTemperature } from "@/app/lib/ai/scoring";
 
@@ -21,7 +21,7 @@ export async function POST(
     );
   }
 
-  // Tworzymy interakcjÄ™ i Ĺ‚Ä…czymy jÄ… z leadem przez relacjÄ™
+  // Tworzymy interakcjć™ i łć…czymy jć… z leadem przez relacjć™
   const interaction = await prisma.interaction.create({
     data: {
       actorId: body.actorId ?? null,

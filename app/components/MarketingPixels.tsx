@@ -1,4 +1,4 @@
-﻿"use client";
+?"use client";
 
 import Script from "next/script";
 import { useEffect, useState } from "react";
@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
  * - Meta Pixel: wpisujesz ID w /prospects/ads (localStorage)
  * - TikTok Pixel: wpisujesz ID w /prospects/ads (localStorage)
  *
- * To NIE uruchamia reklam automatycznie â€” daje tracking do kampanii.
+ * To NIE uruchamia reklam automatycznie — daje tracking do kampanii.
  */
 export default function MarketingPixels() {
   const [metaId, setMetaId] = useState<string>("");
@@ -65,4 +65,3 @@ export default function MarketingPixels() {
     </>
   );
 }
-

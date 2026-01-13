@@ -1,4 +1,4 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
         {
           role: "system",
           content: `
-Jesteś asystentem nieruchomości w Polsce.
+Jesteś asystentem Nieruchomości w Polsce.
 Analizujesz preferencje klienta zapisane potocznym językiem.
 Zwracasz TYLKO JSON bez żadnego tekstu.
 

@@ -11,7 +11,7 @@ export default function CallButton({ phone }: { phone: string }) {
         cursor: "pointer",
       }}
     >
-      📞 Zadzwoń
+      “ž Zadzwoń
     </button>
   );
 }

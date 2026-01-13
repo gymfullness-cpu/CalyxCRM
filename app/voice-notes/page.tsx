@@ -1,4 +1,4 @@
-﻿"use client";
+?"use client";
 
 import { useMemo, useRef, useState } from "react";
 
@@ -235,9 +235,9 @@ export default function VoiceNotesPage() {
 
       recorder.current.start();
       setRecording(true);
-      setStatus("đźŽ™ď¸Ź Nagrywanieâ€¦");
+      setStatus("â„˘Ä🏠Â¸Ĺą Nagrywanieâ‚¬Â¦");
     } catch {
-      setStatus("âťŚ Brak dostÄ™pu do mikrofonu (sprawdĹş uprawnienia).");
+      setStatus("ĹĄĹš Brak dostćâ„˘pu do mikrofonu (sprawdÄąĹ🏠 uprawnienia).");
     }
   };
 
@@ -260,8 +260,8 @@ export default function VoiceNotesPage() {
         payload: {
           date: data.meeting.date,
           time: data.meeting.time,
-          title: data.lead?.name ? `Spotkanie â€“ ${data.lead.name}` : "Spotkanie z gĹ‚osĂłwki",
-          note: data.lead?.preferences || "Spotkanie z gĹ‚osĂłwki",
+          title: data.lead?.name ? `Spotkanie â‚¬📊  ${data.lead.name}` : "Spotkanie z gÄąâ€šosÄ‚łwki",
+          note: data.lead?.preferences || "Spotkanie z gÄąâ€šosÄ‚łwki",
           eventType: "pozysk",
         },
       });
@@ -271,7 +271,7 @@ export default function VoiceNotesPage() {
   };
 
   const send = async () => {
-    setStatus("đź¤– Analiza AIâ€¦");
+    setStatus("Â¤â— Analiza AIâ‚¬Â¦");
 
     const blob = new Blob(chunks.current, { type: "audio/webm" });
     const form = new FormData();
@@ -289,11 +289,11 @@ export default function VoiceNotesPage() {
       }
 
       if (!res.ok || !data) {
-        setStatus("âťŚ BĹ‚Ä…d analizy (API nie zwrĂłciĹ‚o poprawnych danych)");
+        setStatus("ĹĄĹš BÄąâ€šć…d analizy (API nie zwrÄ‚łciÄąâ€šo poprawnych danych)");
         return;
       }
       if (data.success === false) {
-        setStatus(`âťŚ ${data.error ?? "BĹ‚Ä…d analizy"}`);
+        setStatus(`ĹĄĹš ${data.error ?? "BÄąâ€šć…d analizy"}`);
         return;
       }
 
@@ -307,17 +307,17 @@ export default function VoiceNotesPage() {
       setPlan(actions);
 
       if (actions.length === 0) {
-        setStatus("âš ď¸Ź Nie wykryto akcji. Powiedz polecenie bardziej konkretnie.");
+        setStatus("ĹˇÂ Ä🏠Â¸Ĺą Nie wykryto akcji. Powiedz polecenie bardziej konkretnie.");
         return;
       }
 
-      setStatus(autoExecute ? "âś… Plan gotowy â€” wykonujÄ™â€¦" : "âś… Plan gotowy â€” sprawdĹş i kliknij Wykonaj");
+      setStatus(autoExecute ? "… Plan gotowy â‚¬” wykonujćâ„˘â‚¬Â¦" : "… Plan gotowy â‚¬” sprawdÄąĹ🏠 i kliknij Wykonaj");
 
       if (autoExecute) {
         await executePlan(actions);
       }
     } catch {
-      setStatus("âťŚ BĹ‚Ä…d poĹ‚Ä…czenia z /api/voice-analyze");
+      setStatus("ĹĄĹš BÄąâ€šć…d poÄąâ€šć…czenia z /api/voice-analyze");
     }
   };
 
@@ -329,7 +329,7 @@ export default function VoiceNotesPage() {
 
     const outDrafts: { sms: any[]; email: any[] } = { sms: [], email: [] };
 
-    // 1) najpierw dodajemy leady (ĹĽeby follow-up mĂłgĹ‚ siÄ™ dopasowaÄ‡)
+    // 1) najpierw dodajemy leady (żeby follow-up mÄ‚łgÄąâ€š sićâ„˘ dopasowaćâ€ˇ)
     actions.forEach((a) => {
       if (a.type !== "create_lead") return;
 
@@ -367,7 +367,7 @@ export default function VoiceNotesPage() {
         const dueDate = String((a.payload as any)?.dueDate ?? "").trim();
         if (!dueDate) continue;
 
-        // đź”Ą klucz: relatedId z nazwy
+        // ”Ä„ klucz: relatedId z nazwy
         let relatedId: number | null =
           typeof (a.payload as any)?.relatedId === "number" ? (a.payload as any).relatedId : null;
 
@@ -378,17 +378,17 @@ export default function VoiceNotesPage() {
           }
         }
 
-        // jeĹ›li dalej nie ma â€” nie zapisujemy â€śĹ›mieciaâ€ť
+        // jeÄąâ€şli dalej nie ma â‚¬” nie zapisujemy â‚¬śÄąâ€şmieciaâ‚¬ĹĄ
         if (!relatedId) {
           outDrafts.email.push({
             toName: "Ty (notatka)",
             toEmail: "",
-            subject: "Nie udaĹ‚o siÄ™ dopasowaÄ‡ follow-up do leada",
+            subject: "Nie udaÄąâ€šo sićâ„˘ dopasowaćâ€ˇ follow-up do leada",
             body:
-              `AI chciaĹ‚o dodaÄ‡ follow-up, ale nie znalazĹ‚em leada po nazwie.\n\n` +
+              `AI chciaÄąâ€šo dodaćâ€ˇ follow-up, ale nie znalazÄąâ€šem leada po nazwie.\n\n` +
               `Polecenie: ${(a.payload as any)?.relatedName ?? "(brak nazwy)"}\n` +
               `Data: ${dueDate}\n\n` +
-              `Dodaj najpierw leada albo powiedz peĹ‚ne imiÄ™ i nazwisko.`,
+              `Dodaj najpierw leada albo powiedz peÄąâ€šne imięâ„˘ i nazwisko.`,
           });
           continue;
         }
@@ -405,7 +405,7 @@ export default function VoiceNotesPage() {
       }
 
       if (a.type === "create_contact") {
-        // âś… POPRAWKA: dodajemy kontakt do bazy (a nie tylko localStorage)
+        // … POPRAWKA: dodajemy kontakt do bazy (a nie tylko localStorage)
         const fullName = String((a.payload as any)?.name ?? "").trim();
         if (!fullName) continue;
 
@@ -419,7 +419,7 @@ export default function VoiceNotesPage() {
           const orgId = pickOrgId(org);
 
           if (!orgId) {
-            throw new Error("Nie mogÄ™ znaleĹşÄ‡ orgId. SprawdĹş Console (F12).");
+            throw new Error("Nie mogćâ„˘ znaleÄąĹźćâ€ˇ orgId. SprawdÄąĹ🏠 Console (F12).");
           }
 
           const res = await fetch("/api/contacts", {
@@ -441,7 +441,7 @@ export default function VoiceNotesPage() {
             throw new Error(text || `POST /api/contacts status ${res.status}`);
           }
 
-          // (opcjonalnie) kopia w localStorage â€” nie przeszkadza
+          // (opcjonalnie) kopia w localStorage â‚¬” nie przeszkadza
           contacts.push({
             id: nowId(),
             name: fullName,
@@ -453,12 +453,12 @@ export default function VoiceNotesPage() {
           outDrafts.email.push({
             toName: "Ty (debug)",
             toEmail: "",
-            subject: "BĹ‚Ä…d dodania kontaktu z gĹ‚osĂłwki",
+            subject: "BÄąâ€šć…d dodania kontaktu z gÄąâ€šosÄ‚łwki",
             body:
-              `Nie udaĹ‚o siÄ™ dodaÄ‡ kontaktu przez API /api/contacts.\n\n` +
-              `BĹ‚Ä…d: ${String(e?.message ?? e)}\n\n` +
+              `Nie udaÄąâ€šo sićâ„˘ dodaćâ€ˇ kontaktu przez API /api/contacts.\n\n` +
+              `BÄąâ€šć…d: ${String(e?.message ?? e)}\n\n` +
               `Payload:\n${JSON.stringify(a.payload ?? {}, null, 2)}\n\n` +
-              `SprawdĹş Console (F12).`,
+              `SprawdÄąĹ🏠 Console (F12).`,
           });
         }
       }
@@ -473,7 +473,7 @@ export default function VoiceNotesPage() {
     lsSet("contacts", contacts);
 
     setDrafts(outDrafts);
-    setStatus("âś… Wykonano: zapisano akcje w systemie");
+    setStatus("… Wykonano: zapisano akcje w systemie");
   };
 
   const clearAll = () => {
@@ -490,10 +490,10 @@ export default function VoiceNotesPage() {
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight" style={{ color: "var(--text-main)" }}>
-            đźŽ™ď¸Ź GĹ‚osĂłwki AI â€” Asystent
+            â„˘Ä🏠Â¸Ĺą GÄąâ€šosÄ‚łwki AI â‚¬” Asystent
           </h1>
           <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>
-            MĂłw komendy: â€žDodaj follow-up do Jana Kowalskiego na 10 stycznia 15:00â€ť, â€žDodaj kontaktâ€¦â€ť, â€žWyĹ›lij SMSâ€¦â€ť.
+            MÄ‚łw komendy: â‚¬ĹľDodaj follow-up do Jana Kowalskiego na 10 stycznia 15:00â‚¬ĹĄ, â‚¬ĹľDodaj kontaktâ‚¬Â¦â‚¬ĹĄ, â‚¬ĹľWyÄąâ€şlij SMSâ‚¬Â¦â‚¬ĹĄ.
           </p>
         </div>
 
@@ -518,7 +518,7 @@ export default function VoiceNotesPage() {
           </label>
 
           <button onClick={clearAll} style={pillIdle}>
-            WyczyĹ›Ä‡
+            WyczyÄąâ€şćâ€ˇ
           </button>
         </div>
       </div>
@@ -537,7 +537,7 @@ export default function VoiceNotesPage() {
               Sterowanie
             </div>
             <div className="mt-1 text-lg font-black" style={{ color: "#0f172a" }}>
-              Nagrywaj i twĂłrz plan dziaĹ‚aĹ„
+              Nagrywaj i twÄ‚łrz plan dziaÄąâ€šaÄąâ€ž
             </div>
           </div>
 
@@ -554,7 +554,7 @@ export default function VoiceNotesPage() {
                 cursor: "pointer",
               }}
             >
-              {recording ? "âŹąď¸Ź Zatrzymaj" : "đźŽ¤ Nagraj"}
+              {recording ? "ąÄ🏠Â¸Ĺą Zatrzymaj" : "Â¤ Nagraj"}
             </button>
 
             <button
@@ -571,7 +571,7 @@ export default function VoiceNotesPage() {
                 opacity: canExecute ? 1 : 0.6,
               }}
             >
-              âś… Wykonaj plan
+              … Wykonaj plan
             </button>
           </div>
         </div>
@@ -598,7 +598,7 @@ export default function VoiceNotesPage() {
               color: "#0f172a",
             }}
           >
-            đź’ˇ {hint}
+            ’Ë‡ {hint}
           </div>
         ) : null}
 
@@ -700,17 +700,17 @@ export default function VoiceNotesPage() {
         >
           <div>
             <div className="text-xs font-extrabold uppercase tracking-wide" style={{ color: "rgba(15,23,42,0.60)" }}>
-              WiadomoĹ›ci (draft)
+              WiadomoÄąâ€şci (draft)
             </div>
             <div className="mt-1 text-lg font-black" style={{ color: "#0f172a" }}>
-              Gotowe treĹ›ci do wysĹ‚ania
+              Gotowe treÄąâ€şci do wysÄąâ€šania
             </div>
           </div>
 
           {drafts.sms.length > 0 ? (
             <div className="mt-4">
               <div className="text-sm font-extrabold" style={{ color: "#0f172a" }}>
-                đź“© SMS
+                📊 Â© SMS
               </div>
               <div className="mt-2 grid grid-cols-1 gap-3">
                 {drafts.sms.map((s, idx) => (
@@ -724,20 +724,20 @@ export default function VoiceNotesPage() {
                     }}
                   >
                     <div className="text-xs font-extrabold" style={{ opacity: 0.8 }}>
-                      Do: {s.toName ?? "â€”"} {s.toPhone ? `(${s.toPhone})` : ""}
+                      Do: {s.toName ?? "â‚¬”"} {s.toPhone ? `(${s.toPhone})` : ""}
                     </div>
                     <div className="mt-2 whitespace-pre-wrap text-sm font-semibold">{s.message}</div>
 
                     <div className="mt-3 flex gap-2 flex-wrap">
                       <button onClick={() => navigator.clipboard.writeText(s.message)} style={pillBtnDark}>
-                        đź“Ž Kopiuj treĹ›Ä‡
+                        📊 Ĺ˝ Kopiuj treÄąâ€şćâ€ˇ
                       </button>
 
                       <a
                         href={`sms:${encodeURIComponent(s.toPhone ?? "")}?body=${encodeURIComponent(s.message)}`}
                         style={{ ...pillBtnDark, textDecoration: "none", display: "inline-block" }}
                       >
-                        đź“˛ OtwĂłrz SMS
+                        📊 Ë› Otwórz SMS
                       </a>
                     </div>
                   </div>
@@ -749,7 +749,7 @@ export default function VoiceNotesPage() {
           {drafts.email.length > 0 ? (
             <div className="mt-6">
               <div className="text-sm font-extrabold" style={{ color: "#0f172a" }}>
-                âś‰ď¸Ź Email
+                â€°Ä🏠Â¸Ĺą Email
               </div>
               <div className="mt-2 grid grid-cols-1 gap-3">
                 {drafts.email.map((e, idx) => (
@@ -763,7 +763,7 @@ export default function VoiceNotesPage() {
                     }}
                   >
                     <div className="text-xs font-extrabold" style={{ opacity: 0.8 }}>
-                      Do: {e.toName ?? "â€”"} {e.toEmail ? `(${e.toEmail})` : ""}
+                      Do: {e.toName ?? "â‚¬”"} {e.toEmail ? `(${e.toEmail})` : ""}
                     </div>
                     <div className="mt-2 text-sm font-black">Temat: {e.subject}</div>
                     <div className="mt-2 whitespace-pre-wrap text-sm font-semibold">{e.body}</div>
@@ -773,7 +773,7 @@ export default function VoiceNotesPage() {
                         onClick={() => navigator.clipboard.writeText(`Temat: ${e.subject}\n\n${e.body}`)}
                         style={pillBtnDark}
                       >
-                        đź“Ž Kopiuj
+                        📊 Ĺ˝ Kopiuj
                       </button>
 
                       <a
@@ -782,7 +782,7 @@ export default function VoiceNotesPage() {
                         )}&body=${encodeURIComponent(e.body)}`}
                         style={{ ...pillBtnDark, textDecoration: "none", display: "inline-block" }}
                       >
-                        âś‰ď¸Ź OtwĂłrz email
+                        â€°Ä🏠Â¸Ĺą Otwórz email
                       </a>
                     </div>
                   </div>
@@ -796,7 +796,7 @@ export default function VoiceNotesPage() {
       {rawPreview ? (
         <details className="mt-6">
           <summary style={{ color: "var(--text-muted)", cursor: "pointer", fontWeight: 900 }}>
-            Debug: surowa odpowiedĹş API
+            Debug: surowa odpowiedÄąĹ🏠 API
           </summary>
           <pre
             style={{
@@ -840,4 +840,3 @@ const pillBtnDark: React.CSSProperties = {
   fontWeight: 900,
   cursor: "pointer",
 };
-

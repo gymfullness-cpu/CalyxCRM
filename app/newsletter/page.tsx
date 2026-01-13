@@ -1,4 +1,4 @@
-﻿"use client";
+?"use client";
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -21,8 +21,8 @@ type Property = {
   price?: number;
   area?: number;
   elevator?: boolean;
-  // u Ciebie w details sÄ… teĹĽ pola typu apartmentNumber itd.
-  // newsletter ich nie potrzebuje, ale nie przeszkadzajÄ….
+  // u Ciebie w details sć… teÄąÄ˝ pola typu apartmentNumber itd.
+  // newsletter ich nie potrzebuje, ale nie przeszkadzajć….
 };
 
 type Lead = {
@@ -41,12 +41,12 @@ export default function NewsletterPage() {
   const [mode, setMode] = useState<"all" | "matched">("all");
   const [threshold, setThreshold] = useState<number>(60);
 
-  // âś… staĹ‚e ustawienia newslettera (ustawiasz raz)
-  const [templateSubjectPrefix, setTemplateSubjectPrefix] = useState<string>("Nowa nieruchomoĹ›Ä‡:");
+  // … staÄąâ€še ustawienia newslettera (ustawiasz raz)
+  const [templateSubjectPrefix, setTemplateSubjectPrefix] = useState<string>("Nowa nieruchomoÄąâ€şćâ€ˇ:");
   const [templateMessage, setTemplateMessage] = useState<string>(
-    "CzeĹ›Ä‡!\n\nMam dla Ciebie nowÄ… ofertÄ™. JeĹ›li chcesz, podeĹ›lÄ™ wiÄ™cej szczegĂłĹ‚Ăłw / umĂłwimy prezentacjÄ™.\n"
+    "CzeÄąâ€şćâ€ˇ!\n\nMam dla Ciebie nowć… ofertćâ„˘. JeÄąâ€şli chcesz, podeÄąâ€şlćâ„˘ wićâ„˘cej szczegÄ‚łÄąâ€šÄ‚łw / umÄ‚łwimy prezentacjćâ„˘.\n"
   );
-  const [templateSignature, setTemplateSignature] = useState<string>("Pozdrawiam!\nâ€”\nCalyx AI / Agent");
+  const [templateSignature, setTemplateSignature] = useState<string>("Pozdrawiam!\nâ‚¬”\nCalyx AI / Agent");
 
   /* ===== LOAD ===== */
   useEffect(() => {
@@ -63,7 +63,7 @@ export default function NewsletterPage() {
     if (s3 && s3.trim()) setTemplateSignature(s3);
   }, []);
 
-  /* ===== SAVE (ustawiasz raz, pamiÄ™ta) ===== */
+  /* ===== SAVE (ustawiasz raz, pamićâ„˘ta) ===== */
   useEffect(() => localStorage.setItem("nl_subject_prefix", templateSubjectPrefix), [templateSubjectPrefix]);
   useEffect(() => localStorage.setItem("nl_message", templateMessage), [templateMessage]);
   useEffect(() => localStorage.setItem("nl_signature", templateSignature), [templateSignature]);
@@ -79,7 +79,7 @@ export default function NewsletterPage() {
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
-      .replace(/(owie|ach|ami|owi|emu|ie|u|a|e|y|ow|Ăłw)$/g, "");
+      .replace(/(owie|ach|ami|owi|emu|ie|u|a|e|y|ow|Ä‚łw)$/g, "");
 
   /* ===== PRICE (jak w leadach) ===== */
   const extractPriceRange = (text: string) => {
@@ -87,7 +87,7 @@ export default function NewsletterPage() {
     let min: number | null = null;
     let max: number | null = null;
 
-    const range = t.match(/(\d{2,3})[-â€“](\d{2,3})tys/);
+    const range = t.match(/(\d{2,3})[-â‚¬📊 ](\d{2,3})tys/);
     if (range) {
       min = +range[1] * 1000;
       max = +range[2] * 1000;
@@ -178,11 +178,11 @@ export default function NewsletterPage() {
     return dedupeByEmail(out);
   }, [mode, safeContacts, leadByName, selectedProperty, threshold]);
 
-  /* ===== SUBJECT + BODY (staĹ‚y template) ===== */
+  /* ===== SUBJECT + BODY (staÄąâ€šy template) ===== */
   const subject = useMemo(() => {
     if (!selectedProperty) return `${templateSubjectPrefix} oferta`;
     const loc = [selectedProperty.city, selectedProperty.district].filter(Boolean).join(", ");
-    const rooms = typeof selectedProperty.rooms === "number" ? `${selectedProperty.rooms} pok. â€˘ ` : "";
+    const rooms = typeof selectedProperty.rooms === "number" ? `${selectedProperty.rooms} pok. â‚¬Ë ` : "";
     return `${templateSubjectPrefix} ${rooms}${loc || "oferta"}`.trim();
   }, [selectedProperty, templateSubjectPrefix]);
 
@@ -190,20 +190,20 @@ export default function NewsletterPage() {
     if (!selectedProperty) return "";
     return [
       "",
-      "â€”â€”â€”",
-      "SzczegĂłĹ‚y oferty:",
-      `đź“Ť Lokalizacja: ${[selectedProperty.city, selectedProperty.district, selectedProperty.street].filter(Boolean).join(", ") || "â€”"}`,
-      `đźŹ  Pokoje: ${typeof selectedProperty.rooms === "number" ? selectedProperty.rooms : "â€”"}`,
-      `đź“ MetraĹĽ: ${typeof selectedProperty.area === "number" ? `${selectedProperty.area} mÂ˛` : "â€”"}`,
-      `đź’° Cena: ${typeof selectedProperty.price === "number" ? `${selectedProperty.price.toLocaleString("pl-PL")} zĹ‚` : "â€”"}`,
-      `đź›— Winda: ${selectedProperty.elevator ? "tak" : "nie"}`,
+      "â‚¬”â‚¬”â‚¬”",
+      "SzczegÄ‚łÄąâ€šy oferty:",
+      `📊 Ĺ¤ Lokalizacja: ${[selectedProperty.city, selectedProperty.district, selectedProperty.street].filter(Boolean).join(", ") || "â‚¬”"}`,
+      `ĹąÂ  Pokoje: ${typeof selectedProperty.rooms === "number" ? selectedProperty.rooms : "â‚¬”"}`,
+      `📊 Â MetraÄąÄ˝: ${typeof selectedProperty.area === "number" ? `${selectedProperty.area} mË›` : "â‚¬”"}`,
+      `’Â° Cena: ${typeof selectedProperty.price === "number" ? `${selectedProperty.price.toLocaleString("pl-PL")} zÄąâ€š` : "â‚¬”"}`,
+      `â€şâ— Winda: ${selectedProperty.elevator ? "tak" : "nie"}`,
       "",
       `Link do oferty: ${typeof window !== "undefined" ? `${window.location.origin}/properties/${selectedProperty.id}` : ""}`,
     ].join("\n");
   }, [selectedProperty]);
 
   const bodyText = useMemo(() => {
-    if (!selectedProperty) return "Wybierz nieruchomoĹ›Ä‡, aby wygenerowaÄ‡ treĹ›Ä‡.";
+    if (!selectedProperty) return "Wybierz nieruchomoÄąâ€şćâ€ˇ, aby wygenerowaćâ€ˇ treÄąâ€şćâ€ˇ.";
     const msg = (templateMessage || "").trim();
     const sign = (templateSignature || "").trim();
     return [msg, detailsBlock, "", sign].filter(Boolean).join("\n");
@@ -224,16 +224,16 @@ export default function NewsletterPage() {
   const copy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      alert("Skopiowano âś…");
+      alert("Skopiowano …");
     } catch {
-      alert("Nie udaĹ‚o siÄ™ skopiowaÄ‡ (sprawdĹş uprawnienia przeglÄ…darki).");
+      alert("Nie udaÄąâ€šo sićâ„˘ skopiowaćâ€ˇ (sprawdÄąĹ🏠 uprawnienia przeglć…darki).");
     }
   };
 
-  // âś… PDF: odpalamy istniejÄ…cy eksport z PropertyDetails przez autopdf=1
+  // … PDF: odpalamy istniejć…cy eksport z PropertyDetails przez autopdf=1
   const exportPdfAuto = () => {
-    if (!selectedProperty) return alert("Najpierw wybierz nieruchomoĹ›Ä‡.");
-    // otwieramy szczegĂłĹ‚y -> a tam useEffect zrobi generatePropertyPdf(property)
+    if (!selectedProperty) return alert("Najpierw wybierz nieruchomoÄąâ€şćâ€ˇ.");
+    // otwieramy szczegÄ‚łÄąâ€šy -> a tam useEffect zrobi generatePropertyPdf(property)
     window.open(`/properties/${selectedProperty.id}?autopdf=1`, "_blank", "noopener,noreferrer");
   };
 
@@ -290,16 +290,16 @@ export default function NewsletterPage() {
       `}</style>
 
       <h1 className="text-3xl font-extrabold" style={{ color: "var(--text-main)" }}>
-        âś‰ď¸Ź Newsletter
+        â€°Ä🏠Â¸Ĺą Newsletter
       </h1>
       <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>
-        Ustawiasz raz treĹ›Ä‡/temat/podpis â†’ wybierasz ofertÄ™ â†’ PDF (auto) â†’ otwierasz email.
+        Ustawiasz raz treÄąâ€şćâ€ˇ/temat/podpis â€ ’ wybierasz ofertćâ„˘ â€ ’ PDF (auto) â€ ’ otwierasz email.
       </p>
 
-      {/* USTAWIENIA TEMPLATE (staĹ‚e) */}
+      {/* USTAWIENIA TEMPLATE (staÄąâ€še) */}
       <section className="mt-6 rounded-2xl p-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border-soft)" }}>
         <h2 className="text-xl font-extrabold" style={{ color: "var(--text-main)" }}>
-          Szablon (zapamiÄ™tywany)
+          Szablon (zapamićâ„˘tywany)
         </h2>
 
         <div className="mt-4 grid gap-4 md:grid-cols-2">
@@ -314,45 +314,45 @@ export default function NewsletterPage() {
           </div>
 
           <div className="md:col-span-2">
-            <label className="label">TreĹ›Ä‡ wiadomoĹ›ci (staĹ‚a)</label>
+            <label className="label">TreÄąâ€şćâ€ˇ wiadomoÄąâ€şci (staÄąâ€ša)</label>
             <textarea className="input" style={{ minHeight: 140 }} value={templateMessage} onChange={(e) => setTemplateMessage(e.target.value)} />
           </div>
         </div>
       </section>
 
-      {/* WYBĂ“R + TRYB */}
+      {/* WYBÄ‚📊 R + TRYB */}
       <section className="mt-6 rounded-2xl p-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border-soft)" }}>
         <div className="grid gap-4 md:grid-cols-2">
           <div>
-            <label className="label">NieruchomoĹ›Ä‡</label>
+            <label className="label">NieruchomoÄąâ€şćâ€ˇ</label>
             <select className="input" value={selectedPropertyId ?? ""} onChange={(e) => setSelectedPropertyId(e.target.value ? Number(e.target.value) : null)}>
-              <option value="">â€” wybierz â€”</option>
+              <option value="">â‚¬” wybierz â‚¬”</option>
               {properties
                 .slice()
                 .sort((a, b) => (b.id ?? 0) - (a.id ?? 0))
                 .map((p) => (
                   <option key={p.id} value={p.id}>
-                    #{p.id} â€˘ {[p.city, p.district].filter(Boolean).join(", ") || "â€”"}
-                    {typeof p.price === "number" ? ` â€˘ ${p.price.toLocaleString("pl-PL")} zĹ‚` : ""}
+                    #{p.id} â‚¬Ë {[p.city, p.district].filter(Boolean).join(", ") || "â‚¬”"}
+                    {typeof p.price === "number" ? ` â‚¬Ë ${p.price.toLocaleString("pl-PL")} zÄąâ€š` : ""}
                   </option>
                 ))}
             </select>
           </div>
 
           <div>
-            <label className="label">Tryb odbiorcĂłw</label>
+            <label className="label">Tryb odbiorcÄ‚łw</label>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
               <button type="button" className={`btn ${mode === "all" ? "btnPrimary" : ""}`} onClick={() => setMode("all")}>
-                đź‘Ą Wszyscy
+                â€Ä„ Wszyscy
               </button>
               <button type="button" className={`btn ${mode === "matched" ? "btnPrimary" : ""}`} onClick={() => setMode("matched")}>
-                đźŽŻ Dopasowani
+                Ĺ» Dopasowani
               </button>
             </div>
 
             {mode === "matched" ? (
               <div style={{ marginTop: 10 }}>
-                <label className="label">PrĂłg dopasowania (0â€“100)</label>
+                <label className="label">PrÄ‚łg dopasowania (0â‚¬📊 100)</label>
                 <input className="input" type="number" min={0} max={100} value={threshold} onChange={(e) => setThreshold(Number(e.target.value || 0))} />
               </div>
             ) : null}
@@ -361,19 +361,19 @@ export default function NewsletterPage() {
 
         <div style={{ marginTop: 14, display: "flex", gap: 10, flexWrap: "wrap" }}>
           <button type="button" className="btn" onClick={exportPdfAuto} disabled={!selectedProperty}>
-            đź“„ PDF (auto z oferty)
+            📊 â€ž PDF (auto z oferty)
           </button>
 
           <button type="button" className="btn" onClick={() => copy(recipients.map((r) => r.email).join(", "))} disabled={recipients.length === 0}>
-            đź“‹ Kopiuj odbiorcĂłw
+            📊 â€ą Kopiuj odbiorcÄ‚łw
           </button>
 
           <button type="button" className="btn" onClick={() => copy(subject)} disabled={!selectedProperty}>
-            đź“‹ Kopiuj temat
+            📊 â€ą Kopiuj temat
           </button>
 
           <button type="button" className="btn" onClick={() => copy(bodyText)} disabled={!selectedProperty}>
-            đź“‹ Kopiuj treĹ›Ä‡
+            📊 â€ą Kopiuj treÄąâ€şćâ€ˇ
           </button>
 
           <a
@@ -382,21 +382,21 @@ export default function NewsletterPage() {
             onClick={(e) => {
               if (!selectedProperty || recipients.length === 0) e.preventDefault();
             }}
-            title="Uwaga: mailto nie doĹ‚Ä…cza automatycznie PDF. Kliknij PDF (auto), a potem doĹ‚Ä…cz plik rÄ™cznie w poczcie."
+            title="Uwaga: mailto nie doÄąâ€šć…cza automatycznie PDF. Kliknij PDF (auto), a potem doÄąâ€šć…cz plik rćâ„˘cznie w poczcie."
           >
-            đź“§ OtwĂłrz email
+            📊 Â§ Otwórz email
           </a>
         </div>
 
         <div className="mt-3 text-xs" style={{ color: "var(--text-muted)" }}>
-          Tip: mailto nie potrafi automatycznie dodaÄ‡ zaĹ‚Ä…cznika. Najpierw pobierz PDF, potem kliknij â€žOtwĂłrz emailâ€ť i dodaj plik rÄ™cznie.
+          Tip: mailto nie potrafi automatycznie dodaćâ€ˇ zaÄąâ€šć…cznika. Najpierw pobierz PDF, potem kliknij â‚¬ĹľOtwórz emailâ‚¬ĹĄ i dodaj plik rćâ„˘cznie.
         </div>
       </section>
 
-      {/* PODGLÄ„D */}
+      {/* PODGLćâ€žD */}
       <section className="mt-6 rounded-2xl p-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border-soft)" }}>
         <h2 className="text-xl font-extrabold" style={{ color: "var(--text-main)" }}>
-          PodglÄ…d
+          Podglć…d
         </h2>
         <div className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>
           <b>Temat:</b> {subject}
@@ -416,4 +416,3 @@ export default function NewsletterPage() {
     </main>
   );
 }
-

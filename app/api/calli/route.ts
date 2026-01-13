@@ -1,4 +1,4 @@
-﻿import OpenAI from "openai";
+?import OpenAI from "openai";
 import { NextResponse } from "next/server";
 import crypto from "node:crypto";
 import { getMemory, saveMemory, Msg } from "../../../lib/calliMemory";
@@ -17,7 +17,7 @@ function getOrCreateUserId(req: Request) {
   return { userId, setCookie };
 }
 
-// âś… helper: wyciÄ…gnij cytowania URL z odpowiedzi (url_citation annotations)
+// … helper: wycić…gnij cytowania URL z odpowiedzi (url_citation annotations)
 function extractUrlCitations(resp: any): Array<{ title?: string; url: string }> {
   const out: Array<{ title?: string; url: string }> = [];
 
@@ -37,7 +37,7 @@ function extractUrlCitations(resp: any): Array<{ title?: string; url: string }> 
     }
   }
 
-  // usuĹ„ duplikaty po URL
+  // usuń duplikaty po URL
   const seen = new Set<string>();
   return out.filter((x) => {
     if (!x.url) return false;
@@ -47,7 +47,7 @@ function extractUrlCitations(resp: any): Array<{ title?: string; url: string }> 
   });
 }
 
-// âś… TS/Vercel fix: normalizacja wiadomoĹ›ci do typu Msg[]
+// … TS/Vercel fix: normalizacja wiadomości do typu Msg[]
 function toMsgArray(input: unknown): Msg[] {
   if (!Array.isArray(input)) return [];
 
@@ -64,40 +64,48 @@ function toMsgArray(input: unknown): Msg[] {
 }
 
 export async function POST(req: Request) {
-  try {
+  
+    const openai = getOpenAI();
+    if (!openai) {
+      return NextResponse.json(
+        { error: "Missing OPENAI_API_KEY", details: "Ustaw OPENAI_API_KEY w Vercel -> Project Settings -> Environment Variables." },
+        { status: 500 }
+      );
+    }
+try {
     const body = (await req.json()) as unknown;
     const incomingMessages = toMsgArray((body as any)?.messages);
 
     const { userId, setCookie } = getOrCreateUserId(req);
     const mem = getMemory(userId);
 
-    // âś… DODATEK: mniejszy kontekst = szybciej
+    // … DODATEK: mniejszy kontekst = szybciej
     const lastMemMsgs: Msg[] = toMsgArray(mem?.messages).slice(-12);
     const userMsgs: Msg[] = incomingMessages.slice(-12);
 
     const vectorStoreId = process.env.CALLI_VECTOR_STORE_ID?.trim();
 
-    // âś… Stabilny prompt: prosimy o web search dla rzeczy â€śzmiennychâ€ť + preferowane domeny
+    // … Stabilny prompt: prosimy o web search dla rzeczy €śzmiennych€ť + preferowane domeny
     const system = `
-JesteĹ› Calli Chat â€” ekspert od nieruchomoĹ›ci (PL) i asystent ogĂłlny.
+Jesteś Calli Chat — ekspert od nieruchomości (PL) i asystent ogólny.
 
 Zasady:
-- Odpowiadaj po polsku, krĂłtko i konkretnie.
-- JeĹ›li temat moĹĽe byÄ‡ aktualny / zmienny (terminy, opĹ‚aty, procedury, przepisy, urzÄ™dy) â†’ uĹĽyj WEB SEARCH.
-- JeĹ›li temat jest z Twojej bazy wiedzy â†’ uĹĽyj FILE SEARCH.
-- Dawaj kroki â€śco zrobiÄ‡â€ť, checklisty dokumentĂłw.
-- JeĹ›li brakuje danych (miasto, rodzaj prawa: wĹ‚asnoĹ›Ä‡/spĂłĹ‚dzielcze, KW) â†’ dopytaj.
-- Nie zmyĹ›laj. JeĹ›li korzystasz z internetu, podaj ĹşrĂłdĹ‚a.
-- Dodaj zdanie: "To informacja ogĂłlna, nie porada prawna."
+- Odpowiadaj po polsku, krótko i konkretnie.
+- Jeśli temat może być‡ aktualny / zmienny (terminy, opłaty, procedury, przepisy, urzć™dy) †’ użyj WEB SEARCH.
+- Jeśli temat jest z Twojej bazy wiedzy †’ użyj FILE SEARCH.
+- Dawaj kroki €śco zrobić‡€ť, checklisty dokumentów.
+- Jeśli brakuje danych (miasto, rodzaj prawa: własność‡/spółdzielcze, KW) †’ dopytaj.
+- Nie zmyślaj. Jeśli korzystasz z internetu, podaj źródła.
+- Dodaj zdanie: "To informacja ogólna, nie porada prawna."
 
-Preferowane ĹşrĂłdĹ‚a (jeĹ›li pasujÄ… do pytania):
+Preferowane źródła (jeśli pasujć… do pytania):
 - gov.pl, ms.gov.pl, isap.sejm.gov.pl, podatki.gov.pl, biznes.gov.pl
 
-Profil uĹĽytkownika:
+Profil użytkownika:
 ${mem.profile || "(brak)"}
 `;
 
-    // âś… Tools: web_search zawsze + file_search jeĹ›li masz vector store
+    // … Tools: web_search zawsze + file_search jeśli masz vector store
     const tools: any[] = [{ type: "web_search" }];
 
     if (vectorStoreId) {
@@ -112,18 +120,18 @@ ${mem.profile || "(brak)"}
       tools,
       temperature: 0.2,
 
-      // âś… DODATEK: limit odpowiedzi = szybciej
+      // … DODATEK: limit odpowiedzi = szybciej
       max_output_tokens: 500,
 
       input: [{ role: "system", content: system }, ...lastMemMsgs, ...userMsgs],
     });
 
     const reply =
-      (resp.output_text || "").trim() || "Nie udaĹ‚o mi siÄ™ wygenerowaÄ‡ odpowiedzi.";
+      (resp.output_text || "").trim() || "Nie udało mi się wygenerować‡ odpowiedzi.";
 
     const sources = extractUrlCitations(resp);
 
-    // âś… update pamiÄ™ci (TS-safe)
+    // … update pamić™ci (TS-safe)
     const assistantMsg: Msg = { role: "assistant", content: reply };
 
     const merged: Msg[] = [...lastMemMsgs, ...userMsgs, assistantMsg].slice(-40);
@@ -135,7 +143,7 @@ ${mem.profile || "(brak)"}
         {
           role: "system",
           content:
-            "Zaktualizuj krĂłtki profil uĹĽytkownika w 1â€“2 zdaniach (rola, miasto, preferencje odpowiedzi). JeĹ›li brak nowych faktĂłw: zwrĂłÄ‡ bez zmian.",
+            "Zaktualizuj krótki profil użytkownika w 1—2 zdaniach (rola, miasto, preferencje odpowiedzi). Jeśli brak nowych faktów: zwróć bez zmian.",
         },
         {
           role: "user",
@@ -165,4 +173,3 @@ ${mem.profile || "(brak)"}
     );
   }
 }
-

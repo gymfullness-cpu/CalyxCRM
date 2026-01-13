@@ -1,16 +1,16 @@
-﻿"use client";
+?"use client";
 
 import { useEffect, useRef, useState } from "react";
 
 type Props = {
   children: React.ReactNode;
-  /** ile px scrolla w dĂłĹ‚ zanim zaczniemy chowaÄ‡ */
+  /** ile px scrolla w dół zanim zaczniemy chować‡ */
   hideAfter?: number;
-  /** ile px â€śdrgaĹ„â€ť ignorowaÄ‡ */
+  /** ile px €śdrgań€ť ignorować‡ */
   deadzone?: number;
-  /** wysokoĹ›Ä‡ headera, ĹĽeby zrobiÄ‡ spacer i nie skakaĹ‚ layout */
+  /** wysokość‡ headera, żeby zrobić‡ spacer i nie skakał layout */
   height?: number;
-  /** jeĹ›li chcesz na mobile tylko: className="md:hidden" itd. */
+  /** jeśli chcesz na mobile tylko: className="md:hidden" itd. */
   className?: string;
 };
 
@@ -37,10 +37,10 @@ export default function HideOnScrollHeader({
         const prev = lastY.current;
         const delta = y - prev;
 
-        // zapamiÄ™taj
+        // zapamić™taj
         lastY.current = y;
 
-        // zawsze pokaĹĽ gdy jesteĹ›my blisko gĂłry
+        // zawsze pokaż gdy jesteśmy blisko góry
         if (y < hideAfter) {
           setHidden(false);
           ticking.current = false;
@@ -53,7 +53,7 @@ export default function HideOnScrollHeader({
           return;
         }
 
-        // scroll w dĂłĹ‚ -> chowaj, w gĂłrÄ™ -> pokazuj
+        // scroll w dół -> chowaj, w górć™ -> pokazuj
         if (delta > 0) setHidden(true);
         else setHidden(false);
 
@@ -67,7 +67,7 @@ export default function HideOnScrollHeader({
 
   return (
     <>
-      {/* spacer ĹĽeby treĹ›Ä‡ nie â€śpodskakiwaĹ‚aâ€ť */}
+      {/* spacer żeby treść‡ nie €śpodskakiwała€ť */}
       <div style={{ height }} />
       <div
         className={className}
@@ -87,4 +87,3 @@ export default function HideOnScrollHeader({
     </>
   );
 }
-

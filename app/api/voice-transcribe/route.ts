@@ -1,12 +1,35 @@
-﻿import { NextResponse } from "next/server";
+?import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+
+function getOpenAI() {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) return null;
+
+  // Import runtime, żeby build nie evaluował modułu OpenAI bez env
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const OpenAI = require("openai").default as any;
+
+  return new OpenAI({ apiKey });
+}
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 export async function POST(req: Request) {
-  try {
+  
+    const openai = getOpenAI();
+    if (!openai) {
+      return NextResponse.json(
+        { error: "Missing OPENAI_API_KEY", details: "Ustaw OPENAI_API_KEY w Vercel -> Project Settings -> Environment Variables." },
+        { status: 500 }
+      );
+    }
+try {
     const formData = await req.formData();
     const audio = formData.get("audio") as Blob | null;
 
@@ -27,9 +50,8 @@ export async function POST(req: Request) {
     console.error("VOICE TRANSCRIBE ERROR:", error);
 
     return NextResponse.json(
-      { error: "BĹ‚Ä…d transkrypcji" },
+      { error: "Błąd transkrypcji" },
       { status: 500 }
     );
   }
 }
-

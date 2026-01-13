@@ -1,4 +1,4 @@
-﻿"use client";
+?"use client";
 
 import { useState } from "react";
 
@@ -25,15 +25,15 @@ export default function ScorePage() {
 
   return (
     <main style={{ padding: 40, maxWidth: 600 }}>
-      <h1>đź“Š Scoring nieruchomoĹ›ci</h1>
+      <h1>“Š Scoring nieruchomości</h1>
 
       <input placeholder="Miasto" onChange={(e) => setData({ ...data, city: e.target.value })} />
       <input placeholder="Dzielnica" onChange={(e) => setData({ ...data, district: e.target.value })} />
-      <input placeholder="MetraĹĽ (m2)" onChange={(e) => setData({ ...data, area: e.target.value })} />
-      <input placeholder="Cena (zĹ‚)" onChange={(e) => setData({ ...data, price: e.target.value })} />
+      <input placeholder="Metraż (m2)" onChange={(e) => setData({ ...data, area: e.target.value })} />
+      <input placeholder="Cena (zł)" onChange={(e) => setData({ ...data, price: e.target.value })} />
       <textarea placeholder="Stan (z analizy AI)" onChange={(e) => setData({ ...data, condition: e.target.value })} />
 
-      <button onClick={calculate}>đź“ Oblicz score</button>
+      <button onClick={calculate}>“ Oblicz score</button>
 
       {result && (
         <pre style={{ marginTop: 20, background: "#f5f5f5", padding: 15 }}>
@@ -43,4 +43,3 @@ export default function ScorePage() {
     </main>
   );
 }
-

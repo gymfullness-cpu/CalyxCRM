@@ -1,4 +1,4 @@
-﻿"use client";
+?"use client";
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -13,7 +13,7 @@ type FollowUp = {
 const STORAGE_KEY = "followups";
 
 function formatPL(dateStr: string) {
-  if (!dateStr) return "â€”";
+  if (!dateStr) return "—";
   const safe = dateStr.includes("T") ? new Date(dateStr) : new Date(`${dateStr}T12:00:00`);
   return safe.toLocaleDateString("pl-PL", { year: "numeric", month: "long", day: "numeric" });
 }
@@ -47,7 +47,7 @@ function typeMeta(t: FollowUp["type"]) {
   };
 }
 
-/** Bezpieczne wczytanie follow-upĂłw z localStorage (JSON.parse zwraca unknown i psuje uniony) */
+/** Bezpieczne wczytanie follow-upów z localStorage (JSON.parse zwraca unknown i psuje uniony) */
 function readStoredFollowUps(): FollowUp[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -89,7 +89,7 @@ export default function FollowUpsPage() {
   const [sort, setSort] = useState<"dateAsc" | "dateDesc">("dateAsc");
 
   useEffect(() => {
-    // âś… NajwaĹĽniejsze: wczytujemy jako FollowUp[], bez "status: string"
+    // … Najważniejsze: wczytujemy jako FollowUp[], bez "status: string"
     setItems(readStoredFollowUps());
   }, []);
 
@@ -109,7 +109,7 @@ export default function FollowUpsPage() {
   };
 
   const remove = (id: number) => {
-    if (!confirm("UsunÄ…Ä‡ follow-up?")) return;
+    if (!confirm("Usunć…ć‡ follow-up?")) return;
     persist(items.filter((x) => x.id !== id));
   };
 
@@ -141,10 +141,10 @@ export default function FollowUpsPage() {
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight" style={{ color: "var(--text-main)" }}>
-            đź”” Follow-upy
+            ”” Follow-upy
           </h1>
           <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>
-            Lista zadaĹ„ do oddzwonienia / dopiÄ™cia tematu.
+            Lista zadań do oddzwonienia / dopić™cia tematu.
           </p>
         </div>
 
@@ -185,8 +185,8 @@ export default function FollowUpsPage() {
               outline: "none",
             }}
           >
-            <option value="dateAsc">Data â†‘ (najbliĹĽsze)</option>
-            <option value="dateDesc">Data â†“ (najdalsze)</option>
+            <option value="dateAsc">Data †‘ (najbliższe)</option>
+            <option value="dateDesc">Data †“ (najdalsze)</option>
           </select>
         </div>
       </div>
@@ -202,7 +202,7 @@ export default function FollowUpsPage() {
               color: "var(--text-main)",
             }}
           >
-            Brak follow-upĂłw w tym widoku.
+            Brak follow-upów w tym widoku.
           </div>
         ) : (
           visible.map((f) => {
@@ -269,7 +269,7 @@ export default function FollowUpsPage() {
                     </div>
 
                     <div className="mt-3 text-sm font-black" style={{ color: "#0f172a" }}>
-                      đź“… {formatPL(f.dueDate)}
+                      “… {formatPL(f.dueDate)}
                       {dd !== null ? (
                         <span style={{ marginLeft: 10, fontWeight: 900, color: "rgba(15,23,42,0.62)" }}>
                           {dd === 0 ? "(dzisiaj)" : dd > 0 ? `(za ${dd} dni)` : `(${Math.abs(dd)} dni po terminie)`}
@@ -278,7 +278,7 @@ export default function FollowUpsPage() {
                     </div>
 
                     <div className="mt-2 text-xs" style={{ color: "rgba(15,23,42,0.65)" }}>
-                      PowiÄ…zanie ID: <span style={{ fontWeight: 900 }}>{f.relatedId}</span>
+                      Powić…zanie ID: <span style={{ fontWeight: 900 }}>{f.relatedId}</span>
                     </div>
                   </div>
 
@@ -295,7 +295,7 @@ export default function FollowUpsPage() {
                         }}
                         title="Oznacz jako zrobione"
                       >
-                        âś…
+                        …
                       </button>
                     ) : (
                       <button
@@ -307,9 +307,9 @@ export default function FollowUpsPage() {
                           color: "#0f172a",
                           cursor: "pointer",
                         }}
-                        title="PrzywrĂłÄ‡ do pending"
+                        title="Przywróć‡ do pending"
                       >
-                        â†©ď¸Ź
+                        †©ď¸🏠
                       </button>
                     )}
 
@@ -322,9 +322,9 @@ export default function FollowUpsPage() {
                         color: "rgba(185,28,28,0.95)",
                         cursor: "pointer",
                       }}
-                      title="UsuĹ„"
+                      title="Usuń"
                     >
-                      đź—‘ď¸Ź
+                      🗑️
                     </button>
                   </div>
                 </div>
@@ -340,7 +340,7 @@ export default function FollowUpsPage() {
                       cursor: "pointer",
                     }}
                   >
-                    âś… Zrobione
+                    … Zrobione
                   </button>
                 ) : null}
               </div>
@@ -413,4 +413,3 @@ function Kpi({
     </div>
   );
 }
-

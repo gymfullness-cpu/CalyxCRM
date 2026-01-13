@@ -1,4 +1,4 @@
-﻿import * as React from "react";
+?import * as React from "react";
 
 type CalyxMarkProps = {
   className?: string;
@@ -7,7 +7,7 @@ type CalyxMarkProps = {
 
 /**
  * Calyx mini mark:
- * - readable at 20â€“24px
+ * - readable at 20—24px
  * - references logo (leaf calyx + AI nodes)
  * - currentColor so Tailwind text-* works
  */
@@ -82,4 +82,3 @@ export function CalyxMark({ className, title = "Calyx" }: CalyxMarkProps) {
     </svg>
   );
 }
-

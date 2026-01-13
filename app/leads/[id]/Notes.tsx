@@ -36,20 +36,20 @@ export default function Notes({ leadId }: { leadId: number }) {
 
   return (
     <div style={{ marginTop: 30 }}>
-      <h3>📝 Notatki po rozmowie</h3>
+      <h3>“ť Notatki po rozmowie</h3>
 
       <textarea
         value={text}
         onChange={(e) => setText(e.target.value)}
         rows={4}
         style={{ width: "100%", padding: 8 }}
-        placeholder="Wpisz notatkę z rozmowy..."
+        placeholder="Wpisz notatkć™ z rozmowy..."
       />
 
       <br />
 
       <button onClick={saveNote} style={{ marginTop: 10 }}>
-        💾 Zapisz notatkę
+        ’ľ Zapisz notatkć™
       </button>
 
       <ul style={{ marginTop: 20 }}>

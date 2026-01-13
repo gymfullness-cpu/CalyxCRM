@@ -1,4 +1,4 @@
-﻿"use client";
+?"use client";
 
 import Link from "next/link";
 
@@ -15,29 +15,29 @@ export default function DashboardPage() {
               color: "rgba(234,255,251,0.92)",
             }}
           >
-            <span style={{ color: "var(--accent)" }}>â—Ź</span> Centrum dowodzenia
+            <span style={{ color: "var(--accent)" }}>â—Ĺą</span> Centrum dowodzenia
           </div>
 
           <h1
             className="mt-3 text-3xl font-extrabold tracking-tight"
             style={{ color: "var(--text-main)" }}
           >
-            đź“Š Dashboard
+            📊 Ĺ  Dashboard
           </h1>
 
           <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>
-            Szybki dostÄ™p do moduĹ‚Ăłw. Wszystko w jednym miejscu.
+            Szybki dostćâ„˘p do moduÄąâ€šÄ‚łw. Wszystko w jednym miejscu.
           </p>
         </div>
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        <Tile title="đź“… Kalendarz" desc="Spotkania, przypomnienia, follow-up." href="/calendar" />
-        <Tile title="đź§˛ Pozyski" desc="Pozyskiwanie ofert i wĹ‚aĹ›cicieli." href="/prospects" />
-        <Tile title="đźŹ  NieruchomoĹ›ci" desc="Baza ofert, zdjÄ™cia, parametry." href="/properties" />
-        <Tile title="đź¤– AI: Analiza" desc="AI: analiza i porzÄ…dek zdjÄ™Ä‡." href="/analyzed" />
-        <Tile title="đź§® AI: Wycena" desc="Szybka wycena nieruchomoĹ›ci." href="/valuation" />
-        <Tile title="đź“ž Leady" desc="Leady, statusy, kontakty." href="/leads" />
+        <Tile title="📊 … Kalendarz" desc="Spotkania, przypomnienia, follow-up." href="/calendar" />
+        <Tile title="Â§Ë› Pozyski" desc="Pozyskiwanie ofert i wÄąâ€šaÄąâ€şcicieli." href="/prospects" />
+        <Tile title="ĹąÂ  NieruchomoÄąâ€şci" desc="Baza ofert, zdjćâ„˘cia, parametry." href="/properties" />
+        <Tile title="Â¤â— AI: Analiza" desc="AI: analiza i porzć…dek zdjćâ„˘ćâ€ˇ." href="/analyzed" />
+        <Tile title="Â§Â® AI: Wycena" desc="Szybka wycena nieruchomoÄąâ€şci." href="/valuation" />
+        <Tile title="📊 Ĺľ Leady" desc="Leady, statusy, kontakty." href="/leads" />
       </div>
     </main>
   );
@@ -64,7 +64,7 @@ function Tile({ title, desc, href }: { title: string; desc: string; href: string
             color: "rgba(234,255,251,0.95)",
           }}
         >
-          OtwĂłrz â†’
+          Otwórz â€ ’
         </div>
       </div>
 
@@ -104,4 +104,3 @@ function Tag({ children }: { children: React.ReactNode }) {
     </span>
   );
 }
-

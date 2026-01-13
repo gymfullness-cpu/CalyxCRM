@@ -1,4 +1,4 @@
-﻿"use client";
+?"use client";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -10,7 +10,7 @@ export default function LoginPage() {
 
   const login = () => {
     if (!email || !password) {
-      alert("UzupeĹ‚nij email i hasĹ‚o");
+      alert("Uzupełnij email i hasło");
       return;
     }
 
@@ -21,7 +21,7 @@ export default function LoginPage() {
 
   return (
     <main style={{ padding: 40, maxWidth: 400 }}>
-      <h1>đź” Logowanie</h1>
+      <h1>” Logowanie</h1>
 
       <input
         placeholder="Email"
@@ -31,15 +31,14 @@ export default function LoginPage() {
       />
 
       <input
-        placeholder="HasĹ‚o"
+        placeholder="Hasło"
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         style={{ display: "block", width: "100%", marginBottom: 10 }}
       />
 
-      <button onClick={login}>Zaloguj siÄ™</button>
+      <button onClick={login}>Zaloguj się</button>
     </main>
   );
 }
-

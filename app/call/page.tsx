@@ -1,4 +1,4 @@
-﻿"use client";
+?"use client";
 
 import { useEffect, useState } from "react";
 
@@ -11,7 +11,7 @@ type Lead = {
 const leads: Lead[] = [
   { id: 1, name: "Jan Kowalski", phone: "600123456" },
   { id: 2, name: "Anna Nowak", phone: "500987654" },
-  { id: 3, name: "Piotr ZieliĹ„ski", phone: "700111222" },
+  { id: 3, name: "Piotr Zieliński", phone: "700111222" },
 ];
 
 export default function CallMode() {
@@ -45,18 +45,17 @@ export default function CallMode() {
       </p>
 
       <p>
-        âŹ± Czas rozmowy: <strong>{seconds}s</strong>
+        ± Czas rozmowy: <strong>{seconds}s</strong>
       </p>
 
       <button
         onClick={() => (window.location.href = `tel:${lead.phone}`)}
         style={{ marginRight: 10 }}
       >
-        đź“ž ZadzwoĹ„
+        “ž Zadzwoń
       </button>
 
-      <button onClick={nextLead}>âžˇď¸Ź NastÄ™pny lead</button>
+      <button onClick={nextLead}>žˇď¸🏠 Nastć™pny lead</button>
     </main>
   );
 }
-

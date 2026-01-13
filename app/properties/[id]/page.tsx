@@ -7,7 +7,7 @@ import { generatePropertyPdf } from "@/app/lib/generatePropertyPdf";
 
 export default function PropertyDetailsPage() {
   const params = useParams();
-  const searchParams = useSearchParams(); // ✅ DODANE
+  const searchParams = useSearchParams(); // … DODANE
   const id = params.id;
 
   const [property, setProperty] = useState<Property | null>(null);
@@ -16,7 +16,7 @@ export default function PropertyDetailsPage() {
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [touchEndX, setTouchEndX] = useState<number | null>(null);
 
-  // ✅ DODATEK: status do rubryki "Dodaj do listy dokumentów"
+  // … DODATEK: status do rubryki "Dodaj do listy dokumentÄ‚łw"
   const [docAdded, setDocAdded] = useState(false);
 
   const mapRef = useRef<any>(null);
@@ -31,7 +31,7 @@ export default function PropertyDetailsPage() {
 
     const list: Property[] = JSON.parse(saved);
 
-    // ✅ DODATEK (NIC NIE ZMIENIA UI):
+    // … DODATEK (NIC NIE ZMIENIA UI):
     // Synchronizacja: "properties" -> "calli_properties_v1" (dla checklist /documents/sale)
     try {
       const CALLI_KEY = "calli_properties_v1";
@@ -47,15 +47,15 @@ export default function PropertyDetailsPage() {
           `${(p as any).city ?? ""} ${(p as any).street ?? ""} ${
             (p as any).apartmentNumber ? "Nr " + (p as any).apartmentNumber : ""
           }`.trim() ||
-          "Nieruchomość";
+          "NieruchomoÄąâ€şćâ€ˇ";
 
         const notes = [
           (p as any).district ? `Dzielnica: ${(p as any).district}` : "",
-          (p as any).area ? `Metraż: ${(p as any).area} m²` : "",
-          (p as any).price ? `Cena: ${(p as any).price} zł` : "",
+          (p as any).area ? `MetraÄąÄ˝: ${(p as any).area} mË›` : "",
+          (p as any).price ? `Cena: ${(p as any).price} zÄąâ€š` : "",
         ]
           .filter(Boolean)
-          .join(" • ");
+          .join(" â‚¬Ë ");
 
         const existing = calliMap.get(pid);
         const now = Date.now();
@@ -99,13 +99,13 @@ export default function PropertyDetailsPage() {
     }
   }, [id]);
 
-  // ✅ NOWE: AUTOPDF (newsletter może otworzyć /properties/[id]?autopdf=1)
+  // … NOWE: AUTOPDF (newsletter moÄąÄ˝e otworzyćâ€ˇ /properties/[id]?autopdf=1)
   useEffect(() => {
     if (!property) return;
     const auto = searchParams?.get("autopdf");
     if (auto !== "1") return;
 
-    // uruchom raz na wejście
+    // uruchom raz na wejÄąâ€şcie
     let cancelled = false;
     (async () => {
       try {
@@ -121,7 +121,7 @@ export default function PropertyDetailsPage() {
     };
   }, [property, searchParams]);
 
-  // ✅ DODATEK: ręczne dodanie bieżącej nieruchomości do listy dokumentów (calli_properties_v1)
+  // … DODATEK: rćâ„˘czne dodanie bieÄąÄ˝ć…cej nieruchomoÄąâ€şci do listy dokumentÄ‚łw (calli_properties_v1)
   const addToDocumentsList = () => {
     if (!property) return;
 
@@ -138,15 +138,15 @@ export default function PropertyDetailsPage() {
         `${(property as any).city ?? ""} ${(property as any).street ?? ""} ${
           (property as any).apartmentNumber ? "Nr " + (property as any).apartmentNumber : ""
         }`.trim() ||
-        "Nieruchomość";
+        "NieruchomoÄąâ€şćâ€ˇ";
 
       const notes = [
         (property as any).district ? `Dzielnica: ${(property as any).district}` : "",
-        (property as any).area ? `Metraż: ${(property as any).area} m²` : "",
-        (property as any).price ? `Cena: ${(property as any).price} zł` : "",
+        (property as any).area ? `MetraÄąÄ˝: ${(property as any).area} mË›` : "",
+        (property as any).price ? `Cena: ${(property as any).price} zÄąâ€š` : "",
       ]
         .filter(Boolean)
-        .join(" • ");
+        .join(" â‚¬Ë ");
 
       const idx = list.findIndex((p) => String(p.id) === pid);
 
@@ -236,7 +236,7 @@ export default function PropertyDetailsPage() {
       map = L.map("property-map").setView([lat, lon], 15);
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "© OpenStreetMap",
+        attribution: "Â© OpenStreetMap",
       }).addTo(map);
 
       L.marker([lat, lon]).addTo(map);
@@ -261,9 +261,9 @@ export default function PropertyDetailsPage() {
 
   return (
     <main className="p-6 md:p-10 max-w-7xl mx-auto">
-      {/* Górna sekcja (Tytuł, Cena, Zdjęcie) */}
+      {/* GÄ‚łrna sekcja (TytuÄąâ€š, Cena, Zdjćâ„˘cie) */}
       <div className="mb-6 flex flex-col md:flex-row items-start">
-        {/* Miniatura zdjęcia po lewej stronie */}
+        {/* Miniatura zdjćâ„˘cia po lewej stronie */}
         <div className="relative w-full md:w-1/3 mb-6 md:mb-0">
           <img
             src={property.images[activeIndex]}
@@ -280,35 +280,35 @@ export default function PropertyDetailsPage() {
                 onClick={goToPreviousImage}
                 className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/60 text-white px-4 py-2 rounded-full"
               >
-                ◀
+                â—â‚¬
               </button>
 
               <button
                 onClick={goToNextImage}
                 className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/60 text-white px-4 py-2 rounded-full"
               >
-                ▶
+                â—Â¶
               </button>
             </>
           )}
         </div>
 
-        {/* Tytuł i informacje o nieruchomości po prawej stronie */}
+        {/* TytuÄąâ€š i informacje o nieruchomoÄąâ€şci po prawej stronie */}
         <div className="w-full md:w-2/3">
-          {/* ✅ FIX KOLORÓW: tytuł biały na ciemnym tle */}
+          {/* … FIX KOLORÄ‚📊 W: tytuÄąâ€š biaÄąâ€šy na ciemnym tle */}
           <h1 className="text-2xl md:text-3xl font-semibold text-white text-right">
             {property.title}
           </h1>
 
           <div className="flex space-x-8 mt-4 justify-end">
             <div className="flex flex-col items-end">
-              {/* ✅ FIX: jaśniejszy szary */}
+              {/* … FIX: jaÄąâ€şniejszy szary */}
               <p className="text-lg text-gray-300">
-                📍 {property.city}, {property.district}, {property.street}{" "}
+                📊 Ĺ¤ {property.city}, {property.district}, {property.street}{" "}
                 {property.apartmentNumber && `Nr ${property.apartmentNumber}`}
               </p>
               <p className="text-lg text-gray-300">
-                📐 {property.area} m² | 📅 {property.year}
+                📊 Â {property.area} mË› | 📊 … {property.year}
               </p>
             </div>
           </div>
@@ -316,17 +316,17 @@ export default function PropertyDetailsPage() {
           <div className="flex space-x-8 mt-4 justify-end">
             <div>
               <div className="text-sm text-gray-300 mb-1">Cena</div>
-              {/* ✅ FIX: cena biała */}
+              {/* … FIX: cena biaÄąâ€ša */}
               <div className="text-3xl font-bold text-white">
-                {property.price.toLocaleString()} zł
+                {property.price.toLocaleString()} zÄąâ€š
               </div>
             </div>
 
             <div>
-              <div className="text-sm text-gray-300 mb-1">Cena za m²</div>
-              {/* ✅ FIX: dodaj kolor */}
+              <div className="text-sm text-gray-300 mb-1">Cena za mË›</div>
+              {/* … FIX: dodaj kolor */}
               <div className="text-2xl font-semibold text-white">
-                {(property.price / property.area).toLocaleString()} zł
+                {(property.price / property.area).toLocaleString()} zÄąâ€š
               </div>
             </div>
 
@@ -344,14 +344,14 @@ export default function PropertyDetailsPage() {
             </div>
           </div>
 
-          {/* ✅ NOWA RUBRYKA: Dodaj do listy dokumentów */}
+          {/* … NOWA RUBRYKA: Dodaj do listy dokumentÄ‚łw */}
           <div className="mt-5 flex justify-end">
             <div className="w-full md:w-auto rounded-2xl border border-white/10 bg-white/5 backdrop-blur px-5 py-4">
               <div className="font-semibold text-white mb-2">
-                📄 Dodaj do listy dokumentów
+                📊 â€ž Dodaj do listy dokumentÄ‚łw
               </div>
               <div className="text-sm text-gray-300 mb-3">
-                Dzięki temu nieruchomość pojawi się w checklistach dokumentów (np. /documents/sale).
+                Dzićâ„˘ki temu nieruchomoÄąâ€şćâ€ˇ pojawi sićâ„˘ w checklistach dokumentÄ‚łw (np. /documents/sale).
               </div>
 
               <div className="flex items-center gap-10 justify-end flex-wrap">
@@ -363,12 +363,12 @@ export default function PropertyDetailsPage() {
                   }}
                   className="rounded-xl bg-emerald-500 px-5 py-3 text-black font-semibold shadow hover:bg-emerald-400 transition"
                 >
-                  ➕ Dodaj / Aktualizuj na liście
+                  Ĺľâ€˘ Dodaj / Aktualizuj na liÄąâ€şcie
                 </button>
 
                 {docAdded && (
                   <span className="text-emerald-300 font-semibold">
-                    Dodano ✅
+                    Dodano …
                   </span>
                 )}
               </div>
@@ -377,37 +377,37 @@ export default function PropertyDetailsPage() {
         </div>
       </div>
 
-      {/* Szczegóły nieruchomości i opis */}
-      {/* ✅ FIX: na białej karcie ustawiamy ciemny tekst */}
+      {/* SzczegÄ‚łÄąâ€šy nieruchomoÄąâ€şci i opis */}
+      {/* … FIX: na biaÄąâ€šej karcie ustawiamy ciemny tekst */}
       <div className="mt-12 bg-white text-gray-900 rounded-2xl shadow p-8 flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-8">
         <div className="w-full md:w-1/2">
-          <h2 className="text-xl font-bold mb-4 text-gray-900">📌 Szczegóły nieruchomości</h2>
+          <h2 className="text-xl font-bold mb-4 text-gray-900">📊 Ĺš SzczegÄ‚łÄąâ€šy nieruchomoÄąâ€şci</h2>
 
           <ul className="space-y-3 text-sm text-gray-800">
-            <li>📍 {property.city}, {property.district}</li>
-            <li>🏠 Ulica: {property.street}</li>
+            <li>📊 Ĺ¤ {property.city}, {property.district}</li>
+            <li>ĹąÂ  Ulica: {property.street}</li>
             {property.apartmentNumber && (
-              <li>🚪 Numer mieszkania: {property.apartmentNumber}</li>
+              <li>Ĺž Numer mieszkania: {property.apartmentNumber}</li>
             )}
-            <li>📐 Metraż: {property.area} m²</li>
-            <li>🛏 Pokoje: {property.rooms}</li>
-            <li>🛁 Łazienki: {property.bathrooms}</li>
-            <li>🏢 Piętro: {property.floor}</li>
-            <li>📅 Rok budowy: {property.year}</li>
-            <li>💰 Cena: {property.price.toLocaleString()} zł</li>
-            {property.rent > 0 && <li>📄 Czynsz: {property.rent} zł</li>}
-            <li>🚗 Parking: {property.parking}</li>
-            {property.winda && <li>🛗 Winda</li>}
-            {property.balkon && <li>🌤 Balkon</li>}
-            {property.loggia && <li>🏡 Loggia</li>}
-            {property.piwnica && <li>📦 Piwnica</li>}
-            {property.komorka && <li>📦 Komórka lokatorska</li>}
-            {property.ownership && <li>📄 Stan prawny: {property.ownership}</li>}
+            <li>📊 Â MetraÄąÄ˝: {property.area} mË›</li>
+            <li>â€şĹą Pokoje: {property.rooms}</li>
+            <li>â€şÂ ÄąÂazienki: {property.bathrooms}</li>
+            <li>ĹąË Pićâ„˘tro: {property.floor}</li>
+            <li>📊 … Rok budowy: {property.year}</li>
+            <li>’Â° Cena: {property.price.toLocaleString()} zÄąâ€š</li>
+            {property.rent > 0 && <li>📊 â€ž Czynsz: {property.rent} zÄąâ€š</li>}
+            <li>â— Parking: {property.parking}</li>
+            {property.winda && <li>â€şâ— Winda</li>}
+            {property.balkon && <li>ĹšÂ¤ Balkon</li>}
+            {property.loggia && <li>ĹąË‡ Loggia</li>}
+            {property.piwnica && <li>📊 Â¦ Piwnica</li>}
+            {property.komorka && <li>📊 Â¦ KomÄ‚łrka lokatorska</li>}
+            {property.ownership && <li>📊 â€ž Stan prawny: {property.ownership}</li>}
           </ul>
         </div>
 
         <div className="w-full md:w-1/2">
-          <h2 className="text-xl font-bold mb-4 text-gray-900">📝 Opis nieruchomości</h2>
+          <h2 className="text-xl font-bold mb-4 text-gray-900">📊 ĹĄ Opis nieruchomoÄąâ€şci</h2>
 
           <p className="text-gray-700 leading-relaxed whitespace-pre-line">
             {property.description}
@@ -416,9 +416,9 @@ export default function PropertyDetailsPage() {
       </div>
 
       {/* Mapa */}
-      {/* ✅ FIX: biała karta ma ciemny tekst */}
+      {/* … FIX: biaÄąâ€ša karta ma ciemny tekst */}
       <div className="mt-12 bg-white text-gray-900 rounded-2xl shadow p-8">
-        <h2 className="text-xl font-semibold mb-4">📍 Lokalizacja</h2>
+        <h2 className="text-xl font-semibold mb-4">📊 Ĺ¤ Lokalizacja</h2>
         <div
           id="property-map"
           className="w-full h-[360px] rounded-2xl overflow-hidden"
@@ -452,14 +452,14 @@ export default function PropertyDetailsPage() {
               onClick={goToPreviousImage}
               className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/60 text-white px-4 py-2 rounded-full"
             >
-              ◀
+              â—â‚¬
             </button>
 
             <button
               onClick={goToNextImage}
               className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/60 text-white px-4 py-2 rounded-full"
             >
-              ▶
+              â—Â¶
             </button>
           </div>
         </div>

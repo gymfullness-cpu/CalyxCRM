@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const statuses = ["Nowy", "Oddzwonić", "Zamknięty"] as const;
+const statuses = ["Nowy", "Oddzwonić‡", "Zamknić™ty"] as const;
 type Status = (typeof statuses)[number];
 
 export default function StatusSwitcher({
@@ -33,7 +33,7 @@ export default function StatusSwitcher({
     localStorage.setItem(storageKey, next);
   };
 
-  // ⛔️ NA SERWERZE NIC NIE RENDERUJEMY
+  // ›”ď¸🏠 NA SERWERZE NIC NIE RENDERUJEMY
   if (!mounted) return null;
 
   return (

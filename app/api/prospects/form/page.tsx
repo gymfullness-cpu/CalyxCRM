@@ -1,4 +1,4 @@
-﻿"use client";
+?"use client";
 
 import { useMemo, useState } from "react";
 
@@ -65,7 +65,7 @@ export default function ProspectsIntakeFormPage() {
     setErr("");
 
     if (!canSend) {
-      setErr("UzupeĹ‚nij wymagane pola (imiÄ™, miasto, kontakt + zgoda).");
+      setErr("Uzupełnij wymagane pola (imię™, miasto, kontakt + zgoda).");
       return;
     }
 
@@ -78,11 +78,11 @@ export default function ProspectsIntakeFormPage() {
       });
 
       const data = await res.json().catch(() => null);
-      if (!res.ok || !data?.ok) throw new Error(data?.error || "BĹ‚Ä…d wysyĹ‚ki formularza.");
+      if (!res.ok || !data?.ok) throw new Error(data?.error || "Błąd wysyłki formularza.");
 
       setDoneId(String(data.id || ""));
     } catch (e: any) {
-      setErr(e?.message || "Nie udaĹ‚o siÄ™ wysĹ‚aÄ‡ formularza.");
+      setErr(e?.message || "Nie udało się wysłać‡ formularza.");
     } finally {
       setSending(false);
     }
@@ -137,14 +137,14 @@ export default function ProspectsIntakeFormPage() {
     return (
       <main style={S.page}>
         <div style={S.card}>
-          <h1 className="text-3xl font-extrabold tracking-tight">âś… DziÄ™kujÄ™!</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight">… Dzić™kujć™!</h1>
           <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>
-            ZgĹ‚oszenie zapisane. OdezwÄ™ siÄ™ do Ciebie.
+            Zgłoszenie zapisane. Odezwć™ się do Ciebie.
           </p>
 
           <div className="mt-4 rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.10)" }}>
             <div className="text-xs font-extrabold" style={{ color: "var(--text-muted)" }}>
-              ID zgĹ‚oszenia
+              ID zgłoszenia
             </div>
             <div className="mt-1 text-lg font-black" style={{ color: "rgba(234,255,251,0.95)" }}>
               {doneId}
@@ -160,7 +160,7 @@ export default function ProspectsIntakeFormPage() {
                 setErr("");
               }}
             >
-              âž• WyĹ›lij kolejne zgĹ‚oszenie
+              ž• Wyślij kolejne zgłoszenie
             </button>
           </div>
         </div>
@@ -180,9 +180,9 @@ export default function ProspectsIntakeFormPage() {
       `}</style>
 
       <div style={S.card}>
-        <h1 className="text-3xl font-extrabold tracking-tight">đźŹ  Chcesz sprzedaÄ‡ nieruchomoĹ›Ä‡?</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight">🏠  Chcesz sprzedać‡ nieruchomość‡?</h1>
         <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>
-          Zostaw kontakt i kilka informacji â€” wrĂłcÄ™ z wycenÄ… i planem sprzedaĹĽy.
+          Zostaw kontakt i kilka informacji — wrócć™ z wycenć… i planem sprzedaży.
         </p>
 
         {/* honeypot */}
@@ -197,14 +197,14 @@ export default function ProspectsIntakeFormPage() {
 
         <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <label style={S.label}>ImiÄ™ i nazwisko *</label>
+            <label style={S.label}>imię™ i nazwisko *</label>
             <input style={S.input} value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} placeholder="Jan Kowalski" />
           </div>
 
           <div>
             <label style={S.label}>Telefon (lub email) *</label>
             <input style={S.input} value={form.phone} onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))} placeholder="500 600 700" />
-            <div className="mt-2 text-xs" style={{ color: "var(--text-muted)" }}>MoĹĽesz zostawiÄ‡ tylko telefon albo tylko email.</div>
+            <div className="mt-2 text-xs" style={{ color: "var(--text-muted)" }}>Możesz zostawić‡ tylko telefon albo tylko email.</div>
           </div>
 
           <div>
@@ -213,12 +213,12 @@ export default function ProspectsIntakeFormPage() {
           </div>
 
           <div>
-            <label style={S.label}>Rodzaj nieruchomoĹ›ci</label>
+            <label style={S.label}>Rodzaj nieruchomości</label>
             <select className="ce-select" style={S.input} value={form.propertyType} onChange={(e) => setForm((p) => ({ ...p, propertyType: e.target.value as any }))}>
               <option value="mieszkanie">Mieszkanie</option>
               <option value="dom">Dom</option>
-              <option value="dzialka">DziaĹ‚ka</option>
-              <option value="lokal">Lokal usĹ‚ugowy</option>
+              <option value="dzialka">Działka</option>
+              <option value="lokal">Lokal usługowy</option>
             </select>
           </div>
 
@@ -229,12 +229,12 @@ export default function ProspectsIntakeFormPage() {
 
           <div>
             <label style={S.label}>Dzielnica</label>
-            <input style={S.input} value={form.district} onChange={(e) => setForm((p) => ({ ...p, district: e.target.value }))} placeholder="np. MokotĂłw" />
+            <input style={S.input} value={form.district} onChange={(e) => setForm((p) => ({ ...p, district: e.target.value }))} placeholder="np. Mokotów" />
           </div>
 
           <div className="md:col-span-2">
             <label style={S.label}>Ulica</label>
-            <input style={S.input} value={form.street} onChange={(e) => setForm((p) => ({ ...p, street: e.target.value }))} placeholder="np. PuĹ‚awska" />
+            <input style={S.input} value={form.street} onChange={(e) => setForm((p) => ({ ...p, street: e.target.value }))} placeholder="np. Puławska" />
           </div>
 
           <div>
@@ -243,22 +243,22 @@ export default function ProspectsIntakeFormPage() {
           </div>
 
           <div>
-            <label style={S.label}>MetraĹĽ (mÂ˛)</label>
+            <label style={S.label}>Metraż (m˛)</label>
             <input style={S.input} value={form.area} onChange={(e) => setForm((p) => ({ ...p, area: e.target.value }))} placeholder="np. 58" inputMode="decimal" />
           </div>
 
           <div>
-            <label style={S.label}>Oczekiwana cena (zĹ‚)</label>
+            <label style={S.label}>Oczekiwana cena (zł)</label>
             <input style={S.input} value={form.price} onChange={(e) => setForm((p) => ({ ...p, price: e.target.value }))} placeholder="np. 850000" inputMode="numeric" />
           </div>
 
           <div>
-            <label style={S.label}>Kiedy sprzedaĹĽ?</label>
+            <label style={S.label}>Kiedy sprzedaż?</label>
             <select className="ce-select" style={S.input} value={form.timeframe} onChange={(e) => setForm((p) => ({ ...p, timeframe: e.target.value as any }))}>
               <option value="od_razu">Od razu</option>
-              <option value="1_3_mies">1â€“3 miesiÄ…ce</option>
-              <option value="3_6_mies">3â€“6 miesiÄ™cy</option>
-              <option value="6_plus">6+ miesiÄ™cy</option>
+              <option value="1_3_mies">1—3 miesić…ce</option>
+              <option value="3_6_mies">3—6 miesięcy</option>
+              <option value="6_plus">6+ miesięcy</option>
               <option value="nie_wiem">Nie wiem</option>
             </select>
           </div>
@@ -269,7 +269,7 @@ export default function ProspectsIntakeFormPage() {
               style={{ ...S.input, minHeight: 110, resize: "vertical" as const }}
               value={form.notes}
               onChange={(e) => setForm((p) => ({ ...p, notes: e.target.value }))}
-              placeholder="np. piÄ™tro, stan, czy jest winda, termin wyprowadzki, itp."
+              placeholder="np. pić™tro, stan, czy jest winda, termin wyprowadzki, itp."
             />
           </div>
         </div>
@@ -279,20 +279,20 @@ export default function ProspectsIntakeFormPage() {
             <input type="checkbox" checked={form.consent} onChange={(e) => setForm((p) => ({ ...p, consent: e.target.checked }))} style={{ marginTop: 3 }} />
             <div style={{ minWidth: 0 }}>
               <div className="text-sm font-extrabold" style={{ color: "rgba(234,255,251,0.95)" }}>
-                WyraĹĽam zgodÄ™ na kontakt w sprawie sprzedaĹĽy nieruchomoĹ›ci *
+                Wyrażam zgodć™ na kontakt w sprawie sprzedaży nieruchomości *
               </div>
               <div className="mt-1 text-xs" style={{ color: "var(--text-muted)" }}>
-                Zgoda potrzebna, ĹĽebym mĂłgĹ‚ oddzwoniÄ‡/odpisaÄ‡.
+                Zgoda potrzebna, żebym mógł oddzwonić‡/odpisać‡.
               </div>
             </div>
           </label>
         </div>
 
-        {err ? <div className="mt-4 text-sm" style={{ color: "rgba(255,220,220,0.95)" }}>âš  {err}</div> : null}
+        {err ? <div className="mt-4 text-sm" style={{ color: "rgba(255,220,220,0.95)" }}>š  {err}</div> : null}
 
         <div className="mt-6 flex flex-wrap gap-10">
           <button style={S.btn(true)} onClick={submit} disabled={!canSend || sending}>
-            {sending ? "âŹł WysyĹ‚amâ€¦" : "âś… WyĹ›lij zgĹ‚oszenie"}
+            {sending ? "ł Wysyłam€¦" : "… Wyślij zgłoszenie"}
           </button>
 
           <button
@@ -303,11 +303,10 @@ export default function ProspectsIntakeFormPage() {
             }}
             disabled={sending}
           >
-            WyczyĹ›Ä‡
+            Wyczyść‡
           </button>
         </div>
       </div>
     </main>
   );
 }
-

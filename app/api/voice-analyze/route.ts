@@ -1,4 +1,4 @@
-﻿export const runtime = "nodejs";
+?export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
@@ -277,7 +277,15 @@ function coerceCoach(raw: any): CoachOutput {
 ========================= */
 
 export async function POST(req: Request) {
-  try {
+  
+    const openai = getOpenAI();
+    if (!openai) {
+      return NextResponse.json(
+        { error: "Missing OPENAI_API_KEY", details: "Ustaw OPENAI_API_KEY w Vercel -> Project Settings -> Environment Variables." },
+        { status: 500 }
+      );
+    }
+try {
     const formData = await req.formData();
     const file = formData.get("audio") as File | null;
     if (!file) return NextResponse.json({ success: false, error: "Brak pliku audio" }, { status: 400 });
@@ -303,31 +311,31 @@ export async function POST(req: Request) {
         {
           role: "system",
           content: [
-            "JesteĹ› asystentem CRM + trenerem rozmĂłw dla agenta nieruchomoĹ›ci w Polsce.",
-            "Masz zwracaÄ‡ WYĹÄ„CZNIE czysty JSON (bez markdown, bez komentarzy).",
+            "Jesteś asystentem CRM + trenerem rozmów dla agenta nieruchomości w Polsce.",
+            "Masz zwracać WYĹć„CZNIE czysty JSON (bez markdown, bez komentarzy).",
             "",
-            "Zwracasz jednoczeĹ›nie:",
-            "1) actions[] (CRM) â€” jak dotychczas",
+            "Zwracasz jednocześnie:",
+            "1) actions[] (CRM) — jak dotychczas",
             "2) COACHING dla rozmowy: speaker, stage, objections[], tips[], nextLine",
             "",
-            "Tryb rozmowy (mode): exclusive (wyĹ‚Ä…cznoĹ›Ä‡) albo open (otwarta).",
+            "Tryb rozmowy (mode): exclusive (wyłć…czność‡) albo open (otwarta).",
             "",
-            "ReguĹ‚y dat:",
-            "- JeĹĽeli uĹĽytkownik nie poda roku, przyjmij bieĹĽÄ…cy rok wzglÄ™dem `nowISO`.",
-            "- JeĹĽeli data bez roku jest juĹĽ w przeszĹ‚oĹ›ci wzglÄ™dem `nowISO`, ustaw kolejny rok.",
+            "Reguły dat:",
+            "- Jeżeli użytkownik nie poda roku, przyjmij bieżć…cy rok wzglć™dem `nowISO`.",
+            "- Jeżeli data bez roku jest już w przeszłości wzglć™dem `nowISO`, ustaw kolejny rok.",
             "- Formaty: date = YYYY-MM-DD, time = HH:mm.",
             "",
-            "Typy eventĂłw: pozysk | prezentacja | umowa | inne.",
+            "Typy eventów: pozysk | prezentacja | umowa | inne.",
             "Follow-up: followupType: pozysk | prezentacja.",
             "",
-            "WaĹĽne: Nie wymyĹ›laj numerĂłw telefonu/email jeĹ›li ich nie ma.",
-            "JeĹ›li komenda CRM jest niepeĹ‚na: actions = [] i hint z krĂłtkÄ… sugestiÄ….",
+            "Ważne: Nie wymyślaj numerów telefonu/email jeśli ich nie ma.",
+            "Jeśli komenda CRM jest niepełna: actions = [] i hint z krótkć… sugestić….",
             "",
             "COACHING:",
-            "- speaker: kto mĂłwi w tym fragmencie transkrypcji (client/agent/unknown).",
-            "- stage: raport/needs/value/terms/close/unknown (jeden wybĂłr).",
-            "- objections: max 4. KaĹĽda ma: type, evidence (krĂłtki cytat), response (co agent ma powiedzieÄ‡), question (pytanie domykajÄ…ce).",
-            "- tips: max 6, krĂłtkie konkretne zdania do uĹĽycia teraz.",
+            "- speaker: kto mówi w tym fragmencie transkrypcji (client/agent/unknown).",
+            "- stage: raport/needs/value/terms/close/unknown (jeden wybór).",
+            "- objections: max 4. Każda ma: type, evidence (krótki cytat), response (co agent ma powiedzieć‡), question (pytanie domykajć…ce).",
+            "- tips: max 6, krótkie konkretne zdania do użycia teraz.",
             "- nextLine: jedno najlepsze zdanie do powiedzenia TERAZ (pod tryb mode).",
           ].join("\n"),
         },
@@ -339,7 +347,7 @@ mode: ${mode}
 TRANSKRYPCJA (ostatni fragment):
 ${transcript}
 
-ZwrĂłÄ‡ JSON o strukturze:
+Zwróć JSON o strukturze:
 {
   "actions": [
     // { "type": "create_lead", "payload": { "name": "...", "phone": "...", "preferences": "..." } }
@@ -362,15 +370,15 @@ ZwrĂłÄ‡ JSON o strukturze:
   ]
 }
 
-JeĹ›li z transkrypcji wynika: klient szuka mieszkania + data spotkania, zwrĂłÄ‡ DWIE akcje:
+Jeśli z transkrypcji wynika: klient szuka mieszkania + data spotkania, zwróć DWIE akcje:
 - create_lead
 - create_calendar_event
 
-JeĹ›li z transkrypcji wynika: "dodaj follow up ...", zwrĂłÄ‡ create_followup.
-JeĹ›li z transkrypcji wynika: "wyĹ›lij sms/email ...", zwrĂłÄ‡ draft_sms/draft_email (tylko draft).`,
+Jeśli z transkrypcji wynika: "dodaj follow up ...", zwróć create_followup.
+Jeśli z transkrypcji wynika: "wyślij sms/email ...", zwróć draft_sms/draft_email (tylko draft).`,
         },
       ],
-      // trochÄ™ szybciej / stabilniej w JSON: ucinamy kreatywnoĹ›Ä‡
+      // trochć™ szybciej / stabilniej w JSON: ucinamy kreatywność‡
       temperature: 0.2,
     });
 
@@ -382,7 +390,7 @@ JeĹ›li z transkrypcji wynika: "wyĹ›lij sms/email ...", zwrĂłÄ‡ draft_
 
     const coach = coerceCoach(parsed);
 
-    /* 3) Legacy (ĹĽeby nic nie popsuÄ‡): lead/meeting */
+    /* 3) Legacy (żeby nic nie popsuć‡): lead/meeting */
     const leadAction = actions.find((a) => a.type === "create_lead") as
       | { type: "create_lead"; payload: { name: string; phone?: string | null; preferences?: string | null } }
       | undefined;
@@ -416,7 +424,7 @@ JeĹ›li z transkrypcji wynika: "wyĹ›lij sms/email ...", zwrĂłÄ‡ draft_
     if (eventAction) {
       legacyMeeting = {
         id: Date.now(),
-        title: eventAction.payload.title || "Spotkanie z gĹ‚osĂłwki",
+        title: eventAction.payload.title || "Spotkanie z głosówki",
         date: eventAction.payload.date,
         time: eventAction.payload.time,
       };
@@ -442,8 +450,7 @@ JeĹ›li z transkrypcji wynika: "wyĹ›lij sms/email ...", zwrĂłÄ‡ draft_
     });
   } catch (e: any) {
     console.error(e);
-    const msg = typeof e?.message === "string" ? e.message : "BĹ‚Ä…d serwera voice-analyze";
+    const msg = typeof e?.message === "string" ? e.message : "Błąd serwera voice-analyze";
     return NextResponse.json({ success: false, error: msg }, { status: 500 });
   }
 }
-

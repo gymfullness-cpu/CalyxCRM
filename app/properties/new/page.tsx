@@ -1,12 +1,12 @@
-﻿"use client";
+?"use client";
 
 import { useEffect, useState } from "react";
 
 /* ================= TYPES ================= */
 
-type PropertyStatus = "DostÄ™pna" | "Zarezerwowana" | "Sprzedana";
+type PropertyStatus = "Dostć™pna" | "Zarezerwowana" | "Sprzedana";
 type KitchenType = "Osobna kuchnia" | "Salon z aneksem";
-type ParkingType = "GaraĹĽ podziemny" | "Miejsce naziemne" | "Publiczne" | "Brak";
+type ParkingType = "Garaż podziemny" | "Miejsce naziemne" | "Publiczne" | "Brak";
 
 type Property = {
   id: number;
@@ -50,7 +50,7 @@ type Property = {
 
 const emptyForm: Omit<Property, "id"> = {
   title: "",
-  status: "DostÄ™pna",
+  status: "Dostć™pna",
 
   city: "",
   district: "",
@@ -133,7 +133,7 @@ export default function PropertiesPage() {
 
   return (
     <main style={{ padding: 40, maxWidth: 1200, fontFamily: "Inter, system-ui" }}>
-      <h1 style={{ fontSize: 32, fontWeight: 800 }}>đźŹ  NieruchomoĹ›ci</h1>
+      <h1 style={{ fontSize: 32, fontWeight: 800 }}>🏠  Nieruchomości</h1>
 
       {/* ================= FORM ================= */}
       <div
@@ -147,13 +147,13 @@ export default function PropertiesPage() {
       >
         <Section title="Podstawowe informacje" />
 
-        <Field label="TytuĹ‚ ogĹ‚oszenia">
+        <Field label="Tytuł ogłoszenia">
           <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
         </Field>
 
-        <Field label="Status nieruchomoĹ›ci">
+        <Field label="Status nieruchomości">
           <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as PropertyStatus })}>
-            <option>DostÄ™pna</option>
+            <option>Dostć™pna</option>
             <option>Zarezerwowana</option>
             <option>Sprzedana</option>
           </select>
@@ -173,13 +173,13 @@ export default function PropertiesPage() {
           <input value={form.street} onChange={(e) => setForm({ ...form, street: e.target.value })} />
         </Field>
 
-        <Section title="Cena i metraĹĽ" />
+        <Section title="Cena i metraż" />
 
-        <Field label="Cena (zĹ‚)">
+        <Field label="Cena (zł)">
           <input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: +e.target.value })} />
         </Field>
 
-        <Field label="Powierzchnia (mÂ˛)">
+        <Field label="Powierzchnia (m˛)">
           <input type="number" value={form.area} onChange={(e) => setForm({ ...form, area: +e.target.value })} />
         </Field>
 
@@ -199,17 +199,17 @@ export default function PropertiesPage() {
         <Checkbox label="Winda" value={form.elevator} onChange={() => setForm({ ...form, elevator: !form.elevator })} />
         <Checkbox label="Balkon / taras" value={form.balcony} onChange={() => setForm({ ...form, balcony: !form.balcony })} />
         <Checkbox label="Piwnica" value={form.basement} onChange={() => setForm({ ...form, basement: !form.basement })} />
-        <Checkbox label="KomĂłrka lokatorska" value={form.storage} onChange={() => setForm({ ...form, storage: !form.storage })} />
+        <Checkbox label="Komórka lokatorska" value={form.storage} onChange={() => setForm({ ...form, storage: !form.storage })} />
 
-        <Section title="Opis nieruchomoĹ›ci" />
+        <Section title="Opis nieruchomości" />
 
         <textarea
-          placeholder="PeĹ‚ny opis nieruchomoĹ›ci â€“ standard, lokalizacja, atuty"
+          placeholder="Pełny opis nieruchomości — standard, lokalizacja, atuty"
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
         />
 
-        <Section title="ZdjÄ™cia" />
+        <Section title="Zdjć™cia" />
         <input type="file" accept="image/*" onChange={(e) => e.target.files && uploadImage(e.target.files[0])} />
 
         <button
@@ -224,10 +224,9 @@ export default function PropertiesPage() {
             fontSize: 16,
           }}
         >
-          đź’ľ Zapisz nieruchomoĹ›Ä‡
+          ’ľ Zapisz nieruchomość‡
         </button>
       </div>
     </main>
   );
 }
-

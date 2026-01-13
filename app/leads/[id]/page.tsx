@@ -7,11 +7,11 @@ import Notes from "./Notes";
 import CallButton from "./CallButton";
 import StatusSwitcher from "./StatusSwitcher";
 
-type LeadRole = "właściciel" | "kupujący";
-type LeadStatus = "Nowy" | "Oddzwonić" | "Zamknięty";
+type LeadRole = "właściciel" | "kupujć…cy";
+type LeadStatus = "Nowy" | "Oddzwonić‡" | "Zamknić™ty";
 
 function normalizeLeadStatus(s: unknown): LeadStatus {
-  return s === "Nowy" || s === "Oddzwonić" || s === "Zamknięty" ? s : "Nowy";
+  return s === "Nowy" || s === "Oddzwonić‡" || s === "Zamknić™ty" ? s : "Nowy";
 }
 
 type Lead = {
@@ -35,7 +35,7 @@ export default function LeadPage() {
   const [lead, setLead] = useState<Lead | null>(null);
   const [properties, setProperties] = useState<Property[]>([]);
 
-  // 🔹 LEAD Z LOCALSTORAGE
+  // ”ą LEAD Z LOCALSTORAGE
   useEffect(() => {
     const saved = localStorage.getItem("leads");
     if (!saved) return;
@@ -54,7 +54,7 @@ export default function LeadPage() {
         name: typeof x.name === "string" ? x.name : "",
         phone: typeof x.phone === "string" ? x.phone : "",
         status: normalizeLeadStatus(x.status),
-        role: x.role === "właściciel" || x.role === "kupujący" ? x.role : undefined,
+        role: x.role === "właściciel" || x.role === "kupujć…cy" ? x.role : undefined,
         propertyIds: Array.isArray(x.propertyIds)
           ? x.propertyIds
               .map((v: any) => (typeof v === "number" ? v : Number(v)))
@@ -67,7 +67,7 @@ export default function LeadPage() {
     setLead(found);
   }, [id]);
 
-  // 🔹 NIERUCHOMOŚCI
+  // ”ą NIERUCHOMOĹšCI
   useEffect(() => {
     const saved = localStorage.getItem("properties");
     if (!saved) return;
@@ -118,7 +118,7 @@ export default function LeadPage() {
 
       <hr />
 
-      <h3>🏠 Powiązane nieruchomości</h3>
+      <h3>🏠  Powić…zane nieruchomości</h3>
 
       {properties.length === 0 && <p>Brak nieruchomości</p>}
 
@@ -164,12 +164,12 @@ export default function LeadPage() {
           }
         >
           <option value="">— wybierz —</option>
-          <option value="właściciel">🏠 Właściciel</option>
-          <option value="kupujący">🧍 Kupujący</option>
+          <option value="właściciel">🏠  Właściciel</option>
+          <option value="kupujć…cy">§Ť Kupujć…cy</option>
         </select>
       </p>
 
-      {/* ✅ tu już zawsze idzie poprawny union */}
+      {/* … tu już zawsze idzie poprawny union */}
       <StatusSwitcher leadId={lead.id} initialStatus={lead.status} />
 
       <p>
@@ -179,7 +179,7 @@ export default function LeadPage() {
 
       <hr />
 
-      <h3>📅 Spotkania</h3>
+      <h3>“… Spotkania</h3>
 
       {(() => {
         const saved = localStorage.getItem("meetings");
@@ -205,7 +205,7 @@ export default function LeadPage() {
             {meetings.map((m: any) => (
               <li key={m.id}>
                 {m.date} {m.time} —{" "}
-                {m.type === "pozyskowe" ? "✍️ Pozyskowe" : "🏠 Prezentacja"}
+                {m.type === "pozyskowe" ? "Ťď¸🏠 Pozyskowe" : "🏠  Prezentacja"}
               </li>
             ))}
           </ul>
