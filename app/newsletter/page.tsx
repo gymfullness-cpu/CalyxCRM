@@ -1,4 +1,4 @@
-?"use client";
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -21,8 +21,6 @@ type Property = {
   price?: number;
   area?: number;
   elevator?: boolean;
-  // u Ciebie w details s& te��� pola typu apartmentNumber itd.
-  // newsletter ich nie potrzebuje, ale nie przeszkadzaj&.
 };
 
 type Lead = {
@@ -37,86 +35,115 @@ export default function NewsletterPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [properties, setProperties] = useState<Property[]>([]);
 
-  const [selectedPropertyId, setSelectedPropertyId] = useState<number | null>(null);
+  const [selectedPropertyId, setSelectedPropertyId] = useState<number | null>(
+    null
+  );
   const [mode, setMode] = useState<"all" | "matched">("all");
   const [threshold, setThreshold] = useState<number>(60);
 
-  // & sta� ae ustawienia newslettera (ustawiasz raz)
-  const [templateSubjectPrefix, setTemplateSubjectPrefix] = useState<string>("Nowa nieruchomo� _ �:");
-  const [templateMessage, setTemplateMessage] = useState<string>(
-    "Cze� _ �!\n\nMam dla Ciebie now& ofert��. Je� _li chcesz, pode� _l�� wi��cej szczeg�B� a�Bw / um�Bwimy prezentacj��.\n"
+  // stałe ustawienia newslettera (ustawiasz raz)
+  const [templateSubjectPrefix, setTemplateSubjectPrefix] = useState<string>(
+    "Nowa nieruchomość:"
   );
-  const [templateSignature, setTemplateSignature] = useState<string>("Pozdrawiam!\n��\nCalyx AI / Agent");
+  const [templateMessage, setTemplateMessage] = useState<string>(
+    "Cześć!\n\nMam dla Ciebie nową ofertę. Jeśli chcesz, podeślę więcej szczegółów lub umówimy prezentację.\n"
+  );
+  const [templateSignature, setTemplateSignature] = useState<string>(
+    "Pozdrawiam!\n\nCalyx AI / Agent"
+  );
 
   /* ===== LOAD ===== */
   useEffect(() => {
-    setContacts(JSON.parse(localStorage.getItem("contacts") || "[]"));
-    setLeads(JSON.parse(localStorage.getItem("leads") || "[]"));
-    setProperties(JSON.parse(localStorage.getItem("properties") || "[]"));
+    try {
+      setContacts(JSON.parse(localStorage.getItem("contacts") || "[]"));
+      setLeads(JSON.parse(localStorage.getItem("leads") || "[]"));
+      setProperties(JSON.parse(localStorage.getItem("properties") || "[]"));
 
-    const s1 = localStorage.getItem("nl_subject_prefix");
-    const s2 = localStorage.getItem("nl_message");
-    const s3 = localStorage.getItem("nl_signature");
+      const s1 = localStorage.getItem("nl_subject_prefix");
+      const s2 = localStorage.getItem("nl_message");
+      const s3 = localStorage.getItem("nl_signature");
 
-    if (s1 && s1.trim()) setTemplateSubjectPrefix(s1);
-    if (s2 && s2.trim()) setTemplateMessage(s2);
-    if (s3 && s3.trim()) setTemplateSignature(s3);
+      if (s1 && s1.trim()) setTemplateSubjectPrefix(s1);
+      if (s2 && s2.trim()) setTemplateMessage(s2);
+      if (s3 && s3.trim()) setTemplateSignature(s3);
+    } catch {
+      // ignore
+    }
   }, []);
 
-  /* ===== SAVE (ustawiasz raz, pami��ta) ===== */
-  useEffect(() => localStorage.setItem("nl_subject_prefix", templateSubjectPrefix), [templateSubjectPrefix]);
-  useEffect(() => localStorage.setItem("nl_message", templateMessage), [templateMessage]);
-  useEffect(() => localStorage.setItem("nl_signature", templateSignature), [templateSignature]);
+  /* ===== SAVE (zapamiętuje) ===== */
+  useEffect(
+    () => localStorage.setItem("nl_subject_prefix", templateSubjectPrefix),
+    [templateSubjectPrefix]
+  );
+  useEffect(() => localStorage.setItem("nl_message", templateMessage), [
+    templateMessage,
+  ]);
+  useEffect(() => localStorage.setItem("nl_signature", templateSignature), [
+    templateSignature,
+  ]);
 
   const selectedProperty = useMemo(() => {
     if (selectedPropertyId == null) return null;
     return properties.find((p) => p.id === selectedPropertyId) || null;
   }, [selectedPropertyId, properties]);
 
-  /* ===== NORMALIZE (jak w leadach) ===== */
+  /* ===== NORMALIZE ===== */
   const normalize = (t: string) =>
     t
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
-      .replace(/(owie|ach|ami|owi|emu|ie|u|a|e|y|ow|�Bw)$/g, "");
+      .replace(/(owie|ach|ami|owi|emu|ie|u|a|e|y|ow)$/g, "");
 
-  /* ===== PRICE (jak w leadach) ===== */
+  /* ===== PRICE ===== */
   const extractPriceRange = (text: string) => {
     const t = text.toLowerCase().replace(/\s/g, "");
     let min: number | null = null;
     let max: number | null = null;
 
-    const range = t.match(/(\d{2,3})[-��=� ](\d{2,3})tys/);
+    // np. 450-600tys
+    const range = t.match(/(\d{2,4})-(\d{2,4})tys/);
     if (range) {
-      min = +range[1] * 1000;
-      max = +range[2] * 1000;
+      min = Number(range[1]) * 1000;
+      max = Number(range[2]) * 1000;
     }
 
-    const maxMatch = t.match(/do(\d{2,3})tys|do(\d)mln/);
+    // np. do600tys / do1mln
+    const maxMatch = t.match(/do(\d{2,4})tys|do(\d)mln/);
     if (maxMatch) {
-      max = Number(maxMatch[1] || maxMatch[2]) * (maxMatch[2] ? 1_000_000 : 1000);
+      const tys = maxMatch[1];
+      const mln = maxMatch[2];
+      max = Number(tys || mln) * (mln ? 1_000_000 : 1000);
     }
 
     return { min, max };
   };
 
-  /* ===== MATCH SCORE (jak w leadach) ===== */
+  /* ===== MATCH SCORE ===== */
   const matchScore = (lead: Lead, p: Property) => {
     if (!lead.preferences) return 0;
     const prefWords = lead.preferences.split(/\s+/).map(normalize);
     let score = 0;
 
-    if (p.city && prefWords.some((w) => normalize(p.city!).includes(w))) score += 30;
-    if (p.district && prefWords.some((w) => normalize(p.district!).includes(w))) score += 30;
+    if (p.city && prefWords.some((w) => normalize(p.city!).includes(w)))
+      score += 30;
+    if (
+      p.district &&
+      prefWords.some((w) => normalize(p.district!).includes(w))
+    )
+      score += 30;
 
     const rooms = lead.preferences.match(/(\d)\s*pok/);
-    if (rooms && typeof p.rooms === "number" && p.rooms === Number(rooms[1])) score += 20;
+    if (rooms && typeof p.rooms === "number" && p.rooms === Number(rooms[1]))
+      score += 20;
 
-    if (lead.preferences.includes("winda") && p.elevator) score += 10;
+    if (lead.preferences.toLowerCase().includes("winda") && p.elevator)
+      score += 10;
 
     const { min, max } = extractPriceRange(lead.preferences);
-    if (p.price && (!min || p.price >= min) && (!max || p.price <= max)) score += 10;
+    if (p.price && (!min || p.price >= min) && (!max || p.price <= max))
+      score += 10;
 
     return Math.min(score, 100);
   };
@@ -178,32 +205,60 @@ export default function NewsletterPage() {
     return dedupeByEmail(out);
   }, [mode, safeContacts, leadByName, selectedProperty, threshold]);
 
-  /* ===== SUBJECT + BODY (sta� ay template) ===== */
+  /* ===== SUBJECT + BODY ===== */
   const subject = useMemo(() => {
     if (!selectedProperty) return `${templateSubjectPrefix} oferta`;
-    const loc = [selectedProperty.city, selectedProperty.district].filter(Boolean).join(", ");
-    const rooms = typeof selectedProperty.rooms === "number" ? `${selectedProperty.rooms} pok. ��˘ ` : "";
+    const loc = [selectedProperty.city, selectedProperty.district]
+      .filter(Boolean)
+      .join(", ");
+    const rooms =
+      typeof selectedProperty.rooms === "number"
+        ? `${selectedProperty.rooms} pok. • `
+        : "";
     return `${templateSubjectPrefix} ${rooms}${loc || "oferta"}`.trim();
   }, [selectedProperty, templateSubjectPrefix]);
 
   const detailsBlock = useMemo(() => {
     if (!selectedProperty) return "";
+
+    const url =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/properties/${selectedProperty.id}`
+        : "";
+
     return [
       "",
-      "������",
-      "Szczeg�B� ay oferty:",
-      `=� 9� Lokalizacja: ${[selectedProperty.city, selectedProperty.district, selectedProperty.street].filter(Boolean).join(", ") || "��"}`,
-      `9� Pokoje: ${typeof selectedProperty.rooms === "number" ? selectedProperty.rooms : "��"}`,
-      `=� � Metra���: ${typeof selectedProperty.area === "number" ? `${selectedProperty.area} m�:` : "��"}`,
-      `� Cena: ${typeof selectedProperty.price === "number" ? `${selectedProperty.price.toLocaleString("pl-PL")} z� a` : "��"}`,
-      ` _� Winda: ${selectedProperty.elevator ? "tak" : "nie"}`,
+      "—",
+      "Szczegóły oferty:",
+      `📍 Lokalizacja: ${
+        [selectedProperty.city, selectedProperty.district, selectedProperty.street]
+          .filter(Boolean)
+          .join(", ") || "—"
+      }`,
+      `🛏️ Pokoje: ${
+        typeof selectedProperty.rooms === "number" ? selectedProperty.rooms : "—"
+      }`,
+      `📐 Metraż: ${
+        typeof selectedProperty.area === "number"
+          ? `${selectedProperty.area} m²`
+          : "—"
+      }`,
+      `💰 Cena: ${
+        typeof selectedProperty.price === "number"
+          ? `${selectedProperty.price.toLocaleString("pl-PL")} zł`
+          : "—"
+      }`,
+      `🛗 Winda: ${selectedProperty.elevator ? "tak" : "nie"}`,
       "",
-      `Link do oferty: ${typeof window !== "undefined" ? `${window.location.origin}/properties/${selectedProperty.id}` : ""}`,
-    ].join("\n");
+      url ? `Link do oferty: ${url}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
   }, [selectedProperty]);
 
   const bodyText = useMemo(() => {
-    if (!selectedProperty) return "Wybierz nieruchomo� _ �, aby wygenerowa � tre� _ �.";
+    if (!selectedProperty)
+      return "Wybierz nieruchomość, aby wygenerować treść.";
     const msg = (templateMessage || "").trim();
     const sign = (templateSignature || "").trim();
     return [msg, detailsBlock, "", sign].filter(Boolean).join("\n");
@@ -224,17 +279,20 @@ export default function NewsletterPage() {
   const copy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      alert("Skopiowano &");
+      alert("Skopiowano!");
     } catch {
-      alert("Nie uda� ao si�� skopiowa � (sprawd�9<� uprawnienia przegl&darki).");
+      alert("Nie udało się skopiować (sprawdź uprawnienia przeglądarki).");
     }
   };
 
-  // & PDF: odpalamy istniej&cy eksport z PropertyDetails przez autopdf=1
+  // PDF: odpalamy istniejący eksport przez autopdf=1
   const exportPdfAuto = () => {
-    if (!selectedProperty) return alert("Najpierw wybierz nieruchomo� _ �.");
-    // otwieramy szczeg�B� ay -> a tam useEffect zrobi generatePropertyPdf(property)
-    window.open(`/properties/${selectedProperty.id}?autopdf=1`, "_blank", "noopener,noreferrer");
+    if (!selectedProperty) return alert("Najpierw wybierz nieruchomość.");
+    window.open(
+      `/properties/${selectedProperty.id}?autopdf=1`,
+      "_blank",
+      "noopener,noreferrer"
+    );
   };
 
   return (
@@ -290,90 +348,159 @@ export default function NewsletterPage() {
       `}</style>
 
       <h1 className="text-3xl font-extrabold" style={{ color: "var(--text-main)" }}>
-         ��<�9 Newsletter
+        ✉️ Newsletter
       </h1>
       <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>
-        Ustawiasz raz tre� _ �/temat/podpis  � wybierasz ofert��  � PDF (auto)  � otwierasz email.
+        Ustawiasz raz treść/temat/podpis → wybierasz ofertę → PDF (auto) → otwierasz email.
       </p>
 
-      {/* USTAWIENIA TEMPLATE (sta� ae) */}
-      <section className="mt-6 rounded-2xl p-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border-soft)" }}>
+      {/* USTAWIENIA TEMPLATE */}
+      <section
+        className="mt-6 rounded-2xl p-6"
+        style={{
+          background: "var(--bg-card)",
+          border: "1px solid var(--border-soft)",
+        }}
+      >
         <h2 className="text-xl font-extrabold" style={{ color: "var(--text-main)" }}>
-          Szablon (zapami��tywany)
+          Szablon (zapamiętywany)
         </h2>
 
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <div>
             <label className="label">Prefix tematu</label>
-            <input className="input" value={templateSubjectPrefix} onChange={(e) => setTemplateSubjectPrefix(e.target.value)} />
+            <input
+              className="input"
+              value={templateSubjectPrefix}
+              onChange={(e) => setTemplateSubjectPrefix(e.target.value)}
+            />
           </div>
 
           <div>
             <label className="label">Podpis</label>
-            <textarea className="input" style={{ minHeight: 88 }} value={templateSignature} onChange={(e) => setTemplateSignature(e.target.value)} />
+            <textarea
+              className="input"
+              style={{ minHeight: 88 }}
+              value={templateSignature}
+              onChange={(e) => setTemplateSignature(e.target.value)}
+            />
           </div>
 
           <div className="md:col-span-2">
-            <label className="label">Tre� _ � wiadomo� _ci (sta� aa)</label>
-            <textarea className="input" style={{ minHeight: 140 }} value={templateMessage} onChange={(e) => setTemplateMessage(e.target.value)} />
+            <label className="label">Treść wiadomości</label>
+            <textarea
+              className="input"
+              style={{ minHeight: 140 }}
+              value={templateMessage}
+              onChange={(e) => setTemplateMessage(e.target.value)}
+            />
           </div>
         </div>
       </section>
 
-      {/* WYB�=� R + TRYB */}
-      <section className="mt-6 rounded-2xl p-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border-soft)" }}>
+      {/* WYBÓR + TRYB */}
+      <section
+        className="mt-6 rounded-2xl p-6"
+        style={{
+          background: "var(--bg-card)",
+          border: "1px solid var(--border-soft)",
+        }}
+      >
         <div className="grid gap-4 md:grid-cols-2">
           <div>
-            <label className="label">Nieruchomo� _ �</label>
-            <select className="input" value={selectedPropertyId ?? ""} onChange={(e) => setSelectedPropertyId(e.target.value ? Number(e.target.value) : null)}>
-              <option value="">�� wybierz ��</option>
+            <label className="label">Nieruchomość</label>
+            <select
+              className="input"
+              value={selectedPropertyId ?? ""}
+              onChange={(e) =>
+                setSelectedPropertyId(e.target.value ? Number(e.target.value) : null)
+              }
+            >
+              <option value="">— wybierz —</option>
               {properties
                 .slice()
                 .sort((a, b) => (b.id ?? 0) - (a.id ?? 0))
                 .map((p) => (
                   <option key={p.id} value={p.id}>
-                    #{p.id} ��˘ {[p.city, p.district].filter(Boolean).join(", ") || "��"}
-                    {typeof p.price === "number" ? ` ��˘ ${p.price.toLocaleString("pl-PL")} z� a` : ""}
+                    #{p.id} • {[p.city, p.district].filter(Boolean).join(", ") || "—"}
+                    {typeof p.price === "number"
+                      ? ` • ${p.price.toLocaleString("pl-PL")} zł`
+                      : ""}
                   </option>
                 ))}
             </select>
           </div>
 
           <div>
-            <label className="label">Tryb odbiorc�Bw</label>
+            <label className="label">Tryb odbiorców</label>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              <button type="button" className={`btn ${mode === "all" ? "btnPrimary" : ""}`} onClick={() => setMode("all")}>
-                 �� Wszyscy
+              <button
+                type="button"
+                className={`btn ${mode === "all" ? "btnPrimary" : ""}`}
+                onClick={() => setMode("all")}
+              >
+                👥 Wszyscy
               </button>
-              <button type="button" className={`btn ${mode === "matched" ? "btnPrimary" : ""}`} onClick={() => setMode("matched")}>
-                9� Dopasowani
+              <button
+                type="button"
+                className={`btn ${mode === "matched" ? "btnPrimary" : ""}`}
+                onClick={() => setMode("matched")}
+              >
+                🎯 Dopasowani
               </button>
             </div>
 
             {mode === "matched" ? (
               <div style={{ marginTop: 10 }}>
-                <label className="label">Pr�Bg dopasowania (0��=� 100)</label>
-                <input className="input" type="number" min={0} max={100} value={threshold} onChange={(e) => setThreshold(Number(e.target.value || 0))} />
+                <label className="label">Próg dopasowania (0–100)</label>
+                <input
+                  className="input"
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={threshold}
+                  onChange={(e) => setThreshold(Number(e.target.value || 0))}
+                />
               </div>
             ) : null}
           </div>
         </div>
 
         <div style={{ marginTop: 14, display: "flex", gap: 10, flexWrap: "wrap" }}>
-          <button type="button" className="btn" onClick={exportPdfAuto} disabled={!selectedProperty}>
-            =�  PDF (auto z oferty)
+          <button
+            type="button"
+            className="btn"
+            onClick={exportPdfAuto}
+            disabled={!selectedProperty}
+          >
+            📄 PDF (auto z oferty)
           </button>
 
-          <button type="button" className="btn" onClick={() => copy(recipients.map((r) => r.email).join(", "))} disabled={recipients.length === 0}>
-            =�   Kopiuj odbiorc�Bw
+          <button
+            type="button"
+            className="btn"
+            onClick={() => copy(recipients.map((r) => r.email).join(", "))}
+            disabled={recipients.length === 0}
+          >
+            📋 Kopiuj odbiorców
           </button>
 
-          <button type="button" className="btn" onClick={() => copy(subject)} disabled={!selectedProperty}>
-            =�   Kopiuj temat
+          <button
+            type="button"
+            className="btn"
+            onClick={() => copy(subject)}
+            disabled={!selectedProperty}
+          >
+            📋 Kopiuj temat
           </button>
 
-          <button type="button" className="btn" onClick={() => copy(bodyText)} disabled={!selectedProperty}>
-            =�   Kopiuj tre� _ �
+          <button
+            type="button"
+            className="btn"
+            onClick={() => copy(bodyText)}
+            disabled={!selectedProperty}
+          >
+            📋 Kopiuj treść
           </button>
 
           <a
@@ -382,21 +509,27 @@ export default function NewsletterPage() {
             onClick={(e) => {
               if (!selectedProperty || recipients.length === 0) e.preventDefault();
             }}
-            title="Uwaga: mailto nie do� a&cza automatycznie PDF. Kliknij PDF (auto), a potem do� a&cz plik r��cznie w poczcie."
+            title="Uwaga: mailto nie dołącza automatycznie PDF. Kliknij PDF (auto), a potem dołącz plik ręcznie w poczcie."
           >
-            =� � Otw�rz email
+            ✉️ Otwórz email
           </a>
         </div>
 
         <div className="mt-3 text-xs" style={{ color: "var(--text-muted)" }}>
-          Tip: mailto nie potrafi automatycznie doda � za� a&cznika. Najpierw pobierz PDF, potem kliknij Otw�rz email i dodaj plik r��cznie.
+          Tip: mailto nie potrafi automatycznie dodać załącznika. Najpierw pobierz PDF, potem kliknij „Otwórz email” i dodaj plik ręcznie.
         </div>
       </section>
 
-      {/* PODGLD */}
-      <section className="mt-6 rounded-2xl p-6" style={{ background: "var(--bg-card)", border: "1px solid var(--border-soft)" }}>
+      {/* PODGLĄD */}
+      <section
+        className="mt-6 rounded-2xl p-6"
+        style={{
+          background: "var(--bg-card)",
+          border: "1px solid var(--border-soft)",
+        }}
+      >
         <h2 className="text-xl font-extrabold" style={{ color: "var(--text-main)" }}>
-          Podgl&d
+          Podgląd
         </h2>
         <div className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>
           <b>Temat:</b> {subject}
