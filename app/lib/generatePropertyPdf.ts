@@ -1,5 +1,6 @@
-?import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+"use client";
+
+import type { jsPDF as JsPdfType } from "jspdf";
 
 type PropertyLike = {
   id: string | number;
@@ -35,9 +36,13 @@ type PropertyLike = {
 function formatMoneyPLN(n: number) {
   const safe = Number.isFinite(n) ? n : 0;
   try {
-    return new Intl.NumberFormat("pl-PL").format(safe) + " zB";
+    return new Intl.NumberFormat("pl-PL", {
+      style: "currency",
+      currency: "PLN",
+      maximumFractionDigits: 0,
+    }).format(safe);
   } catch {
-    return `${safe} zB`;
+    return `${safe} zł`;
   }
 }
 
@@ -47,11 +52,11 @@ function safeText(v: any) {
 
 function clampText(s: string, max = 160) {
   const t = safeText(s).trim();
-  return t.length > max ? t.slice(0, max - 1) + "��" : t;
+  return t.length > max ? t.slice(0, max - 1) + "…" : t;
 }
 
 async function addImageSafe(
-  doc: jsPDF,
+  doc: JsPdfType,
   src: string,
   x: number,
   y: number,
@@ -60,24 +65,26 @@ async function addImageSafe(
 ) {
   if (!src) return false;
 
+  // dataURL
   if (src.startsWith("data:image/")) {
     const format = src.includes("image/png") ? "PNG" : "JPEG";
-    doc.addImage(src, format as any, x, y, w, h, undefined, "FAST");
+    (doc as any).addImage(src, format, x, y, w, h, undefined, "FAST");
     return true;
   }
 
   try {
     const res = await fetch(src, { mode: "cors" });
     const blob = await res.blob();
+
     const dataUrl = await new Promise<string>((resolve, reject) => {
       const r = new FileReader();
       r.onload = () => resolve(String(r.result));
-      r.onerror = reject;
+      r.onerror = () => reject(new Error("Nie udało się wczytać obrazu do PDF."));
       r.readAsDataURL(blob);
     });
 
     const format = dataUrl.includes("image/png") ? "PNG" : "JPEG";
-    doc.addImage(dataUrl, format as any, x, y, w, h, undefined, "FAST");
+    (doc as any).addImage(dataUrl, format, x, y, w, h, undefined, "FAST");
     return true;
   } catch {
     return false;
@@ -85,9 +92,14 @@ async function addImageSafe(
 }
 
 export async function generatePropertyPdf(property: PropertyLike) {
+  // Dynamic import (ważne dla Next/Vercel) – jspdf jest browser-only
+  const { default: jsPDF } = await import("jspdf");
+  const autoTableMod = await import("jspdf-autotable");
+  const autoTable = (autoTableMod as any).default as any;
+
   const doc = new jsPDF({ orientation: "p", unit: "mm", format: "a4" });
 
-  // fonty z /public/fonts (PL znaki)
+  // fonty z /public/fonts (żeby były PL znaki)
   const toBase64 = async (url: string) => {
     const res = await fetch(url);
     const buf = await res.arrayBuffer();
@@ -97,6 +109,7 @@ export async function generatePropertyPdf(property: PropertyLike) {
     return btoa(binary);
   };
 
+  // Uwaga: pliki muszą istnieć w public/fonts
   const interRegular = await toBase64("/fonts/Inter-Regular.ttf");
   const interBold = await toBase64("/fonts/Inter-Bold.ttf");
 
@@ -128,10 +141,11 @@ export async function generatePropertyPdf(property: PropertyLike) {
 
   const pricePerM2 = property.area > 0 ? Math.round(property.price / property.area) : 0;
 
-  // --- HEADER (granat + prawa kolumna cena)
+  // --- HEADER
   doc.setFillColor(NAVY[0], NAVY[1], NAVY[2]);
   doc.rect(0, 0, pageW, 42, "F");
 
+  // price box
   const priceBoxW = 78;
   const priceBoxH = 26;
   const priceBoxX = pageW - margin - priceBoxW;
@@ -143,24 +157,26 @@ export async function generatePropertyPdf(property: PropertyLike) {
   doc.setTextColor(NAVY[0], NAVY[1], NAVY[2]);
   doc.setFont("Inter", "bold");
   doc.setFontSize(12);
-  doc.text(formatMoneyPLN(property.price), priceBoxX + 5, priceBoxY + 11, { maxWidth: priceBoxW - 10 });
+  doc.text(formatMoneyPLN(property.price), priceBoxX + 5, priceBoxY + 11, {
+    maxWidth: priceBoxW - 10,
+  });
 
   doc.setFont("Inter", "normal");
   doc.setFontSize(9);
-  doc.text(`Cena za m�: ${formatMoneyPLN(pricePerM2)}`, priceBoxX + 5, priceBoxY + 19);
+  doc.text(`Cena za m²: ${formatMoneyPLN(pricePerM2)}`, priceBoxX + 5, priceBoxY + 19);
 
-  // lewa cz"[! meta
+  // left header
   doc.setTextColor(255, 255, 255);
   doc.setFont("Inter", "bold");
   doc.setFontSize(12);
-  doc.text("OFERTA NIERUCHOMO9aCI", margin, 16);
+  doc.text("OFERTA NIERUCHOMOŚCI", margin, 16);
 
   doc.setFont("Inter", "normal");
   doc.setFontSize(9);
   doc.text(`ID: ${safeText(property.id)}`, margin, 26);
-  doc.text(`d ${addressInline}`, margin, 35, { maxWidth: contentW - priceBoxW - 10 });
+  doc.text(`📍 ${addressInline}`, margin, 35, { maxWidth: contentW - priceBoxW - 10 });
 
-  // --- KARTA TYTU9�U (biaBa, pod nagB�wkiem)
+  // --- TITLE CARD
   let y = 56;
 
   doc.setFillColor(255, 255, 255);
@@ -181,14 +197,14 @@ export async function generatePropertyPdf(property: PropertyLike) {
   doc.roundedRect(margin, y, contentW, imgBoxH, 4, 4, "F");
 
   const mainImg = property.images?.[0] || "";
-  const imgOk = await addImageSafe(doc, mainImg, margin + 2, y + 2, contentW - 4, imgBoxH - 4);
+  const imgOk = await addImageSafe(doc as any, mainImg, margin + 2, y + 2, contentW - 4, imgBoxH - 4);
 
   if (!imgOk) {
     doc.setTextColor(MUTED[0], MUTED[1], MUTED[2]);
     doc.setFont("Inter", "normal");
     doc.setFontSize(10);
     doc.text(
-      "Zdj"cie nie mogBo zosta! osadzone (CORS). Je[li to link  u|yj hostingu z CORS lub zapisuj zdj"cia jako base64.",
+      'Zdjęcie nie mogło zostać osadzone (CORS). Jeśli to link: użyj hostingu z CORS lub zapisuj zdjęcia jako base64.',
       margin + 6,
       y + 34,
       { maxWidth: contentW - 12 }
@@ -201,28 +217,28 @@ export async function generatePropertyPdf(property: PropertyLike) {
   doc.setTextColor(NAVY[0], NAVY[1], NAVY[2]);
   doc.setFont("Inter", "bold");
   doc.setFontSize(12);
-  doc.text("Szczeg�By nieruchomo[ci", margin, y);
+  doc.text("Szczegóły nieruchomości", margin, y);
   y += 6;
 
   const detailsRows: Array<[string, string]> = [
-    ["Metra|", `${safeText(property.area)} m�`],
+    ["Metraż", `${safeText(property.area)} m²`],
     ["Pokoje", safeText(property.rooms ?? "")],
-    ["9�azienki", safeText(property.bathrooms ?? "")],
-    ["Pi"tro", safeText(property.floor ?? "")],
+    ["Łazienki", safeText(property.bathrooms ?? "")],
+    ["Piętro", safeText(property.floor ?? "")],
     ["Rok budowy", safeText(property.year ?? "")],
-    ["Czynsz", property.rent ? `${safeText(property.rent)} zB` : ""],
+    ["Czynsz", property.rent ? formatMoneyPLN(Number(property.rent)) : ""],
     ["Parking", safeText(property.parking ?? "")],
     ["Winda", property.winda ? "Tak" : "Nie"],
     ["Balkon", property.balkon ? "Tak" : "Nie"],
     ["Loggia", property.loggia ? "Tak" : "Nie"],
     ["Piwnica", property.piwnica ? "Tak" : "Nie"],
-    ["Kom�rka", property.komorka ? "Tak" : "Nie"],
+    ["Komórka", property.komorka ? "Tak" : "Nie"],
     ["Stan prawny", safeText(property.ownership ?? "")],
   ];
 
-  autoTable(doc, {
+  autoTable(doc as any, {
     startY: y,
-    head: [["Parametr", "Warto[!"]],
+    head: [["Parametr", "Wartość"]],
     body: detailsRows,
     margin: { left: margin, right: margin },
     tableWidth: contentW,
@@ -261,7 +277,7 @@ export async function generatePropertyPdf(property: PropertyLike) {
   const descLines = doc.splitTextToSize(desc, contentW);
   doc.text(descLines, margin, descY);
 
-  // --- GALLERY (reszta zdj"! na sam d�B)
+  // --- GALLERY
   const galleryImages = (property.images || []).slice(1);
   const descHeight = descLines.length * 5.2;
   let gY = descY + descHeight + 12;
@@ -275,7 +291,7 @@ export async function generatePropertyPdf(property: PropertyLike) {
     doc.setTextColor(NAVY[0], NAVY[1], NAVY[2]);
     doc.setFont("Inter", "bold");
     doc.setFontSize(12);
-    doc.text("Galeria zdj"!", margin, gY);
+    doc.text("Galeria zdjęć", margin, gY);
     gY += 8;
 
     const cols = 2;
@@ -294,7 +310,7 @@ export async function generatePropertyPdf(property: PropertyLike) {
         doc.setTextColor(NAVY[0], NAVY[1], NAVY[2]);
         doc.setFont("Inter", "bold");
         doc.setFontSize(12);
-        doc.text("Galeria zdj"! (ci&g dalszy)", margin, gY);
+        doc.text("Galeria zdjęć (ciąg dalszy)", margin, gY);
         gY += 8;
 
         x = margin;
@@ -305,7 +321,7 @@ export async function generatePropertyPdf(property: PropertyLike) {
       doc.roundedRect(x, gY, cellW, cellH, 3, 3, "F");
 
       // eslint-disable-next-line no-await-in-loop
-      await addImageSafe(doc, galleryImages[i], x + 1, gY + 1, cellW - 2, cellH - 2);
+      await addImageSafe(doc as any, galleryImages[i], x + 1, gY + 1, cellW - 2, cellH - 2);
 
       col++;
       if (col >= cols) {
@@ -318,7 +334,7 @@ export async function generatePropertyPdf(property: PropertyLike) {
     }
   }
 
-  // --- FOOTER (na ka|dej stronie)
+  // --- FOOTER (na każdej stronie)
   const totalPages = doc.getNumberOfPages();
   for (let p = 1; p <= totalPages; p++) {
     doc.setPage(p);
@@ -330,7 +346,7 @@ export async function generatePropertyPdf(property: PropertyLike) {
     doc.setTextColor(MUTED[0], MUTED[1], MUTED[2]);
     doc.setFont("Inter", "normal");
     doc.setFontSize(9);
-    doc.text(`Wygenerowano w Real Estate App �� Strona ${p}/${totalPages}`, margin, footerY);
+    doc.text(`Wygenerowano w Calyx CRM • Strona ${p}/${totalPages}`, margin, footerY);
   }
 
   doc.save(`oferta_${safeText(property.id)}.pdf`);

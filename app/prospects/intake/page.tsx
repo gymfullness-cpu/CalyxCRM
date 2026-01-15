@@ -41,6 +41,22 @@ type Lead = {
   preferences?: string | null;
 };
 
+function safeJsonParse<T>(raw: string | null, fallback: T): T {
+  if (!raw) return fallback;
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    return fallback;
+  }
+}
+
+function statusLabel(s: Prospect["status"]) {
+  if (s === "new") return "Nowe";
+  if (s === "contacted") return "Skontaktowane";
+  if (s === "closed") return "Zamknięte";
+  return "Spam";
+}
+
 export default function ProspectsIntakeAdminPage() {
   const [items, setItems] = useState<Prospect[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,10 +71,10 @@ export default function ProspectsIntakeAdminPage() {
     try {
       const res = await fetch("/api/prospects/intake/list", { cache: "no-store" });
       const data = await res.json().catch(() => null);
-      if (!res.ok || !data?.ok) throw new Error(data?.error || "BBd pobierania.");
+      if (!res.ok || !data?.ok) throw new Error(data?.error || "Błąd pobierania.");
       setItems(Array.isArray(data.items) ? data.items : []);
     } catch (e: any) {
-      setErr(e?.message || "BBd");
+      setErr(e?.message || "Błąd");
     } finally {
       setLoading(false);
     }
@@ -66,10 +82,12 @@ export default function ProspectsIntakeAdminPage() {
 
   useEffect(() => {
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
+
     return items.filter((x) => {
       if (status !== "all" && x.status !== status) return false;
       if (!needle) return true;
@@ -86,7 +104,7 @@ export default function ProspectsIntakeAdminPage() {
         x.propertyType,
       ]
         .filter(Boolean)
-        .join(" �� ")
+        .join(" · ")
         .toLowerCase();
 
       return hay.includes(needle);
@@ -101,24 +119,26 @@ export default function ProspectsIntakeAdminPage() {
         body: JSON.stringify({ id, status: next }),
       });
       const data = await res.json().catch(() => null);
-      if (!res.ok || !data?.ok) throw new Error(data?.error || "Nie udaBo si zmieni! statusu.");
-      setItems((prev) => prev.map((x) => (x.id === id ? { ...x, status: next, updatedAt: new Date().toISOString() } : x)));
+      if (!res.ok || !data?.ok) throw new Error(data?.error || "Nie udało się zmienić statusu.");
+
+      setItems((prev) =>
+        prev.map((x) => (x.id === id ? { ...x, status: next, updatedAt: new Date().toISOString() } : x))
+      );
     } catch (e: any) {
-      alert(e?.message || "BBd");
+      alert(e?.message || "Błąd");
     }
   };
 
   const addToContacts = (p: Prospect) => {
-    const raw = localStorage.getItem("contacts");
-    const list: Contact[] = raw ? JSON.parse(raw) : [];
+    const list = safeJsonParse<Contact[]>(localStorage.getItem("contacts"), []);
 
     const email = (p.email || "").trim() || null;
 
-    // dedupe po email (case-insensitive) je[li jest
+    // dedupe po email (case-insensitive) jeśli jest
     if (email) {
       const exists = list.some((c) => (c.email || "").trim().toLowerCase() === email.toLowerCase());
       if (exists) {
-        alert("Kontakt z tym emailem ju| istnieje.");
+        alert("Kontakt z tym e-mailem już istnieje.");
         return;
       }
     }
@@ -127,24 +147,23 @@ export default function ProspectsIntakeAdminPage() {
       id: Date.now(),
       name: p.name,
       email,
-      marketingConsent: false, // UWAGA: to nie jest zgoda marketingowa z formularza "sprzeda|"
+      marketingConsent: false, // UWAGA: to nie jest zgoda marketingowa z formularza "sprzedaż"
       unsubscribedAt: null,
     };
 
     const next = [payload, ...list];
     localStorage.setItem("contacts", JSON.stringify(next));
-    alert("Dodano do kontakt�w &");
+    alert("Dodano do kontaktów ✅");
   };
 
   const addToLeads = (p: Prospect) => {
-    const raw = localStorage.getItem("leads");
-    const list: Lead[] = raw ? JSON.parse(raw) : [];
+    const list = safeJsonParse<Lead[]>(localStorage.getItem("leads"), []);
 
     // dedupe po nazwie+telefonie
     const key = `${(p.name || "").trim().toLowerCase()}|${(p.phone || "").trim()}`;
     const exists = list.some((l) => `${(l.name || "").trim().toLowerCase()}|${(l.phone || "").trim()}` === key);
     if (exists) {
-      alert("Lead o tej samej nazwie/telefonie ju| istnieje.");
+      alert("Lead o tej samej nazwie/telefonie już istnieje.");
       return;
     }
 
@@ -154,13 +173,13 @@ export default function ProspectsIntakeAdminPage() {
       p.street ? `Ulica: ${p.street}` : "",
       p.propertyType ? `Typ: ${p.propertyType}` : "",
       p.rooms ? `Pokoje: ${p.rooms}` : "",
-      p.area ? `Metra|: ${p.area} m�` : "",
-      p.price ? `Cena: ${p.price} zB` : "",
+      p.area ? `Metraż: ${p.area} m²` : "",
+      p.price ? `Cena: ${p.price} zł` : "",
       p.timeframe ? `Termin: ${p.timeframe}` : "",
       p.notes ? `Info: ${p.notes}` : "",
     ]
       .filter(Boolean)
-      .join(" �� ");
+      .join(" · ");
 
     const payload: Lead = {
       id: Date.now(),
@@ -171,15 +190,31 @@ export default function ProspectsIntakeAdminPage() {
 
     const next = [payload, ...list];
     localStorage.setItem("leads", JSON.stringify(next));
-    alert("Dodano do lead�w &");
+    alert("Dodano do leadów ✅");
   };
 
   const badge = (s: Prospect["status"]) => {
     const map: Record<string, React.CSSProperties> = {
-      new: { border: "1px solid rgba(45,212,191,0.30)", background: "rgba(45,212,191,0.10)", color: "rgba(234,255,251,0.95)" },
-      contacted: { border: "1px solid rgba(59,130,246,0.30)", background: "rgba(59,130,246,0.10)", color: "rgba(224,232,255,0.95)" },
-      closed: { border: "1px solid rgba(245,158,11,0.30)", background: "rgba(245,158,11,0.10)", color: "rgba(255,236,200,0.95)" },
-      spam: { border: "1px solid rgba(239,68,68,0.30)", background: "rgba(239,68,68,0.10)", color: "rgba(255,220,220,0.95)" },
+      new: {
+        border: "1px solid rgba(45,212,191,0.30)",
+        background: "rgba(45,212,191,0.10)",
+        color: "rgba(234,255,251,0.95)",
+      },
+      contacted: {
+        border: "1px solid rgba(59,130,246,0.30)",
+        background: "rgba(59,130,246,0.10)",
+        color: "rgba(224,232,255,0.95)",
+      },
+      closed: {
+        border: "1px solid rgba(245,158,11,0.30)",
+        background: "rgba(245,158,11,0.10)",
+        color: "rgba(255,236,200,0.95)",
+      },
+      spam: {
+        border: "1px solid rgba(239,68,68,0.30)",
+        background: "rgba(239,68,68,0.10)",
+        color: "rgba(255,220,220,0.95)",
+      },
     };
     return map[s] || map.new;
   };
@@ -223,21 +258,25 @@ export default function ProspectsIntakeAdminPage() {
         <div>
           <div
             className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-extrabold"
-            style={{ border: "1px solid rgba(45,212,191,0.25)", background: "rgba(45,212,191,0.08)", color: "rgba(234,255,251,0.92)" }}
+            style={{
+              border: "1px solid rgba(45,212,191,0.25)",
+              background: "rgba(45,212,191,0.08)",
+              color: "rgba(234,255,251,0.92)",
+            }}
           >
-            <span style={{ color: "var(--accent)" }}><�</span> Pozyski / Formularz
+            <span style={{ color: "var(--accent)" }}>✳</span> Pozyski / Formularz
           </div>
 
           <h1 className="mt-3 text-3xl font-extrabold tracking-tight" style={{ color: "var(--text-main)" }}>
-            A ZgBoszenia sprzeda|y
+            📥 Zgłoszenia sprzedaży
           </h1>
           <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>
-            Publiczny formularz: <b>/prospects/form</b> �� Panel: lista zgBoszeD + szybkie dodanie do kontakt�w/leads.
+            Publiczny formularz: <b>/prospects/form</b> · Panel: lista zgłoszeń + szybkie dodanie do kontaktów/leads.
           </p>
         </div>
 
         <button style={S.btn} onClick={load} disabled={loading}>
-           Od[wie|
+          🔄 Odśwież
         </button>
       </div>
 
@@ -245,15 +284,25 @@ export default function ProspectsIntakeAdminPage() {
         <div className="grid gap-3 md:grid-cols-3">
           <div className="md:col-span-2">
             <div style={S.label}>Szukaj</div>
-            <input style={S.input} value={q} onChange={(e) => setQ(e.target.value)} placeholder="np. email, imi", dzielnica..." />
+            <input
+              style={S.input}
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder='np. email, imię, dzielnica…'
+            />
           </div>
           <div>
             <div style={S.label}>Status</div>
-            <select className="ce-select" style={S.input} value={status} onChange={(e) => setStatus(e.target.value as any)}>
+            <select
+              className="ce-select"
+              style={S.input}
+              value={status}
+              onChange={(e) => setStatus(e.target.value as any)}
+            >
               <option value="all">Wszystkie</option>
               <option value="new">Nowe</option>
               <option value="contacted">Skontaktowane</option>
-              <option value="closed">Zamkni"te</option>
+              <option value="closed">Zamknięte</option>
               <option value="spam">Spam</option>
             </select>
           </div>
@@ -261,40 +310,50 @@ export default function ProspectsIntakeAdminPage() {
 
         {err ? (
           <div className="mt-4 text-sm" style={{ color: "rgba(255,220,220,0.95)" }}>
-            a� {err}
+            ⚠ {err}
           </div>
         ) : null}
 
         {loading ? (
           <div className="mt-4 text-sm" style={{ color: "var(--text-muted)" }}>
-            B 9�aduj"��
+            ⏳ Ładowanie…
           </div>
         ) : filtered.length === 0 ? (
           <div className="mt-4 text-sm" style={{ color: "var(--text-muted)" }}>
-            Brak zgBoszeD.
+            Brak zgłoszeń.
           </div>
         ) : (
           <div className="mt-4 grid gap-12">
             {filtered.slice(0, 200).map((p) => (
-              <div key={p.id} className="rounded-2xl p-4" style={{ border: "1px solid rgba(255,255,255,0.10)", background: "rgba(255,255,255,0.03)" }}>
+              <div
+                key={p.id}
+                className="rounded-2xl p-4"
+                style={{
+                  border: "1px solid rgba(255,255,255,0.10)",
+                  background: "rgba(255,255,255,0.03)",
+                }}
+              >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div style={{ minWidth: 0 }}>
                     <div className="text-lg font-extrabold" style={{ color: "rgba(234,255,251,0.95)" }}>
                       {p.name}
                     </div>
+
                     <div className="mt-1 text-xs" style={{ color: "var(--text-muted)", overflowWrap: "anywhere" }}>
-                      {p.email ? `0�<� ${p.email}` : ""} {p.phone ? ` �� �}�<� ${p.phone}` : ""}
+                      {p.email ? `✉️ ${p.email}` : ""} {p.phone ? ` · 📞 ${p.phone}` : ""}
                     </div>
+
                     <div className="mt-2 text-sm" style={{ color: "rgba(255,255,255,0.78)", overflowWrap: "anywhere" }}>
-                      d {[p.city, p.district, p.street].filter(Boolean).join(", ") || ""}
+                      📍 {[p.city, p.district, p.street].filter(Boolean).join(", ")}
                     </div>
+
                     <div className="mt-2 text-xs" style={{ color: "var(--text-muted)" }}>
-                      ID: {p.id} �� {p.createdAt ? new Date(p.createdAt).toLocaleString("pl-PL") : ""}
+                      ID: {p.id} · {p.createdAt ? new Date(p.createdAt).toLocaleString("pl-PL") : ""}
                     </div>
                   </div>
 
                   <span className="rounded-full px-3 py-1 text-xs font-black" style={badge(p.status)}>
-                    {p.status}
+                    {statusLabel(p.status)}
                   </span>
                 </div>
 
@@ -302,36 +361,51 @@ export default function ProspectsIntakeAdminPage() {
                   {[
                     p.propertyType ? `Typ: ${p.propertyType}` : "",
                     p.rooms ? `Pokoje: ${p.rooms}` : "",
-                    p.area ? `Metra|: ${p.area} m�` : "",
-                    p.price ? `Cena: ${p.price} zB` : "",
+                    p.area ? `Metraż: ${p.area} m²` : "",
+                    p.price ? `Cena: ${p.price} zł` : "",
                     p.timeframe ? `Termin: ${p.timeframe}` : "",
                   ]
                     .filter(Boolean)
-                    .join(" �� ")}
+                    .join(" · ")}
                 </div>
 
                 {p.notes ? (
-                  <div className="mt-3 rounded-xl px-3 py-2 text-sm" style={{ border: "1px solid rgba(255,255,255,0.10)", background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.86)" }}>
-                    e {p.notes}
+                  <div
+                    className="mt-3 rounded-xl px-3 py-2 text-sm"
+                    style={{
+                      border: "1px solid rgba(255,255,255,0.10)",
+                      background: "rgba(255,255,255,0.04)",
+                      color: "rgba(255,255,255,0.86)",
+                    }}
+                  >
+                    📝 {p.notes}
                   </div>
                 ) : null}
 
                 <div className="mt-4 flex flex-wrap gap-2">
                   <button style={S.btn} onClick={() => addToContacts(p)}>
-                    ~" Kontakty
+                    ➕ Kontakty
                   </button>
                   <button style={S.btn} onClick={() => addToLeads(p)}>
-                    ~" Leady
+                    ➕ Leady
                   </button>
 
                   <button style={S.btn} onClick={() => patchStatus(p.id, "contacted")}>
-                    & Skontaktowany
+                    ✅ Skontaktowane
                   </button>
                   <button style={S.btn} onClick={() => patchStatus(p.id, "closed")}>
-                    z� Zamkni"ty
+                    🧾 Zamknięte
                   </button>
-                  <button style={{ ...S.btn, border: "1px solid rgba(239,68,68,0.30)", background: "rgba(239,68,68,0.10)", color: "rgba(255,220,220,0.95)" }} onClick={() => patchStatus(p.id, "spam")}>
-                    : Spam
+                  <button
+                    style={{
+                      ...S.btn,
+                      border: "1px solid rgba(239,68,68,0.30)",
+                      background: "rgba(239,68,68,0.10)",
+                      color: "rgba(255,220,220,0.95)",
+                    }}
+                    onClick={() => patchStatus(p.id, "spam")}
+                  >
+                    🚫 Spam
                   </button>
                 </div>
               </div>
@@ -339,7 +413,7 @@ export default function ProspectsIntakeAdminPage() {
 
             {filtered.length > 200 ? (
               <div className="text-xs" style={{ color: "var(--text-muted)" }}>
-                Lista uci"ta do 200 (|eby byBo szybko).
+                Lista ucięta do 200 (żeby było szybko).
               </div>
             ) : null}
           </div>

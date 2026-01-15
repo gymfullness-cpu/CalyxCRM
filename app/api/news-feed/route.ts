@@ -1,4 +1,4 @@
-?import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import crypto from "crypto";
 
@@ -38,7 +38,7 @@ const openai = process.env.OPENAI_API_KEY
   ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
   : null;
 
-/** … Cache ostatniej dobrej odpowiedzi (żeby feed nie znikał przy chwilowych błć™dach) */
+/** Cache ostatniej dobrej odpowiedzi (żeby feed nie znikał przy chwilowych błędach) */
 type CachePayload = {
   ok: true;
   generatedAt: string;
@@ -48,6 +48,7 @@ type CachePayload = {
   items: NewsItem[];
   stale?: boolean;
 };
+
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 min
 const FEED_CACHE = new Map<string, { ts: number; payload: CachePayload }>();
 
@@ -83,7 +84,7 @@ function pickTag(block: string, tag: string) {
   return m?.[1] ? stripHtml(m[1]) : "";
 }
 
-/** … Stabilne ID (bez kolizji) */
+/** Stabilne ID (bez kolizji) */
 function makeStableId(category: RawItem["category"], link: string, title: string, pub: string | null) {
   const base = `${category}|${link}|${title}|${pub || ""}`;
   const h = crypto.createHash("sha256").update(base).digest("hex").slice(0, 20);
@@ -172,7 +173,10 @@ async function fetchNbpRates(): Promise<Rates | null> {
   const clean = stripHtml(text);
 
   const grab = (label: string) => {
-    const re = new RegExp(`${label}[\\s\\S]{0,140}?([0-9],[0-9]{2})[\\s\\S]{0,140}?(20\\d{2}-\\d{2}-\\d{2})`, "i");
+    const re = new RegExp(
+      `${label}[\\s\\S]{0,140}?([0-9],[0-9]{2})[\\s\\S]{0,140}?(20\\d{2}-\\d{2}-\\d{2})`,
+      "i"
+    );
     const m = clean.match(re);
     if (!m) return null;
     return { value: m[1], date: m[2] };
@@ -240,13 +244,13 @@ async function enrichOne(raw: RawItem): Promise<Omit<NewsItem, "summary" | "whyI
 
 function fallbackSummary(raw: RawItem) {
   const s = raw.snippet ? stripHtml(raw.snippet) : "";
-  const base = s ? (s.length > 180 ? s.slice(0, 180) + "€¦" : s) : "Krótki news z rynku nieruchomości.";
+  const base = s ? (s.length > 180 ? s.slice(0, 180) + "…" : s) : "Krótki news z rynku nieruchomości.";
   const why =
     raw.category === "Kredyty"
-      ? "Wpływa na zdolność‡ kredytowć… klientów i tempo sprzedaży."
+      ? "Wpływa na zdolność kredytową klientów i tempo sprzedaży."
       : raw.category === "Rynek"
-      ? "Pomaga ustawić‡ cenć™ i argumenty w rozmowie z klientem."
-      : "Może zmienić‡ wymagania formalne i ryzyka transakcyjne.";
+      ? "Pomaga ustawić cenę i argumenty w rozmowie z klientem."
+      : "Może zmienić wymagania formalne i ryzyka transakcyjne.";
   return { summary: base, whyItMatters: why };
 }
 
@@ -286,11 +290,11 @@ async function aiSummaries(raw: RawItem[], enriched: Omit<NewsItem, "summary" | 
   } as const;
 
   const prompt = `
-Jesteś analitykiem rynku nieruchomości w Polsce i doradcć… dla agenta.
+Jesteś analitykiem rynku nieruchomości w Polsce i doradcą dla agenta.
 
-Dostajesz listć™ newsów (nagłówki + krótkie zajawki).
+Dostajesz listę newsów (nagłówki + krótkie zajawki).
 Dla KAŻDEGO newsa zwróć:
-- summary: 2—3 zdania po polsku, konkretnie "co się zmieniło / co ogłoszono".
+- summary: 2–3 zdania po polsku, konkretnie "co się zmieniło / co ogłoszono".
 - whyItMatters: 1 zdanie "co to znaczy dla agenta" (sprzedaż/negocjacje/kredyt/ryzyko).
 
 Zwróć JSON zgodny ze schematem. Bez markdown.
@@ -377,7 +381,7 @@ Wybierz TOP 3 newsy "na dziś" dla agenta nieruchomości w Polsce.
 Kryterium: wpływ na sprzedaż/negocjacje/kredyty/popyt/ryzyko transakcji.
 
 Zwróć:
-- title: krótki tytuł (może być‡ lekko skrócony)
+- title: krótki tytuł (może być lekko skrócony)
 - why: 1 zdanie: "co to znaczy dla agenta"
 - url: link do źródła
 - category: Kredyty/Rynek/Prawo
@@ -409,16 +413,19 @@ Zwróć JSON zgodny ze schematem. Bez markdown.
 }
 
 export async function GET(req: Request) {
-  
-    const openai = getOpenAI();
-    if (!openai) {
-      return NextResponse.json(
-        { error: "Missing OPENAI_API_KEY", details: "Ustaw OPENAI_API_KEY w Vercel -> Project Settings -> Environment Variables." },
-        { status: 500 }
-      );
-    }
-const u = new URL(req.url);
+  const u = new URL(req.url);
   const city = (u.searchParams.get("city") || "").trim();
+
+  // Jeśli nie ma klucza — feed nadal działa (fallback bez AI), ale możesz to wymusić jako 500.
+  // Ja zostawiłem "soft mode": bez AI, ale z RSS + fallback summary.
+  // Jeśli chcesz HARD: odkomentuj return 500.
+  //
+  // if (!openai) {
+  //   return NextResponse.json(
+  //     { error: "Missing OPENAI_API_KEY", details: "Ustaw OPENAI_API_KEY w Vercel -> Project Settings -> Environment Variables." },
+  //     { status: 500 }
+  //   );
+  // }
 
   try {
     const cityBoost = city ? ` ${city} ` : " ";
@@ -440,7 +447,7 @@ const u = new URL(req.url);
       return true;
     });
 
-    // … jeśli Google News nie dał nic — nie zwracaj pustki, spróbuj cache
+    // jeśli Google News nie dał nic — spróbuj cache
     if (raw.length === 0) {
       const cached = getCached(city);
       if (cached) return NextResponse.json(cached, { status: 200 });
@@ -488,12 +495,12 @@ const u = new URL(req.url);
       items: final,
     };
 
-    // … zapisz cache (ostatnia dobra odpowiedź)
+    // cache (ostatnia dobra odpowiedź)
     setCached(city, payload);
 
     return NextResponse.json(payload, { status: 200 });
   } catch (e: any) {
-    // … jak coś padnie, a mamy cache — oddaj cache zamiast pustki (żeby UI nie migał)
+    // jak coś padnie, a mamy cache — oddaj cache zamiast pustki
     const cached = getCached(city);
     if (cached) return NextResponse.json(cached, { status: 200 });
 
