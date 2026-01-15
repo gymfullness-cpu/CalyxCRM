@@ -15,14 +15,31 @@ type LocationSuggestion = {
   };
 };
 
+/**
+ * Nominatim ma swoje zasady:
+ * - warto wysyłać sensowny User-Agent (albo chociaż coś stałego),
+ * - warto ustawić Accept-Language,
+ * - lepiej nie spamować -> debounce + abort.
+ */
 async function fetchLocationSuggestions(query: string, signal?: AbortSignal): Promise<LocationSuggestion[]> {
-  if (query.trim().length < 3) return [];
-  const res = await fetch(
-    `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&countrycodes=pl&q=${encodeURIComponent(
-      query
-    )}`,
-    { signal }
-  );
+  const q = query.trim();
+  if (q.length < 3) return [];
+
+  const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&countrycodes=pl&q=${encodeURIComponent(
+    q
+  )}`;
+
+  const res = await fetch(url, {
+    method: "GET",
+    signal,
+    cache: "no-store",
+    headers: {
+      Accept: "application/json",
+      "Accept-Language": "pl-PL,pl;q=0.9,en;q=0.6",
+      // w przeglądarce nie ustawisz realnie custom UA jak w Node, ale header i tak często przechodzi
+      "User-Agent": "CalyxCRM/1.0 (location-suggestions)",
+    },
+  });
 
   const data = await res.json().catch(() => []);
   return Array.isArray(data) ? (data as LocationSuggestion[]) : [];
@@ -235,6 +252,7 @@ function normalizeLoadedProperty(p: any): Property {
 export default function PropertiesPage() {
   const [locationSuggestions, setLocationSuggestions] = useState<LocationSuggestion[]>([]);
   const [suggestFor, setSuggestFor] = useState<"city" | "district" | "street" | null>(null);
+
   const abortRef = useRef<AbortController | null>(null);
   const debounceRef = useRef<number | null>(null);
 
@@ -254,21 +272,38 @@ export default function PropertiesPage() {
   const [statusFilter, setStatusFilter] = useState<Status | "all">("all");
   const [sortBy, setSortBy] = useState<"newest" | "price_desc" | "price_asc" | "area_desc" | "area_asc">("newest");
 
+  // cleanup debounce/abort
+  useEffect(() => {
+    return () => {
+      try {
+        abortRef.current?.abort();
+      } catch {}
+      if (debounceRef.current) window.clearTimeout(debounceRef.current);
+    };
+  }, []);
+
   const onLocationInput = (value: string, field: "city" | "district" | "street") => {
     setSuggestFor(field);
 
     if (debounceRef.current) window.clearTimeout(debounceRef.current);
+
     debounceRef.current = window.setTimeout(async () => {
+      const v = value.trim();
+      if (v.length < 3) {
+        setLocationSuggestions([]);
+        return;
+      }
+
       try {
         abortRef.current?.abort();
         abortRef.current = new AbortController();
 
-        const suggestions = await fetchLocationSuggestions(value, abortRef.current.signal);
+        const suggestions = await fetchLocationSuggestions(v, abortRef.current.signal);
         setLocationSuggestions(Array.isArray(suggestions) ? suggestions.slice(0, 6) : []);
       } catch {
         setLocationSuggestions([]);
       }
-    }, 220);
+    }, 260);
   };
 
   const applySuggestion = (s: LocationSuggestion) => {
@@ -287,28 +322,30 @@ export default function PropertiesPage() {
 
   /* ===== LOAD ===== */
   useEffect(() => {
-    const saved = localStorage.getItem("properties");
-    if (!saved) return;
+    try {
+      const saved = localStorage.getItem("properties");
+      if (!saved) return;
 
-    const parsed: any[] = JSON.parse(saved);
-    const normalized: Property[] = Array.isArray(parsed) ? parsed.map(normalizeLoadedProperty) : [];
-
-    setList(normalized);
+      const parsed = JSON.parse(saved);
+      const normalized: Property[] = Array.isArray(parsed) ? parsed.map(normalizeLoadedProperty) : [];
+      setList(normalized);
+    } catch {
+      setList([]);
+    }
   }, []);
 
   const persist = (data: Property[]) => {
     setList(data);
-    localStorage.setItem("properties", JSON.stringify(data));
-
-    // żeby inne moduły zobaczyły zmianę
     try {
+      localStorage.setItem("properties", JSON.stringify(data));
+      // żeby inne moduły zobaczyły zmianę
       window.dispatchEvent(new Event("storage"));
     } catch {}
   };
 
   /* ===== IMAGES ===== */
   const handleImages = async (files: FileList | null) => {
-    if (!files) return;
+    if (!files || files.length === 0) return;
 
     const formData = new FormData();
     Array.from(files).forEach((file) => formData.append("files", file));
@@ -336,11 +373,15 @@ export default function PropertiesPage() {
 
     setForm({ ...EMPTY_FORM, id: 0 });
     setEditingId(null);
+    setLocationSuggestions([]);
+    setSuggestFor(null);
   };
 
   const editProperty = (p: Property) => {
     setForm(normalizeLoadedProperty(p));
     setEditingId(p.id);
+    setLocationSuggestions([]);
+    setSuggestFor(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -383,12 +424,12 @@ export default function PropertiesPage() {
       });
     }
 
-    const sortNum = (a: number, b: number) => (a === b ? 0 : a > b ? -1 : 1);
+    // poprawione sortowanie numeryczne (czytelne i stabilne)
     if (sortBy === "newest") data.sort((a, b) => b.id - a.id);
-    if (sortBy === "price_desc") data.sort((a, b) => sortNum(a.price, b.price));
-    if (sortBy === "price_asc") data.sort((a, b) => -sortNum(a.price, b.price));
-    if (sortBy === "area_desc") data.sort((a, b) => sortNum(a.area, b.area));
-    if (sortBy === "area_asc") data.sort((a, b) => -sortNum(a.area, b.area));
+    if (sortBy === "price_desc") data.sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
+    if (sortBy === "price_asc") data.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
+    if (sortBy === "area_desc") data.sort((a, b) => (b.area ?? 0) - (a.area ?? 0));
+    if (sortBy === "area_asc") data.sort((a, b) => (a.area ?? 0) - (b.area ?? 0));
 
     return data;
   }, [list, q, statusFilter, sortBy]);
@@ -407,7 +448,7 @@ export default function PropertiesPage() {
               color: "rgba(234,255,251,0.92)",
             }}
           >
-            <span style={{ color: "var(--accent)" }}>🏠</span> Moduł: Nieruchomości
+            <span style={{ color: "var(--accent)" }}>[HOME]</span> Moduł: Nieruchomości
           </div>
 
           <h1 className="mt-3 text-3xl font-extrabold tracking-tight" style={{ color: "var(--text-main)" }}>
@@ -522,6 +563,8 @@ export default function PropertiesPage() {
               onClick={() => {
                 setForm({ ...EMPTY_FORM, id: 0 });
                 setEditingId(null);
+                setLocationSuggestions([]);
+                setSuggestFor(null);
               }}
             >
               Anuluj edycję
@@ -621,11 +664,7 @@ export default function PropertiesPage() {
 
           <div>
             <label className="label">Numer mieszkania</label>
-            <input
-              className="input"
-              value={form.apartmentNumber}
-              onChange={(e) => setForm({ ...form, apartmentNumber: e.target.value })}
-            />
+            <input className="input" value={form.apartmentNumber} onChange={(e) => setForm({ ...form, apartmentNumber: e.target.value })} />
           </div>
 
           {/* parametry */}
@@ -633,19 +672,39 @@ export default function PropertiesPage() {
             <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
               <div>
                 <label className="label">Cena (zł)</label>
-                <input className="input" type="number" value={form.price || ""} onChange={(e) => setForm({ ...form, price: Number(e.target.value) })} />
+                <input
+                  className="input"
+                  type="number"
+                  value={form.price || ""}
+                  onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
+                />
               </div>
               <div>
                 <label className="label">Metraż (m²)</label>
-                <input className="input" type="number" value={form.area || ""} onChange={(e) => setForm({ ...form, area: Number(e.target.value) })} />
+                <input
+                  className="input"
+                  type="number"
+                  value={form.area || ""}
+                  onChange={(e) => setForm({ ...form, area: Number(e.target.value) })}
+                />
               </div>
               <div>
                 <label className="label">Pokoje</label>
-                <input className="input" type="number" value={form.rooms || ""} onChange={(e) => setForm({ ...form, rooms: Number(e.target.value) })} />
+                <input
+                  className="input"
+                  type="number"
+                  value={form.rooms || ""}
+                  onChange={(e) => setForm({ ...form, rooms: Number(e.target.value) })}
+                />
               </div>
               <div>
                 <label className="label">Łazienki</label>
-                <input className="input" type="number" value={form.bathrooms || ""} onChange={(e) => setForm({ ...form, bathrooms: Number(e.target.value) })} />
+                <input
+                  className="input"
+                  type="number"
+                  value={form.bathrooms || ""}
+                  onChange={(e) => setForm({ ...form, bathrooms: Number(e.target.value) })}
+                />
               </div>
             </div>
           </div>
@@ -727,11 +786,7 @@ export default function PropertiesPage() {
                 color: "var(--text-main)",
               }}
             >
-              <input
-                type="checkbox"
-                checked={(form as any)[k]}
-                onChange={(e) => setForm({ ...form, [k]: e.target.checked } as any)}
-              />
+              <input type="checkbox" checked={(form as any)[k]} onChange={(e) => setForm({ ...form, [k]: e.target.checked } as any)} />
               {label}
             </label>
           ))}
@@ -740,12 +795,7 @@ export default function PropertiesPage() {
         {/* opis */}
         <div className="mt-5">
           <label className="label">Opis</label>
-          <textarea
-            className="input h-28 resize-y"
-            placeholder="Opis nieruchomości"
-            value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
-          />
+          <textarea className="input h-28 resize-y" placeholder="Opis nieruchomości" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
         </div>
 
         {/* upload */}
@@ -853,7 +903,7 @@ export default function PropertiesPage() {
                           }}
                           aria-label="Poprzednie zdjęcie"
                         >
-                          ‹
+                          {"<"}
                         </button>
 
                         <button
@@ -872,16 +922,13 @@ export default function PropertiesPage() {
                           }}
                           aria-label="Następne zdjęcie"
                         >
-                          ›
+                          {">"}
                         </button>
                       </>
                     ) : null}
 
                     {/* status badge */}
-                    <div
-                      className="absolute left-3 top-3 rounded-full px-3 py-1 text-xs font-extrabold"
-                      style={statusBadgeStyle(p.status)}
-                    >
+                    <div className="absolute left-3 top-3 rounded-full px-3 py-1 text-xs font-extrabold" style={statusBadgeStyle(p.status)}>
                       {statusLabel(p.status)}
                     </div>
                   </div>
@@ -974,11 +1021,7 @@ export default function PropertiesPage() {
 
       {/* LIGHTBOX */}
       {previewImage ? (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ background: "rgba(0,0,0,0.78)" }}
-          onClick={() => setPreviewImage(null)}
-        >
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.78)" }} onClick={() => setPreviewImage(null)}>
           <div className="relative" onClick={(e) => e.stopPropagation()}>
             <img
               src={previewImages[previewIndex]}
@@ -999,7 +1042,7 @@ export default function PropertiesPage() {
                   }}
                   aria-label="Poprzednie"
                 >
-                  ‹
+                  {"<"}
                 </button>
                 <button
                   onClick={() => setPreviewIndex((previewIndex + 1) % previewImages.length)}
@@ -1011,7 +1054,7 @@ export default function PropertiesPage() {
                   }}
                   aria-label="Następne"
                 >
-                  ›
+                  {">"}
                 </button>
               </>
             ) : null}
@@ -1097,15 +1140,7 @@ export default function PropertiesPage() {
 
 /* ====== small UI helpers ====== */
 
-function Kpi({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: number;
-  tone: "neutral" | "mint" | "amber" | "red";
-}) {
+function Kpi({ label, value, tone }: { label: string; value: number; tone: "neutral" | "mint" | "amber" | "red" }) {
   const toneStyle: Record<string, React.CSSProperties> = {
     neutral: {
       border: "1px solid rgba(255,255,255,0.10)",
@@ -1156,13 +1191,7 @@ function InfoPill({ label, value }: { label: string; value: string }) {
   );
 }
 
-function SuggestList({
-  suggestions,
-  onPick,
-}: {
-  suggestions: LocationSuggestion[];
-  onPick: (s: LocationSuggestion) => void;
-}) {
+function SuggestList({ suggestions, onPick }: { suggestions: LocationSuggestion[]; onPick: (s: LocationSuggestion) => void }) {
   return (
     <div
       className="absolute z-40 mt-2 w-full overflow-hidden rounded-2xl"
@@ -1180,6 +1209,7 @@ function SuggestList({
           style={{
             color: "var(--text-main)",
             borderBottom: idx === suggestions.length - 1 ? "none" : "1px solid rgba(255,255,255,0.08)",
+            cursor: "pointer",
           }}
           onClick={(e) => {
             e.preventDefault();

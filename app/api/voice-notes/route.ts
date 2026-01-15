@@ -1,86 +1,74 @@
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
-
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
 
 function getOpenAI() {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) return null;
 
-  // Import runtime, |eby build nie evaluowaB moduBu OpenAI bez env
+  // runtime import (żeby build nie evaluował OpenAI bez env)
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const OpenAI = require("openai").default as any;
-
   return new OpenAI({ apiKey });
 }
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-});
 
-// Funkcja do ekstrakcji JSON z tekstu
-function extractJSON(text: string) {
-  const match = text.match(/\{[\s\S]*\}/);
-  if (!match) return null;
-  try {
-    return JSON.parse(match[0]);
-  } catch {
-    return null;
-  }
-}
-
-// GB�wna funkcja POST do transkrypcji i analizy
 export async function POST(req: Request) {
-  
-    const openai = getOpenAI();
-    if (!openai) {
-      return NextResponse.json(
-        { error: "Missing OPENAI_API_KEY", details: "Ustaw OPENAI_API_KEY w Vercel -> Project Settings -> Environment Variables." },
-        { status: 500 }
-      );
-    }
-try {
+  const openai = getOpenAI();
+  if (!openai) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Missing OPENAI_API_KEY",
+        details: "Ustaw OPENAI_API_KEY w Vercel -> Project Settings -> Environment Variables.",
+      },
+      { status: 500 }
+    );
+  }
+
+  try {
     const formData = await req.formData();
-    const file = formData.get("audio") as File | null;
+    const audio = formData.get("audio");
 
-    // Walidacja obecno[ci pliku
-    if (!file) {
-      return NextResponse.json({ success: false, error: "Brak audio" });
+    // Walidacja: musi być File
+    if (!audio || !(audio instanceof File)) {
+      return NextResponse.json({ success: false, error: "Brak pliku audio (audio)" }, { status: 400 });
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-
-    // 1�<�9�9� Transkrypcja
+    // 1) Transkrypcja
     const transcription = await openai.audio.transcriptions.create({
-      file: new File([buffer], "audio.webm", { type: file.type }),
-      model: "gpt-4o-mini-transcribe",
+      file: audio,
+      model: "gpt-4o-transcribe",
     });
 
-    // Sprawdzenie, czy transkrypcja zawiera tekst
-    const text = transcription.text;
+    const text = String(transcription?.text || "").trim();
     if (!text) {
-      return NextResponse.json({
-        success: false,
-        error: "Transkrypcja nie zawiera tekstu",
-      });
+      return NextResponse.json(
+        { success: false, error: "Transkrypcja nie zawiera tekstu" },
+        { status: 400 }
+      );
     }
 
-    // 2�<�9�9� Analiza AI (Zastosowanie modelu GPT do analizy)
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: "Zwracaj WY��CZNIE czysty JSON. Bez markdown, bez ```.",
+    // 2) Analiza -> wymuszony JSON schema (bez ręcznego parsowania)
+    const schema = {
+      name: "voice_note_extract",
+      schema: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          name: { type: ["string", "null"] },
+          phone: { type: ["string", "null"] },
+          preferences: { type: "string" },
+          meetingDate: { type: ["string", "null"] }, // ISO lub null
         },
-        {
-          role: "user",
-          content: `
-Wycignij dane z notatki gBosowej.
+        required: ["name", "phone", "preferences", "meetingDate"],
+      },
+    } as const;
 
-Zwr�:
+    const prompt = `
+Wyciągnij dane z notatki głosowej agenta nieruchomości.
+
+Zwróć JSON:
 {
   "name": string | null,
   "phone": string | null,
@@ -88,45 +76,54 @@ Zwr�:
   "meetingDate": string | null
 }
 
-Tekst:
-${text}
-`,
-        },
+Zasady:
+- meetingDate: jeśli jest konkretny termin, zwróć jako ISO (np. 2026-01-15T14:30:00), inaczej null
+- preferences: krótko i konkretnie (1-3 zdania), co klient chce / jakie wymagania
+- Jeśli brak telefonu/imienia -> null
+`.trim();
+
+    const ai = await openai.responses.create({
+      model: "gpt-4.1-mini",
+      input: [
+        { role: "system", content: [{ type: "input_text", text: prompt }] },
+        { role: "user", content: [{ type: "input_text", text: `TEKST:\n${text}` }] },
       ],
+      text: {
+        format: {
+          type: "json_schema",
+          ...schema,
+        },
+      },
     });
 
-    // Odczytanie odpowiedzi z modelu
-    const raw = completion.choices[0].message.content || "";
-    const parsed = extractJSON(raw);
-
-    // Sprawdzenie, czy odpowiedz jest poprawnym JSON
-    if (!parsed) {
-      return NextResponse.json({
-        success: false,
-        error: "Nie udaBo si sparsowa JSON",
-        raw,
-      });
+    let parsed: any = {};
+    try {
+      parsed = JSON.parse(ai.output_text || "{}");
+    } catch {
+      parsed = {};
     }
 
-    // Zwr�cenie odpowiedzi w odpowiednim formacie
+    const meetingDate = parsed?.meetingDate ? String(parsed.meetingDate) : null;
+
     return NextResponse.json({
       success: true,
       transcript: text,
-      clientName: parsed.name ?? null,
-      phone: parsed.phone ?? null,
-      preferences: parsed.preferences ?? "",
-      meeting: parsed.meetingDate
+      clientName: parsed?.name ?? null,
+      phone: parsed?.phone ?? null,
+      preferences: parsed?.preferences ?? "",
+      meeting: meetingDate
         ? {
-            date: parsed.meetingDate.split("T")[0],
-            time: parsed.meetingDate.split("T")[1]?.slice(0, 5),
+            date: meetingDate.includes("T") ? meetingDate.split("T")[0] : meetingDate,
+            time: meetingDate.includes("T") ? meetingDate.split("T")[1]?.slice(0, 5) : null,
           }
         : null,
+      raw: parsed, // zostawiam dla debug (możesz usunąć jak nie chcesz)
     });
   } catch (err: any) {
     console.error("VOICE API ERROR:", err);
-    return NextResponse.json({
-      success: false,
-      error: err.message || "Nieoczekiwany bBd",
-    });
+    return NextResponse.json(
+      { success: false, error: err?.message || "Nieoczekiwany błąd" },
+      { status: 500 }
+    );
   }
 }

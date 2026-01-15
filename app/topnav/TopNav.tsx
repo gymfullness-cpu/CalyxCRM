@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, type MouseEvent } from "react";
+import React, { useEffect, useRef, useState, type MouseEvent } from "react";
 import { usePathname } from "next/navigation";
 import { AppBrand } from "../components/AppBrand";
 import ThemeSwitcher from "../components/ThemeSwitcher";
@@ -29,6 +29,7 @@ function NavLink({
         textDecoration: "none",
         userSelect: "none",
         cursor: "pointer",
+        whiteSpace: "nowrap",
       }}
     >
       {children}
@@ -49,11 +50,13 @@ export default function TopNav() {
     if (detailsRef.current) detailsRef.current.open = false;
   };
 
+  // Zamknij menu po zmianie trasy
   useEffect(() => {
     closeMenu();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
+  // Hide-on-scroll
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -87,6 +90,7 @@ export default function TopNav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Klik w dropdown: jeśli kliknięto w <a>, zamykamy menu
   const onDropdownClick = (e: MouseEvent) => {
     const el = e.target as HTMLElement | null;
     const a = el?.closest?.("a");
@@ -165,7 +169,7 @@ export default function TopNav() {
             flexWrap: "wrap",
           }}
         >
-          {/* LEWA: logo + switcher obok */}
+          {/* LEWA */}
           <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
             <AppBrand />
             <ThemeSwitcher />
@@ -174,29 +178,29 @@ export default function TopNav() {
           {/* MOBILE */}
           <div className="ce-mobile-menu">
             <details ref={detailsRef}>
-              <summary className="ce-hamburger">�� Menu</summary>
+              <summary className="ce-hamburger">Menu</summary>
 
               <div className="ce-dropdown" onClick={onDropdownClick}>
                 <div className="ce-grid">
-                  <NavLink href="/dashboard">=� 9� Dashboard</NavLink>
-                  <NavLink href="/leads">=� 9> Leady</NavLink>
-                  <NavLink href="/contacts"> �� Kontakty</NavLink>
-                  <NavLink href="/agents">� ���9��� Agenci</NavLink>
+                  <NavLink href="/dashboard">Dashboard</NavLink>
+                  <NavLink href="/leads">Leady</NavLink>
+                  <NavLink href="/contacts">Kontakty</NavLink>
+                  <NavLink href="/agents">Agenci</NavLink>
 
-                  <NavLink href="/prospects">9� Pozyski</NavLink>
-                  <NavLink href="/properties">9� Nieruchomo� _ci</NavLink>
+                  <NavLink href="/prospects">Pozyski</NavLink>
+                  <NavLink href="/properties">Nieruchomosci</NavLink>
 
-                  <NavLink href="/calendar">=� & Kalendarz</NavLink>
-                  <NavLink href="/followups"> Follow-up</NavLink>
+                  <NavLink href="/calendar">Kalendarz</NavLink>
+                  <NavLink href="/followups">Follow-up</NavLink>
 
-                  <NavLink href="/analyzed">�� AI: Analiza</NavLink>
-                  <NavLink href="/assistant/live">� AI: Coach</NavLink>
+                  <NavLink href="/analyzed">AI: Analiza</NavLink>
+                  <NavLink href="/assistant/live">AI: Coach</NavLink>
 
-                  <NavLink href="/market">9a9� Market</NavLink>
-                  <NavLink href="/voice-notes">���<�9 G� aos�Bwki</NavLink>
-                  <NavLink href="/documents/sale">=�  Dokumenty</NavLink>
-                  <NavLink href="/news">�9>�<�9 Pras�wka</NavLink>
-                  <NavLink href="/newsletter"> ��<�9 Newsletter</NavLink>
+                  <NavLink href="/market">Market</NavLink>
+                  <NavLink href="/voice-notes">Glosowki</NavLink>
+                  <NavLink href="/documents/sale">Dokumenty</NavLink>
+                  <NavLink href="/news">Prasowka</NavLink>
+                  <NavLink href="/newsletter">Newsletter</NavLink>
                 </div>
               </div>
             </details>
@@ -204,25 +208,25 @@ export default function TopNav() {
 
           {/* DESKTOP */}
           <div className="ce-desktop-links" style={{ gap: 10, flexWrap: "wrap", alignItems: "center" }}>
-            <NavLink href="/dashboard">=� 9� Dashboard</NavLink>
-            <NavLink href="/leads">=� 9> Leady</NavLink>
-            <NavLink href="/contacts"> �� Kontakty</NavLink>
-            <NavLink href="/agents">� ���9��� Agenci</NavLink>
+            <NavLink href="/dashboard">Dashboard</NavLink>
+            <NavLink href="/leads">Leady</NavLink>
+            <NavLink href="/contacts">Kontakty</NavLink>
+            <NavLink href="/agents">Agenci</NavLink>
 
-            <NavLink href="/prospects">9� Pozyski</NavLink>
-            <NavLink href="/properties">9� Nieruchomo� _ci</NavLink>
+            <NavLink href="/prospects">Pozyski</NavLink>
+            <NavLink href="/properties">Nieruchomosci</NavLink>
 
-            <NavLink href="/calendar">=� & Kalendarz</NavLink>
-            <NavLink href="/followups"> Follow-up</NavLink>
+            <NavLink href="/calendar">Kalendarz</NavLink>
+            <NavLink href="/followups">Follow-up</NavLink>
 
-            <NavLink href="/analyzed">�� AI: Analiza</NavLink>
-            <NavLink href="/assistant/live">� AI: Coach</NavLink>
+            <NavLink href="/analyzed">AI: Analiza</NavLink>
+            <NavLink href="/assistant/live">AI: Coach</NavLink>
 
-            <NavLink href="/market">9a9� Market</NavLink>
-            <NavLink href="/voice-notes">���<�9 G� aos�Bwki</NavLink>
-            <NavLink href="/documents/sale">=�  Dokumenty</NavLink>
-            <NavLink href="/news">�9>�<�9 Pras�wka</NavLink>
-            <NavLink href="/newsletter"> ��<�9 Newsletter</NavLink>
+            <NavLink href="/market">Market</NavLink>
+            <NavLink href="/voice-notes">Glosowki</NavLink>
+            <NavLink href="/documents/sale">Dokumenty</NavLink>
+            <NavLink href="/news">Prasowka</NavLink>
+            <NavLink href="/newsletter">Newsletter</NavLink>
           </div>
         </div>
       </nav>
